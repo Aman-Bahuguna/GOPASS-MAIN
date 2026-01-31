@@ -4,6 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Float, MeshDistortMaterial, Sphere, Stars, Cylinder } from '@react-three/drei';
 import { Mail, Lock, Eye, EyeOff, LogIn, Sparkles, ArrowRight, Calendar, Users, Zap, Shield, CheckCircle2, ArrowLeft, Home } from 'lucide-react';
 import gsap from 'gsap';
+import { useAuth } from '../context/AuthContext';
 
 // 3D DNA Helix Structure
 function DNAHelix() {
@@ -131,7 +132,8 @@ function StatCard({ number, label, delay }) {
     );
 }
 
-export default function LoginPage({ onNavigateToSignup, onNavigateToHome }) {
+export default function LoginPage({ onNavigateToSignup, onNavigateToHome, onLoginSuccess }) {
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -199,10 +201,22 @@ export default function LoginPage({ onNavigateToSignup, onNavigateToHome }) {
 
         setIsLoading(true);
 
-        setTimeout(() => {
-            console.log('Login submitted:', formData);
+        try {
+            const result = await login(formData.email, formData.password);
+
+            if (result.success) {
+                console.log('Login successful:', result.user);
+                if (onLoginSuccess) {
+                    onLoginSuccess();
+                }
+            } else {
+                setErrors({ email: result.error || 'Login failed' });
+            }
+        } catch (error) {
+            setErrors({ email: 'An error occurred. Please try again.' });
+        } finally {
             setIsLoading(false);
-        }, 2000);
+        }
     };
 
     return (

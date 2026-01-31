@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
 
-export default function AuthPage({ initialPage = 'login', onNavigateToHome }) {
+export default function AuthPage({ initialPage = 'login', onNavigateToHome, onLoginSuccess, onSignupSuccess }) {
     const [isLogin, setIsLogin] = useState(initialPage === 'login');
     const [direction, setDirection] = useState(0);
 
@@ -91,6 +91,7 @@ export default function AuthPage({ initialPage = 'login', onNavigateToHome }) {
                         <LoginPage
                             onNavigateToSignup={handleNavigateToSignup}
                             onNavigateToHome={onNavigateToHome}
+                            onLoginSuccess={onLoginSuccess}
                         />
                     </motion.div>
                 ) : (
@@ -106,6 +107,7 @@ export default function AuthPage({ initialPage = 'login', onNavigateToHome }) {
                         <SignupPage
                             onNavigateToLogin={handleNavigateToLogin}
                             onNavigateToHome={onNavigateToHome}
+                            onSignupSuccess={onSignupSuccess}
                         />
                     </motion.div>
                 )}
