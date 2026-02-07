@@ -31,6 +31,7 @@ export {
 export {
     EventsSection,
     EventCard,
+    EventDetailModal,
     EventFilters,
     CategoryTabs,
     EmptyEventsState

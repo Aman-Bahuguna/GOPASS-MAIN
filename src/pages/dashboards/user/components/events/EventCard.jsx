@@ -95,8 +95,8 @@ function EventCard({
                 {/* Price badge */}
                 <div className="absolute top-4 left-4">
                     <span className={`px-4 py-1.5 rounded-full text-sm font-bold shadow-lg ${event.fee === 0
-                            ? 'bg-emerald-500 text-white'
-                            : 'bg-white text-slate-800'
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-white text-slate-800'
                         }`}>
                         {event.fee === 0 ? 'FREE' : `₹${event.fee}`}
                     </span>
@@ -217,8 +217,8 @@ function EventCard({
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                         <motion.div
                             className={`h-full rounded-full ${isAlmostFull
-                                    ? 'bg-gradient-to-r from-red-400 to-red-500'
-                                    : 'bg-gradient-to-r from-brand-200 to-brand-300'
+                                ? 'bg-gradient-to-r from-red-400 to-red-500'
+                                : 'bg-gradient-to-r from-brand-200 to-brand-300'
                                 }`}
                             initial={{ width: 0 }}
                             animate={{ width: `${fillPercentage}%` }}
@@ -227,29 +227,46 @@ function EventCard({
                     </div>
                 </div>
 
-                {/* Action Button */}
-                <motion.button
-                    onClick={() => onRegister?.(event)}
-                    disabled={isRegistered}
-                    className={`w-full py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${isRegistered
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                    {/* View Details Button */}
+                    <motion.button
+                        onClick={() => onViewDetails?.(event)}
+                        className="flex-1 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 border-2 border-slate-200 text-slate-700 hover:border-brand-200 hover:text-brand-200 transition-all"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        <Eye className="w-4 h-4" />
+                        Details
+                    </motion.button>
+
+                    {/* Register Button */}
+                    <motion.button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onRegister?.(event);
+                        }}
+                        disabled={isRegistered}
+                        className={`flex-[1.5] py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${isRegistered
                             ? 'bg-emerald-100 text-emerald-700 cursor-default'
-                            : 'bg-gradient-to-r from-brand-100 to-brand-200 text-white hover:shadow-lg hover:shadow-brand-200/30 hover:scale-[1.02]'
-                        }`}
-                    whileHover={!isRegistered ? { scale: 1.02 } : {}}
-                    whileTap={!isRegistered ? { scale: 0.98 } : {}}
-                >
-                    {isRegistered ? (
-                        <>
-                            <CheckCircle2 className="w-5 h-5" />
-                            Already Registered
-                        </>
-                    ) : (
-                        <>
-                            Register Now
-                            <ArrowRight className="w-5 h-5" />
-                        </>
-                    )}
-                </motion.button>
+                            : 'bg-gradient-to-r from-brand-100 to-brand-200 text-white hover:shadow-lg hover:shadow-brand-200/30'
+                            }`}
+                        whileHover={!isRegistered ? { scale: 1.02 } : {}}
+                        whileTap={!isRegistered ? { scale: 0.98 } : {}}
+                    >
+                        {isRegistered ? (
+                            <>
+                                <CheckCircle2 className="w-5 h-5" />
+                                Registered
+                            </>
+                        ) : (
+                            <>
+                                Register
+                                <ArrowRight className="w-5 h-5" />
+                            </>
+                        )}
+                    </motion.button>
+                </div>
             </div>
         </motion.div>
     );

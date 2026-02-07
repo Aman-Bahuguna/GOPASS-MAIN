@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar } from 'lucide-react';
 import EventCard from './EventCard';
+import EventDetailModal from './EventDetailModal';
 import EventFilters from './EventFilters';
 import CategoryTabs from './CategoryTabs';
 import EmptyEventsState from './EmptyEventsState';
@@ -29,12 +30,19 @@ function EventsSection({
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [showFilters, setShowFilters] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
     const [filters, setFilters] = useState({
         dateRange: 'all',
         priceRange: 'all',
         sortBy: 'date',
         sortOrder: 'asc'
     });
+
+    // Handle opening event details
+    const handleViewDetails = (event) => {
+        setSelectedEvent(event);
+        onViewDetails?.(event);
+    };
 
     // Get unique categories
     const categories = useMemo(() => {
@@ -224,7 +232,7 @@ function EventsSection({
                             event={event}
                             index={index}
                             onRegister={onRegister}
-                            onViewDetails={onViewDetails}
+                            onViewDetails={handleViewDetails}
                             isRegistered={isRegisteredForEvent(event.id)}
                             isFavorite={isFavorited(event.id)}
                             onToggleFavorite={onToggleFavorite}
@@ -239,6 +247,21 @@ function EventsSection({
                     showCTA={searchQuery || selectedCategory !== 'All' || filters.dateRange !== 'all' || filters.priceRange !== 'all'}
                     ctaLabel="Clear Filters"
                     onCTA={handleClearFilters}
+                />
+            )}
+
+            {/* Event Detail Modal */}
+            {selectedEvent && (
+                <EventDetailModal
+                    event={selectedEvent}
+                    isRegistered={isRegisteredForEvent(selectedEvent.id)}
+                    isFavorite={isFavorited(selectedEvent.id)}
+                    onClose={() => setSelectedEvent(null)}
+                    onRegister={(event) => {
+                        setSelectedEvent(null);
+                        onRegister?.(event);
+                    }}
+                    onToggleFavorite={onToggleFavorite}
                 />
             )}
         </div>

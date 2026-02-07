@@ -12,36 +12,76 @@ import {
     Loader2,
     Download,
     ArrowRight,
-    QrCode
+    QrCode,
+    Building2,
+    Calendar,
+    MapPin,
+    Shield
 } from 'lucide-react';
 
-// Registration Modal
+/**
+ * Streamlined Registration Modal - Essential Information Only
+ */
 function RegistrationModal({ event, onClose, onSuccess, user }) {
     const [step, setStep] = useState(1); // 1: Form, 2: Payment, 3: Success
     const [isProcessing, setIsProcessing] = useState(false);
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
-        name: user?.fullName || '',
+        fullName: user?.fullName || '',
         email: user?.email || '',
         phone: '',
+        collegeName: '',
+        year: '',
+        agreeToTerms: false
     });
     const [ticketData, setTicketData] = useState(null);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
+        }
     };
 
-    const handleProceedToPayment = (e) => {
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.fullName.trim()) newErrors.fullName = 'Required';
+        if (!formData.email.trim()) newErrors.email = 'Required';
+        else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email';
+        if (!formData.phone.trim()) newErrors.phone = 'Required';
+        if (!formData.collegeName.trim()) newErrors.collegeName = 'Required';
+        if (!formData.agreeToTerms) newErrors.agreeToTerms = 'You must agree to terms';
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = (e) => {
         e.preventDefault();
-        if (!formData.phone) return;
-        setStep(2);
+        if (!validateForm()) return;
+
+        if (event.fee === 0) {
+            handleCompleteRegistration();
+        } else {
+            setStep(2);
+        }
     };
 
     const handlePayment = async () => {
         setIsProcessing(true);
-        // Simulate payment processing
         await new Promise(resolve => setTimeout(resolve, 2000));
+        handleCompleteRegistration();
+    };
 
-        // Generate ticket
+    const handleCompleteRegistration = async () => {
+        setIsProcessing(true);
+        await new Promise(resolve => setTimeout(resolve, 500));
+
         const ticket = {
             ticketNumber: `GP${Date.now().toString(36).toUpperCase()}`,
             eventTitle: event.title,
@@ -49,6 +89,9 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
             venue: event.venue,
             amount: event.fee,
             registeredAt: new Date().toISOString(),
+            attendeeName: formData.fullName,
+            attendeeEmail: formData.email,
+            college: formData.collegeName
         };
 
         setTicketData(ticket);
@@ -98,16 +141,15 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                             </div>
                             <div>
                                 <h2 className="text-xl font-bold">
-                                    {step === 3 ? 'Registration Complete!' : step === 2 ? 'Payment' : 'Register for Event'}
+                                    {step === 3 ? 'Registration Complete!' : step === 2 ? 'Payment' : 'Quick Registration'}
                                 </h2>
                                 <p className="text-white/80 text-sm mt-0.5 line-clamp-1">{event.title}</p>
                             </div>
                         </div>
 
-                        {/* Step indicator */}
                         {step < 3 && (
                             <div className="flex gap-2 mt-6">
-                                {[1, 2].map((s) => (
+                                {[1, 2].slice(0, event?.fee === 0 ? 1 : 2).map((s) => (
                                     <div key={s} className={`flex-1 h-1 rounded-full ${s <= step ? 'bg-white' : 'bg-white/30'}`} />
                                 ))}
                             </div>
@@ -116,200 +158,294 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
 
                     {/* Content */}
                     <div className="p-6">
-                        {step === 1 && (
-                            <form onSubmit={handleProceedToPayment} className="space-y-4">
-                                <div>
-                                    <label className="text-sm font-medium text-slate-700 block mb-2">Full Name</label>
-                                    <div className="relative">
-                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-brand-200 bg-slate-50"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="text-sm font-medium text-slate-700 block mb-2">Email</label>
-                                    <div className="relative">
-                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-brand-200 bg-slate-50"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="text-sm font-medium text-slate-700 block mb-2">Phone Number</label>
-                                    <div className="relative">
-                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                                        <input
-                                            type="tel"
-                                            name="phone"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                            placeholder="+91 98765 43210"
-                                            className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-brand-200"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Event Summary */}
-                                <div className="bg-slate-50 rounded-xl p-4 mt-4">
-                                    <div className="flex justify-between items-center text-sm">
-                                        <span className="text-slate-600">Event</span>
-                                        <span className="font-medium text-slate-900">{event.title}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center text-sm mt-2">
-                                        <span className="text-slate-600">Date</span>
-                                        <span className="font-medium text-slate-900">
-                                            {new Date(event.date).toLocaleDateString('en-IN', {
-                                                month: 'short', day: 'numeric', year: 'numeric'
-                                            })}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between items-center text-sm mt-2 pt-2 border-t border-slate-200">
-                                        <span className="text-slate-600 font-medium">Registration Fee</span>
-                                        <span className="text-lg font-bold text-brand-200">
-                                            {event.fee === 0 ? 'FREE' : `₹${event.fee}`}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <motion.button
-                                    type="submit"
-                                    className="w-full py-4 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-semibold flex items-center justify-center gap-2 mt-6"
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
+                        <AnimatePresence mode="wait">
+                            {/* Step 1: Registration Form */}
+                            {step === 1 && (
+                                <motion.form
+                                    key="step1"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    onSubmit={handleSubmit}
+                                    className="space-y-4"
                                 >
-                                    {event.fee === 0 ? 'Complete Registration' : 'Proceed to Payment'}
-                                    <ArrowRight className="w-5 h-5" />
-                                </motion.button>
-                            </form>
-                        )}
-
-                        {step === 2 && (
-                            <div className="space-y-6">
-                                {/* Payment Summary */}
-                                <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 text-white">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <span className="text-slate-400 text-sm">Amount to Pay</span>
-                                        <IndianRupee className="w-5 h-5 text-slate-400" />
+                                    {/* Full Name */}
+                                    <div>
+                                        <label className="text-sm font-medium text-slate-700 block mb-1.5">
+                                            Full Name <span className="text-red-500">*</span>
+                                        </label>
+                                        <div className="relative">
+                                            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                            <input
+                                                type="text"
+                                                name="fullName"
+                                                value={formData.fullName}
+                                                onChange={handleChange}
+                                                placeholder="Enter your full name"
+                                                className={`w-full pl-10 pr-4 py-2.5 border rounded-xl focus:outline-none focus:border-brand-200 ${errors.fullName ? 'border-red-300 bg-red-50' : 'border-slate-200 bg-slate-50'
+                                                    }`}
+                                            />
+                                        </div>
+                                        {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>}
                                     </div>
-                                    <p className="text-4xl font-bold">₹{event.fee}</p>
-                                    <p className="text-slate-400 text-sm mt-2">For: {event.title}</p>
-                                </div>
 
-                                {/* Payment methods placeholder */}
-                                <div>
-                                    <p className="text-sm font-medium text-slate-700 mb-3">Payment Method</p>
+                                    {/* Email & Phone Row */}
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="text-sm font-medium text-slate-700 block mb-1.5">
+                                                Email <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="relative">
+                                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                                <input
+                                                    type="email"
+                                                    name="email"
+                                                    value={formData.email}
+                                                    onChange={handleChange}
+                                                    placeholder="Email"
+                                                    className={`w-full pl-9 pr-3 py-2.5 border rounded-xl focus:outline-none focus:border-brand-200 text-sm ${errors.email ? 'border-red-300 bg-red-50' : 'border-slate-200 bg-slate-50'
+                                                        }`}
+                                                />
+                                            </div>
+                                            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label className="text-sm font-medium text-slate-700 block mb-1.5">
+                                                Phone <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="relative">
+                                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                                <input
+                                                    type="tel"
+                                                    name="phone"
+                                                    value={formData.phone}
+                                                    onChange={handleChange}
+                                                    placeholder="+91 98765..."
+                                                    className={`w-full pl-9 pr-3 py-2.5 border rounded-xl focus:outline-none focus:border-brand-200 text-sm ${errors.phone ? 'border-red-300 bg-red-50' : 'border-slate-200 bg-slate-50'
+                                                        }`}
+                                                />
+                                            </div>
+                                            {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                                        </div>
+                                    </div>
+
+                                    {/* College & Year Row */}
+                                    <div className="grid grid-cols-3 gap-3">
+                                        <div className="col-span-2">
+                                            <label className="text-sm font-medium text-slate-700 block mb-1.5">
+                                                College <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="relative">
+                                                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                                <input
+                                                    type="text"
+                                                    name="collegeName"
+                                                    value={formData.collegeName}
+                                                    onChange={handleChange}
+                                                    placeholder="College name"
+                                                    className={`w-full pl-9 pr-3 py-2.5 border rounded-xl focus:outline-none focus:border-brand-200 text-sm ${errors.collegeName ? 'border-red-300 bg-red-50' : 'border-slate-200 bg-slate-50'
+                                                        }`}
+                                                />
+                                            </div>
+                                            {errors.collegeName && <p className="text-red-500 text-xs mt-1">{errors.collegeName}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label className="text-sm font-medium text-slate-700 block mb-1.5">Year</label>
+                                            <select
+                                                name="year"
+                                                value={formData.year}
+                                                onChange={handleChange}
+                                                className="w-full px-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:border-brand-200 bg-slate-50 text-sm"
+                                            >
+                                                <option value="">Select</option>
+                                                <option value="1">1st</option>
+                                                <option value="2">2nd</option>
+                                                <option value="3">3rd</option>
+                                                <option value="4">4th</option>
+                                                <option value="pg">PG</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {/* Event Summary */}
+                                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                                        <div className="flex items-center justify-between text-sm mb-2">
+                                            <span className="text-slate-500 flex items-center gap-1.5">
+                                                <Calendar className="w-3.5 h-3.5" />
+                                                {new Date(event.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
+                                            </span>
+                                            <span className="text-slate-500 flex items-center gap-1.5">
+                                                <MapPin className="w-3.5 h-3.5" />
+                                                <span className="truncate max-w-[120px]">{event.venue}</span>
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-center pt-2 border-t border-slate-200">
+                                            <span className="font-medium text-slate-700">Total</span>
+                                            <span className="text-xl font-bold text-brand-200">
+                                                {event.fee === 0 ? 'FREE' : `₹${event.fee}`}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Terms */}
+                                    <label className="flex items-start gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            name="agreeToTerms"
+                                            checked={formData.agreeToTerms}
+                                            onChange={handleChange}
+                                            className="mt-0.5 w-4 h-4 text-brand-200 rounded"
+                                        />
+                                        <span className="text-xs text-slate-500">
+                                            I agree to the <span className="text-brand-200">Terms & Conditions</span> and consent to event photography
+                                        </span>
+                                    </label>
+                                    {errors.agreeToTerms && <p className="text-red-500 text-xs -mt-2">{errors.agreeToTerms}</p>}
+
+                                    <motion.button
+                                        type="submit"
+                                        className="w-full py-3.5 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-semibold flex items-center justify-center gap-2"
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        {event.fee === 0 ? 'Complete Registration' : 'Proceed to Payment'}
+                                        <ArrowRight className="w-5 h-5" />
+                                    </motion.button>
+                                </motion.form>
+                            )}
+
+                            {/* Step 2: Payment */}
+                            {step === 2 && (
+                                <motion.div
+                                    key="step2"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    className="space-y-5"
+                                >
+                                    {/* Payment Card */}
+                                    <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-5 text-white">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="text-slate-400 text-sm">Amount</span>
+                                            <IndianRupee className="w-4 h-4 text-slate-400" />
+                                        </div>
+                                        <p className="text-3xl font-bold">₹{event.fee}</p>
+                                        <div className="mt-3 pt-3 border-t border-slate-700 flex justify-between text-sm">
+                                            <span className="text-slate-400">Attendee</span>
+                                            <span>{formData.fullName}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Payment Methods */}
                                     <div className="space-y-2">
                                         {['UPI / Google Pay', 'Credit/Debit Card', 'Net Banking'].map((method, i) => (
-                                            <label key={method} className={`flex items-center gap-3 p-4 border rounded-xl cursor-pointer transition-all ${i === 0 ? 'border-brand-200 bg-brand-50' : 'border-slate-200 hover:border-brand-100'}`}>
+                                            <label key={method} className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all ${i === 0 ? 'border-brand-200 bg-brand-50' : 'border-slate-200 hover:border-brand-100'}`}>
                                                 <input type="radio" name="payment" defaultChecked={i === 0} className="w-4 h-4 text-brand-200" />
-                                                <span className="font-medium text-slate-700">{method}</span>
+                                                <span className="text-sm font-medium text-slate-700">{method}</span>
                                             </label>
                                         ))}
                                     </div>
-                                </div>
 
-                                <motion.button
-                                    onClick={handlePayment}
-                                    disabled={isProcessing}
-                                    className="w-full py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-70"
-                                    whileHover={!isProcessing ? { scale: 1.02 } : {}}
-                                    whileTap={!isProcessing ? { scale: 0.98 } : {}}
-                                >
-                                    {isProcessing ? (
-                                        <>
-                                            <Loader2 className="w-5 h-5 animate-spin" />
-                                            Processing Payment...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <CreditCard className="w-5 h-5" />
-                                            Pay ₹{event.fee}
-                                        </>
-                                    )}
-                                </motion.button>
-                            </div>
-                        )}
+                                    <div className="flex items-center gap-2 p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg">
+                                        <Shield className="w-4 h-4 text-emerald-600" />
+                                        <p className="text-xs text-emerald-700">Secured with 256-bit encryption</p>
+                                    </div>
 
-                        {step === 3 && ticketData && (
-                            <div className="text-center">
-                                {/* Success animation */}
-                                <motion.div
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-                                    className="w-20 h-20 mx-auto mb-6 rounded-full bg-emerald-100 flex items-center justify-center"
-                                >
-                                    <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+                                    <motion.button
+                                        onClick={handlePayment}
+                                        disabled={isProcessing}
+                                        className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-70"
+                                        whileHover={!isProcessing ? { scale: 1.02 } : {}}
+                                        whileTap={!isProcessing ? { scale: 0.98 } : {}}
+                                    >
+                                        {isProcessing ? (
+                                            <>
+                                                <Loader2 className="w-5 h-5 animate-spin" />
+                                                Processing...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CreditCard className="w-5 h-5" />
+                                                Pay ₹{event.fee}
+                                            </>
+                                        )}
+                                    </motion.button>
                                 </motion.div>
+                            )}
 
-                                <h3 className="text-xl font-bold text-slate-900 mb-2">You're In!</h3>
-                                <p className="text-slate-500 mb-6">Your registration was successful</p>
+                            {/* Step 3: Success */}
+                            {step === 3 && ticketData && (
+                                <motion.div
+                                    key="step3"
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="text-center"
+                                >
+                                    <motion.div
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+                                        className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-100 flex items-center justify-center"
+                                    >
+                                        <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+                                    </motion.div>
 
-                                {/* Ticket Card */}
-                                <div className="bg-gradient-to-br from-brand-100 to-brand-300 rounded-2xl p-6 text-white text-left relative overflow-hidden">
-                                    {/* Decorative circles */}
-                                    <div className="absolute -left-4 top-1/2 w-8 h-8 bg-white rounded-full" />
-                                    <div className="absolute -right-4 top-1/2 w-8 h-8 bg-white rounded-full" />
+                                    <h3 className="text-xl font-bold text-slate-900 mb-1">You're In!</h3>
+                                    <p className="text-slate-500 text-sm mb-5">Confirmation sent to {formData.email}</p>
 
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div>
-                                            <p className="text-white/80 text-xs uppercase tracking-wider">Ticket</p>
-                                            <p className="font-mono font-bold text-lg">{ticketData.ticketNumber}</p>
+                                    {/* Ticket */}
+                                    <div className="bg-gradient-to-br from-brand-100 to-brand-300 rounded-2xl p-5 text-white text-left relative overflow-hidden">
+                                        <div className="absolute -left-3 top-1/2 w-6 h-6 bg-white rounded-full" />
+                                        <div className="absolute -right-3 top-1/2 w-6 h-6 bg-white rounded-full" />
+
+                                        <div className="flex justify-between items-start mb-3">
+                                            <div>
+                                                <p className="text-white/70 text-xs uppercase">E-Ticket</p>
+                                                <p className="font-mono font-bold">{ticketData.ticketNumber}</p>
+                                            </div>
+                                            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                                                <QrCode className="w-5 h-5" />
+                                            </div>
                                         </div>
-                                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                                            <QrCode className="w-6 h-6" />
+
+                                        <div className="border-t border-white/20 pt-3 border-dashed">
+                                            <p className="font-bold">{ticketData.eventTitle}</p>
+                                            <div className="flex items-center gap-4 text-white/80 text-sm mt-2">
+                                                <span className="flex items-center gap-1">
+                                                    <Calendar className="w-3.5 h-3.5" />
+                                                    {new Date(ticketData.eventDate).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <MapPin className="w-3.5 h-3.5" />
+                                                    <span className="truncate max-w-[100px]">{ticketData.venue}</span>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="border-t border-white/20 pt-4 border-dashed">
-                                        <p className="font-bold text-lg">{ticketData.eventTitle}</p>
-                                        <p className="text-white/80 text-sm mt-1">
-                                            {new Date(ticketData.eventDate).toLocaleDateString('en-IN', {
-                                                weekday: 'long',
-                                                month: 'long',
-                                                day: 'numeric',
-                                                year: 'numeric'
-                                            })}
-                                        </p>
-                                        <p className="text-white/80 text-sm">{ticketData.venue}</p>
+                                    <div className="flex gap-3 mt-5">
+                                        <motion.button
+                                            className="flex-1 py-2.5 border border-slate-200 rounded-xl font-medium text-slate-700 flex items-center justify-center gap-2 hover:bg-slate-50"
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                        >
+                                            <Download className="w-4 h-4" />
+                                            Download
+                                        </motion.button>
+                                        <motion.button
+                                            onClick={handleDone}
+                                            className="flex-1 py-2.5 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-semibold"
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                        >
+                                            Done
+                                        </motion.button>
                                     </div>
-                                </div>
-
-                                <div className="flex gap-3 mt-6">
-                                    <motion.button
-                                        className="flex-1 py-3 border border-slate-200 rounded-xl font-medium text-slate-700 flex items-center justify-center gap-2 hover:bg-slate-50"
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
-                                    >
-                                        <Download className="w-4 h-4" />
-                                        Download
-                                    </motion.button>
-                                    <motion.button
-                                        onClick={handleDone}
-                                        className="flex-1 py-3 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-semibold"
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
-                                    >
-                                        Done
-                                    </motion.button>
-                                </div>
-                            </div>
-                        )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                 </motion.div>
             </motion.div>

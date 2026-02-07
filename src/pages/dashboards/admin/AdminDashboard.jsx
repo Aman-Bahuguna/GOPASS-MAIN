@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
-import SettingsPage from '../SettingsPage';
+import { SettingsPage } from '../settings';
 import CreateEventPage from '../../events/CreateEventPage';
 import { useAuth } from '../../../context/AuthContext';
 import {

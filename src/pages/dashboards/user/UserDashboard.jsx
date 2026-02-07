@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
-import SettingsPage from '../SettingsPage';
+import { SettingsPage } from '../settings';
 import { useAuth } from '../../../context/AuthContext';
 import { mockEvents, getUserRegistrations, getDashboardStats } from '../../../data/mockData';
 import { EVENT_STATUS } from '../../../utils/constants';
