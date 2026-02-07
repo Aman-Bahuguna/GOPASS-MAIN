@@ -10,11 +10,14 @@ import {
     Shield,
     Sparkles,
     ChevronRight,
-    UserCheck
+    UserCheck,
+    Bell,
+    X
 } from 'lucide-react';
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
 import SettingsPage from '../SettingsPage';
+import CreateEventPage from '../../events/CreateEventPage';
 import { useAuth } from '../../../context/AuthContext';
 import {
     getPendingOrganizers,
@@ -30,7 +33,18 @@ import {
     ApprovedOrganizerRow,
     CollegeEventCard,
     WelcomeBanner,
-    EmptyPendingState
+    EmptyPendingState,
+    // Phase 2-3 Components
+    AllOrganizersModal,
+    CollegeEventsSection,
+    CollegeInfoCard,
+    CollegeEditModal,
+    ActivityLogSection,
+    ReportsSection,
+    AnalyticsDashboard,
+    NotificationsPanel,
+    NotificationBell,
+    NotificationSettings
 } from './components';
 
 // Main Admin Dashboard Component
@@ -41,6 +55,26 @@ export default function AdminDashboard() {
     const [pendingOrganizers, setPendingOrganizers] = useState([]);
     const [approvedOrganizers, setApprovedOrganizers] = useState([]);
     const [collegeEvents, setCollegeEvents] = useState([]);
+
+    // Phase 2-3 State
+    const [showNotificationsPanel, setShowNotificationsPanel] = useState(false);
+    const [showNotificationSettings, setShowNotificationSettings] = useState(false);
+    const [showAllOrganizers, setShowAllOrganizers] = useState(false);
+    const [showEditCollege, setShowEditCollege] = useState(false);
+
+    // Mock notifications data
+    const [notifications, setNotifications] = useState([
+        { id: '1', type: 'new_organizer', title: 'New Organizer Request', message: 'John Doe has requested to become an organizer', timestamp: new Date().toISOString(), read: false, actionable: true },
+        { id: '2', type: 'new_event', title: 'New Event Created', message: 'Tech Fest 2024 has been created by an organizer', timestamp: new Date(Date.now() - 3600000).toISOString(), read: false, actionable: true },
+        { id: '3', type: 'system', title: 'System Update', message: 'Platform will undergo maintenance tonight', timestamp: new Date(Date.now() - 86400000).toISOString(), read: true, actionable: false },
+    ]);
+
+    // Mock activities data
+    const [activities, setActivities] = useState([
+        { id: '1', type: 'organizer_approved', title: 'Approved Organizer', description: 'You approved Jane Smith as organizer', user: 'Jane Smith', timestamp: new Date().toISOString() },
+        { id: '2', type: 'event_created', title: 'Event Created', description: 'New event "Hackathon 2024" was created', user: 'John Doe', timestamp: new Date(Date.now() - 3600000).toISOString() },
+        { id: '3', type: 'organizer_rejected', title: 'Rejected Organizer', description: 'You rejected Mike Johnson', user: 'Mike Johnson', timestamp: new Date(Date.now() - 7200000).toISOString() },
+    ]);
 
     useEffect(() => {
         if (user?.college) {
@@ -62,16 +96,48 @@ export default function AdminDashboard() {
         if (approved) {
             setApprovedOrganizers(prev => [...prev, { ...approved, isAdminApproved: true }]);
         }
+        // Add to activities
+        setActivities(prev => [{
+            id: Date.now().toString(),
+            type: 'organizer_approved',
+            title: 'Approved Organizer',
+            description: `You approved ${approved?.fullName}`,
+            user: approved?.fullName,
+            timestamp: new Date().toISOString()
+        }, ...prev]);
         console.log('Approved organizer:', organizerId);
     };
 
     const handleReject = (organizerId) => {
+        const rejected = pendingOrganizers.find(o => o.id === organizerId);
         setPendingOrganizers(prev => prev.filter(o => o.id !== organizerId));
+        // Add to activities
+        setActivities(prev => [{
+            id: Date.now().toString(),
+            type: 'organizer_rejected',
+            title: 'Rejected Organizer',
+            description: `You rejected ${rejected?.fullName}`,
+            user: rejected?.fullName,
+            timestamp: new Date().toISOString()
+        }, ...prev]);
         console.log('Rejected organizer:', organizerId);
     };
 
     const handleNavigate = (page) => {
         setCurrentPage(page);
+    };
+
+    // Notification handlers
+    const handleMarkAsRead = (id) => {
+        setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    };
+
+    const handleMarkAllAsRead = () => {
+        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    };
+
+    const handleDeleteNotification = (id) => {
+        setNotifications(prev => prev.filter(n => n.id !== id));
     };
 
     // Get page title based on current page
@@ -81,6 +147,22 @@ export default function AdminDashboard() {
                 return 'My Profile';
             case 'settings':
                 return 'Settings';
+            case 'organizers':
+                return 'Manage Organizers';
+            case 'events':
+                return 'College Events';
+            case 'analytics':
+                return 'Analytics';
+            case 'activity':
+                return 'Activity Log';
+            case 'reports':
+                return 'Reports';
+            case 'college':
+                return 'College Details';
+            case 'notifications':
+                return 'Notifications';
+            case 'create-event':
+                return 'Create Event';
             default:
                 return 'Admin Dashboard';
         }
@@ -93,6 +175,278 @@ export default function AdminDashboard() {
                 return <ProfilePage onNavigate={handleNavigate} />;
             case 'settings':
                 return <SettingsPage onNavigate={handleNavigate} />;
+
+            // Manage Organizers Page
+            case 'organizers':
+                return (
+                    <div className="space-y-6">
+                        {/* Pending Organizers */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-white rounded-2xl border border-slate-200/60 p-6"
+                        >
+                            <div className="flex items-center justify-between mb-5">
+                                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-3">
+                                    <div className="p-2 bg-orange-100 rounded-lg">
+                                        <AlertCircle className="w-5 h-5 text-orange-600" />
+                                    </div>
+                                    Pending Approvals
+                                    {pendingOrganizers.length > 0 && (
+                                        <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-bold">
+                                            {pendingOrganizers.length}
+                                        </span>
+                                    )}
+                                </h2>
+                                <button
+                                    onClick={() => setShowAllOrganizers(true)}
+                                    className="text-sm text-brand-200 hover:text-brand-100 font-medium"
+                                >
+                                    View All Organizers
+                                </button>
+                            </div>
+                            <AnimatePresence mode="popLayout">
+                                {pendingOrganizers.length > 0 ? (
+                                    <div className="space-y-4">
+                                        {pendingOrganizers.map((organizer, index) => (
+                                            <PendingOrganizerCard
+                                                key={organizer.id}
+                                                organizer={organizer}
+                                                index={index}
+                                                onApprove={handleApprove}
+                                                onReject={handleReject}
+                                            />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <EmptyPendingState />
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+
+                        {/* Approved Organizers */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="bg-white rounded-2xl border border-slate-200/60 p-6"
+                        >
+                            <h3 className="text-xl font-bold text-slate-900 flex items-center gap-3 mb-5">
+                                <div className="p-2 bg-emerald-100 rounded-lg">
+                                    <UserCheck className="w-5 h-5 text-emerald-600" />
+                                </div>
+                                Approved Organizers ({approvedOrganizers.length})
+                            </h3>
+                            <div className="space-y-2">
+                                {approvedOrganizers.slice(0, 5).map((organizer, index) => (
+                                    <ApprovedOrganizerRow
+                                        key={organizer.id}
+                                        organizer={organizer}
+                                        index={index}
+                                    />
+                                ))}
+                                {approvedOrganizers.length === 0 && (
+                                    <p className="text-slate-500 text-center py-4">No approved organizers yet</p>
+                                )}
+                            </div>
+                        </motion.div>
+                    </div>
+                );
+
+            // College Events Page
+            case 'events':
+                return (
+                    <CollegeEventsSection
+                        events={collegeEvents}
+                        onCreateEvent={() => handleNavigate('create-event')}
+                    />
+                );
+
+            // Create Event Page
+            case 'create-event':
+                return (
+                    <CreateEventPage onNavigate={handleNavigate} />
+                );
+
+            // Analytics Page
+            case 'analytics':
+                return (
+                    <AnalyticsDashboard
+                        eventsData={[
+                            { label: 'Jan', value: 12 },
+                            { label: 'Feb', value: 19 },
+                            { label: 'Mar', value: 15 },
+                            { label: 'Apr', value: 25 },
+                            { label: 'May', value: 22 },
+                            { label: 'Jun', value: 30 }
+                        ]}
+                        registrationsData={[
+                            { label: 'Week 1', value: 120 },
+                            { label: 'Week 2', value: 180 },
+                            { label: 'Week 3', value: 150 },
+                            { label: 'Week 4', value: 220 }
+                        ]}
+                        categoriesData={[
+                            { label: 'Technical', value: 35 },
+                            { label: 'Cultural', value: 25 },
+                            { label: 'Sports', value: 20 },
+                            { label: 'Workshop', value: 15 },
+                            { label: 'Others', value: 5 }
+                        ]}
+                    />
+                );
+
+            // Activity Log Page
+            case 'activity':
+                return (
+                    <ActivityLogSection
+                        activities={activities}
+                        onRefresh={() => console.log('Refresh activities')}
+                        onLoadMore={() => console.log('Load more activities')}
+                    />
+                );
+
+            // Reports Page
+            case 'reports':
+                return (
+                    <ReportsSection
+                        stats={{
+                            totalEvents: stats?.totalEvents || 0,
+                            totalOrganizers: stats?.totalOrganizers || 0,
+                            totalRegistrations: stats?.totalRegistrations || 0,
+                            activeEvents: stats?.activeEvents || 0
+                        }}
+                        onGenerateReport={(config) => console.log('Generate report:', config)}
+                        onExport={(reportId, format) => console.log('Export:', reportId, format)}
+                    />
+                );
+
+            // College Details Page
+            case 'college':
+                return (
+                    <div className="space-y-6">
+                        <CollegeInfoCard
+                            college={user?.college}
+                            onEdit={() => setShowEditCollege(true)}
+                        />
+
+                        {/* Quick Stats */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                        >
+                            <div className="bg-white rounded-2xl border border-slate-200/60 p-6">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="p-2 bg-blue-100 rounded-lg">
+                                        <Users className="w-5 h-5 text-blue-600" />
+                                    </div>
+                                    <span className="text-slate-600 font-medium">Total Organizers</span>
+                                </div>
+                                <p className="text-3xl font-bold text-slate-900">{approvedOrganizers.length}</p>
+                            </div>
+                            <div className="bg-white rounded-2xl border border-slate-200/60 p-6">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="p-2 bg-purple-100 rounded-lg">
+                                        <Calendar className="w-5 h-5 text-purple-600" />
+                                    </div>
+                                    <span className="text-slate-600 font-medium">Total Events</span>
+                                </div>
+                                <p className="text-3xl font-bold text-slate-900">{collegeEvents.length}</p>
+                            </div>
+                            <div className="bg-white rounded-2xl border border-slate-200/60 p-6">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="p-2 bg-emerald-100 rounded-lg">
+                                        <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                                    </div>
+                                    <span className="text-slate-600 font-medium">Active Events</span>
+                                </div>
+                                <p className="text-3xl font-bold text-slate-900">{stats?.activeEvents || 0}</p>
+                            </div>
+                        </motion.div>
+                    </div>
+                );
+
+            // Notifications Page
+            case 'notifications':
+                return (
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-900">All Notifications</h2>
+                                <p className="text-slate-500 text-sm">{notifications.filter(n => !n.read).length} unread notifications</p>
+                            </div>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={handleMarkAllAsRead}
+                                    className="px-4 py-2 text-sm font-medium text-brand-200 hover:bg-brand-50 rounded-lg transition-colors"
+                                >
+                                    Mark all as read
+                                </button>
+                                <button
+                                    onClick={() => setShowNotificationSettings(true)}
+                                    className="px-4 py-2 text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg transition-colors"
+                                >
+                                    Settings
+                                </button>
+                            </div>
+                        </div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-white rounded-2xl border border-slate-200/60 overflow-hidden"
+                        >
+                            {notifications.length > 0 ? (
+                                <div className="divide-y divide-slate-100">
+                                    {notifications.map((notification, index) => (
+                                        <motion.div
+                                            key={notification.id}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            className={`p-4 hover:bg-slate-50 cursor-pointer transition-colors ${!notification.read ? 'bg-brand-50/30' : ''
+                                                }`}
+                                            onClick={() => handleMarkAsRead(notification.id)}
+                                        >
+                                            <div className="flex items-start gap-3">
+                                                <div className={`w-2 h-2 rounded-full mt-2 ${notification.read ? 'bg-slate-300' : 'bg-brand-200'
+                                                    }`} />
+                                                <div className="flex-1">
+                                                    <p className={`text-sm ${notification.read ? 'text-slate-600' : 'text-slate-900 font-medium'}`}>
+                                                        {notification.title}
+                                                    </p>
+                                                    <p className="text-xs text-slate-500 mt-0.5">{notification.message}</p>
+                                                    <p className="text-xs text-slate-400 mt-1">
+                                                        {new Date(notification.timestamp).toLocaleString()}
+                                                    </p>
+                                                </div>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteNotification(notification.id);
+                                                    }}
+                                                    className="p-1 hover:bg-red-50 rounded text-slate-400 hover:text-red-500"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="p-8 text-center">
+                                    <Bell className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                                    <p className="text-slate-600 font-medium">No notifications</p>
+                                    <p className="text-slate-400 text-sm">You're all caught up!</p>
+                                </div>
+                            )}
+                        </motion.div>
+                    </div>
+                );
+
+            // Default - Home Dashboard
             default:
                 return (
                     <>

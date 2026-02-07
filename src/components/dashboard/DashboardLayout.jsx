@@ -23,7 +23,10 @@ import {
     TrendingUp,
     Zap,
     Star,
-    Plus
+    Plus,
+    BarChart3,
+    FileText,
+    Activity
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../utils/constants';
@@ -154,7 +157,11 @@ function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
                 ...baseItems,
                 { id: 'organizers', icon: Users, label: 'Manage Organizers', badge: 0 },
                 { id: 'events', icon: Calendar, label: 'College Events' },
+                { id: 'analytics', icon: BarChart3, label: 'Analytics' },
+                { id: 'activity', icon: Activity, label: 'Activity Log' },
+                { id: 'reports', icon: FileText, label: 'Reports' },
                 { id: 'college', icon: Building2, label: 'College Details' },
+                { id: 'notifications', icon: Bell, label: 'Notifications' },
                 { id: 'settings', icon: Settings, label: 'Settings' },
             ];
         } else if (user?.role === ROLES.ORGANIZER) {
