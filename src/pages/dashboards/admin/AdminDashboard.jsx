@@ -706,7 +706,7 @@ export default function AdminDashboard() {
     };
 
     return (
-        <DashboardLayout title={getPageTitle()} onNavigate={handleNavigate}>
+        <DashboardLayout title={getPageTitle()} onNavigate={handleNavigate} currentPage={currentPage}>
             {renderContent()}
         </DashboardLayout>
     );

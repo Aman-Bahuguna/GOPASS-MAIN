@@ -62,7 +62,7 @@ export const ROUTES = {
     SIGNUP: '/signup',
     PENDING_VERIFICATION: '/pending-verification',
     DASHBOARD: {
-        USER: '/dashboard',
+        USER: '/dashboard/user',
         ORGANIZER: '/dashboard/organizer',
         ADMIN: '/dashboard/admin',
     },

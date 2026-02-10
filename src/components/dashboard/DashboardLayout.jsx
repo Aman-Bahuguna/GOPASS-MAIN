@@ -576,12 +576,10 @@ function Header({ onMenuClick, title, onNavigate }) {
 }
 
 // Main Dashboard Layout
-export default function DashboardLayout({ children, title = 'Dashboard', onNavigate }) {
+export default function DashboardLayout({ children, title = 'Dashboard', onNavigate, currentPage = 'home' }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState('home');
 
     const handleNavigate = (page) => {
-        setCurrentPage(page);
         setSidebarOpen(false);
         onNavigate && onNavigate(page);
     };

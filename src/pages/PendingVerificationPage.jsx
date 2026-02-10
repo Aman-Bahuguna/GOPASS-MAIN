@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Clock, CheckCircle2, Shield, Mail, Building2, User,
@@ -104,7 +105,8 @@ function EmailCard({ email, index }) {
     );
 }
 
-export default function PendingVerificationPage({ onNavigateToHome }) {
+export default function PendingVerificationPage() {
+    const navigate = useNavigate();
     const { user, simulatePlatformApproval, logout } = useAuth();
     const [emails, setEmails] = useState([]);
     const [showEmails, setShowEmails] = useState(false);
@@ -139,7 +141,7 @@ export default function PendingVerificationPage({ onNavigateToHome }) {
                         <Inbox className="w-5 h-5 text-slate-600" />
                         {emails.length > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand-200 text-white text-xs rounded-full flex items-center justify-center">{emails.length}</span>}
                     </motion.button>
-                    <motion.button onClick={onNavigateToHome} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}><Home className="w-5 h-5 text-slate-600" /></motion.button>
+                    <motion.button onClick={() => navigate('/')} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}><Home className="w-5 h-5 text-slate-600" /></motion.button>
                     <motion.button onClick={logout} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm hover:bg-red-50 hover:border-red-200 transition-all" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}><LogOut className="w-5 h-5 text-slate-600" /></motion.button>
                 </div>
 

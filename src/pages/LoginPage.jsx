@@ -220,7 +220,7 @@ export default function LoginPage({ onNavigateToSignup, onNavigateToHome, onLogi
     };
 
     return (
-        <div ref={containerRef} className="min-h-screen relative overflow-hidden flex">
+        <div ref={containerRef} className="min-h-screen relative overflow-x-hidden flex">
             {/* Left Panel - Marketing/Visual Section */}
             <div
                 ref={leftPanelRef}

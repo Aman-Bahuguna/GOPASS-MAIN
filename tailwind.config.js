@@ -8,23 +8,24 @@ export default {
     extend: {
       colors: {
         brand: {
-          100: '#3d70b2',
-          200: '#5596e6',
-          300: '#41d6c3',
+          100: '#FF4F1F', // Coral Orange - Primary Accent
+          200: '#41D6C3', // Teal Cyan - Secondary Accent
+          300: '#9B5DE5', // Electric Purple - Tertiary Accent
         },
         ui: {
-          100: '#ffffff',
-          200: '#f5f7fa',
-          300: '#f0f3f6',
-          400: '#dfe3e6',
-          500: '#8c9ba5',
+          100: '#0A0A0A', // Charcoal Black - Main Background
+          200: '#121212', // Deep Gray - Secondary Background
+          300: '#1A1A1A', // Card/Modal Background
+          400: '#2A2A2A', // Borders/Dividers
+          500: '#9CA3AF', // Muted Text
         },
-        background: '#ffffff',
-        foreground: '#1a1a1a',
+        background: '#0A0A0A',
+        foreground: '#FFFFFF',
       },
       fontFamily: {
-        sans: ['"General Sans"', 'sans-serif'],
-        serif: ['"Gambetta"', 'serif'],
+        sans: ['Inter', '"General Sans"', 'sans-serif'],
+        display: ['Manrope', 'Inter', 'sans-serif'],
+        serif: ['"Playfair Display"', '"Gambetta"', 'serif'],
       }
     },
   },

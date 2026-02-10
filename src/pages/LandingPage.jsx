@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeroSection from '../components/blocks/HeroSection';
 import ShowcaseSection from '../components/blocks/ShowcaseSection';
 import DeckSection from '../components/blocks/DeckSection';
@@ -11,7 +12,8 @@ import Footer from '../components/blocks/Footer';
 import Navbar from '../components/ui/Navbar';
 import Lenis from 'lenis';
 
-const LandingPage = ({ onNavigateToLogin, onNavigateToSignup }) => {
+const LandingPage = () => {
+    const navigate = useNavigate();
 
     useEffect(() => {
         const lenis = new Lenis({
@@ -39,7 +41,7 @@ const LandingPage = ({ onNavigateToLogin, onNavigateToSignup }) => {
 
     return (
         <main className="w-full min-h-screen bg-ui-100 text-foreground selection:bg-brand-200 selection:text-white">
-            <Navbar onNavigateToLogin={onNavigateToLogin} onNavigateToSignup={onNavigateToSignup} />
+            <Navbar onNavigateToLogin={() => navigate('/login')} onNavigateToSignup={() => navigate('/signup')} />
             <HeroSection />
             <ShowcaseSection />
             {/* <DeckSection /> */}

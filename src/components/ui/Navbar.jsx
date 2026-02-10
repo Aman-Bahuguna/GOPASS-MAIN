@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, useScroll, useMotionValueEvent, useSpring, useTransform } from "framer-motion";
 import { Menu, Calendar, X, Sparkles } from "lucide-react";
 
@@ -31,6 +32,7 @@ const FloatingParticle = ({ delay, duration, x, y }) => (
 );
 
 const Navbar = ({ onNavigateToLogin, onNavigateToSignup }) => {
+    const navigate = useNavigate();
     const [hidden, setHidden] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -225,8 +227,7 @@ const Navbar = ({ onNavigateToLogin, onNavigateToSignup }) => {
                             {/* Right Actions - Enhanced */}
                             <div className="hidden lg:flex items-center gap-3">
                                 {/* Events Button - Ultra Premium */}
-                                <motion.a
-                                    href="#events"
+                                <motion.button
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{
@@ -240,7 +241,8 @@ const Navbar = ({ onNavigateToLogin, onNavigateToSignup }) => {
                                         y: -3,
                                     }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="relative group"
+                                    className="relative group cursor-pointer"
+                                    onClick={() => navigate('/events')}
                                 >
                                     {/* Outer glow */}
                                     <motion.div
@@ -283,7 +285,7 @@ const Navbar = ({ onNavigateToLogin, onNavigateToSignup }) => {
                                         <span className="relative z-10">Events</span>
                                         <Sparkles className="w-3.5 h-3.5 relative z-10 opacity-80" />
                                     </div>
-                                </motion.a>
+                                </motion.button>
 
                                 {/* Login */}
                                 <motion.button
@@ -412,8 +414,7 @@ const Navbar = ({ onNavigateToLogin, onNavigateToSignup }) => {
                         ))}
 
                         {/* Mobile Events Button */}
-                        <motion.a
-                            href="#events"
+                        <motion.button
                             initial={{ opacity: 0, x: -30 }}
                             animate={{
                                 opacity: mobileMenuOpen ? 1 : 0,
@@ -425,14 +426,17 @@ const Navbar = ({ onNavigateToLogin, onNavigateToSignup }) => {
                                 stiffness: 300,
                                 damping: 25
                             }}
-                            onClick={() => setMobileMenuOpen(false)}
+                            onClick={() => {
+                                setMobileMenuOpen(false);
+                                navigate('/events');
+                            }}
                             whileTap={{ scale: 0.95 }}
                             className="flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-2xl text-[16px] font-bold shadow-lg shadow-brand-100/30"
                         >
                             <Calendar className="w-5 h-5" />
                             Events
                             <Sparkles className="w-4 h-4 opacity-80" />
-                        </motion.a>
+                        </motion.button>
 
                         <div className="pt-4 mt-4 border-t border-slate-200/60 space-y-2">
                             <motion.button
