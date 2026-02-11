@@ -4,7 +4,7 @@ import { Lock } from 'lucide-react';
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
 import { SettingsPage } from '../settings';
-import CreateEventPage from '../../events/CreateEventPage';
+import OrganizerCreateEventForm from './components/OrganizerCreateEventForm';
 import { useAuth } from '../../../context/AuthContext';
 import { getEventsByOrganizer, getDashboardStats } from '../../../data/mockData';
 import { canOrganizerCreateEvents } from '../../../utils/roleConfig';
@@ -108,7 +108,7 @@ export default function OrganizerDashboard() {
                         </motion.div>
                     );
                 }
-                return <CreateEventPage onNavigate={handleNavigate} />;
+                return <OrganizerCreateEventForm onNavigate={handleNavigate} />;
 
             case 'analytics':
                 return (

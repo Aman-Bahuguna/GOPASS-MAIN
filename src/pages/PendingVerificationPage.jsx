@@ -181,7 +181,7 @@ export default function PendingVerificationPage() {
                                     )}
                                     {user?.status === USER_STATUS.ACTIVE && (
                                         <div className="p-5 border-t border-slate-200">
-                                            <motion.button className="w-full py-3 bg-gradient-to-r from-brand-200 to-brand-300 text-white rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-brand-200/30" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>Go to Dashboard <ArrowRight className="w-5 h-5" /></motion.button>
+                                            <motion.button onClick={() => navigate(`/${user.role.toLowerCase()}-dashboard`)} className="w-full py-3 bg-gradient-to-r from-brand-200 to-brand-300 text-white rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-brand-200/30" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>Go to Dashboard <ArrowRight className="w-5 h-5" /></motion.button>
                                         </div>
                                     )}
                                 </Card>

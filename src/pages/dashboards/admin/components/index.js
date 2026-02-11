@@ -36,6 +36,7 @@ export {
 
 // Events Components
 export {
+    AdminCreateEventForm,
     CollegeEventCard,
     CollegeEventsSection,
     EventDetailsModal

@@ -17,7 +17,6 @@ import {
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
 import { SettingsPage } from '../settings';
-import CreateEventPage from '../../events/CreateEventPage';
 import { useAuth } from '../../../context/AuthContext';
 import {
     getPendingOrganizers,
@@ -34,6 +33,8 @@ import {
     CollegeEventCard,
     WelcomeBanner,
     EmptyPendingState,
+    // Events Components
+    AdminCreateEventForm,
     // Phase 2-3 Components
     AllOrganizersModal,
     CollegeEventsSection,
@@ -265,7 +266,7 @@ export default function AdminDashboard() {
             // Create Event Page
             case 'create-event':
                 return (
-                    <CreateEventPage onNavigate={handleNavigate} />
+                    <AdminCreateEventForm onNavigate={handleNavigate} />
                 );
 
             // Analytics Page
