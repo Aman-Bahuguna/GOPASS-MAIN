@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
 import { SettingsPage } from '../settings';
 import { useAuth } from '../../../context/AuthContext';
-import { mockEvents, getUserRegistrations, getDashboardStats } from '../../../data/mockData';
+import { getUserRegistrations, getDashboardStats } from '../../../data/mockData';
 import { EVENT_STATUS } from '../../../utils/constants';
+import { fetchEvents, selectAllEvents, selectEventsStatus } from '../../../store/slices/eventsSlice';
 
 // Import components from new structure
 import {
@@ -21,6 +23,7 @@ import { Calendar, Ticket, Star, Heart } from 'lucide-react';
  * Container for the user dashboard pages with navigation
  */
 export default function UserDashboard() {
+    const dispatch = useDispatch();
     const { user } = useAuth();
     const [currentPage, setCurrentPage] = useState('home');
     const [stats, setStats] = useState(null);
@@ -28,29 +31,47 @@ export default function UserDashboard() {
     const [favorites, setFavorites] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [showRegistrationModal, setShowRegistrationModal] = useState(false);
-    const [loading, setLoading] = useState(true);
+
+    // Redux State
+    const events = useSelector(selectAllEvents);
+    const eventStatus = useSelector(selectEventsStatus);
+    const [dashboardLoading, setDashboardLoading] = useState(true);
 
     // Fetch dashboard data
     useEffect(() => {
-        if (user) {
-            setLoading(true);
-            // Simulate API call
-            setTimeout(() => {
-                setStats(getDashboardStats(user));
-                setRegistrations(getUserRegistrations(user.id));
-                setLoading(false);
-            }, 500);
-        }
-    }, [user]);
+        const loadData = async () => {
+            if (user) {
+                setDashboardLoading(true);
+                // Fetch events if needed
+                if (eventStatus === 'idle') {
+                    await dispatch(fetchEvents()).unwrap();
+                }
+
+                // Simulate API call for user-specific data
+                setTimeout(() => {
+                    setStats(getDashboardStats(user));
+                    setRegistrations(getUserRegistrations(user.id));
+                    setDashboardLoading(false);
+                }, 500);
+            }
+        };
+        loadData();
+    }, [user, dispatch, eventStatus]);
+
+    const loading = dashboardLoading || eventStatus === 'loading';
 
     // Get all events for the events page
-    const allEvents = mockEvents;
+    const allEvents = events;
 
     // Get upcoming events for the home page
-    const upcomingEvents = mockEvents.filter(e => e.status === EVENT_STATUS.UPCOMING);
+    const upcomingEvents = useMemo(() =>
+        events.filter(e => e.status === EVENT_STATUS.UPCOMING),
+        [events]);
 
     // Get favorited events
-    const favoritedEvents = allEvents.filter(e => favorites.includes(e.id));
+    const favoritedEvents = useMemo(() =>
+        allEvents.filter(e => favorites.includes(e.id)),
+        [allEvents, favorites]);
 
     // Check if user is registered for an event
     const isRegisteredForEvent = (eventId) => {
