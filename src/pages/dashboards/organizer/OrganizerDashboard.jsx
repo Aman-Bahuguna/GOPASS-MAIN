@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { useDispatch, useSelector } from 'react-redux';
 import { Lock } from 'lucide-react';
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
 import { SettingsPage } from '../settings';
 import OrganizerCreateEventForm from './components/OrganizerCreateEventForm';
 import { useAuth } from '../../../context/AuthContext';
-import { getEventsByOrganizer, getDashboardStats } from '../../../data/mockData';
+import { getDashboardStats } from '../../../data/mockData';
 import { canOrganizerCreateEvents } from '../../../utils/roleConfig';
 import { DashboardHome } from './components';
+import { fetchEvents, selectAllEvents, selectEventsStatus } from '../../../store/slices/eventsSlice';
 
 /**
  * OrganizerDashboard - Main dashboard container for organizers
@@ -16,14 +18,30 @@ import { DashboardHome } from './components';
  */
 export default function OrganizerDashboard() {
     const { user } = useAuth();
+    const dispatch = useDispatch();
+    const allEvents = useSelector(selectAllEvents);
+    const eventStatus = useSelector(selectEventsStatus);
+
     const [currentPage, setCurrentPage] = useState('home');
     const [stats, setStats] = useState(null);
-    const [events, setEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const canCreate = canOrganizerCreateEvents(user);
 
-    // Fetch dashboard data
+    // Fetch Events if not loaded
+    useEffect(() => {
+        if (eventStatus === 'idle') {
+            dispatch(fetchEvents());
+        }
+    }, [dispatch, eventStatus]);
+
+    // Derived state for organizer events
+    const organizerEvents = useMemo(() => {
+        if (!user) return [];
+        return allEvents.filter(event => event.organizerId === user.id);
+    }, [allEvents, user]);
+
+    // Fetch dashboard stats (still mock for now)
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
@@ -32,7 +50,6 @@ export default function OrganizerDashboard() {
                     // Simulate API call delay
                     await new Promise(resolve => setTimeout(resolve, 500));
                     setStats(getDashboardStats(user));
-                    setEvents(getEventsByOrganizer(user.id));
                 }
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
@@ -43,6 +60,9 @@ export default function OrganizerDashboard() {
 
         fetchData();
     }, [user]);
+
+    // Combined loading state
+    const isDashboardLoading = isLoading || eventStatus === 'loading';
 
     // Navigation handler
     const handleNavigate = (page) => {
@@ -163,9 +183,9 @@ export default function OrganizerDashboard() {
                     <DashboardHome
                         user={user}
                         stats={stats}
-                        events={events}
+                        events={organizerEvents}
                         canCreate={canCreate}
-                        isLoading={isLoading}
+                        isLoading={isDashboardLoading}
                         onNavigate={handleNavigate}
                     />
                 );

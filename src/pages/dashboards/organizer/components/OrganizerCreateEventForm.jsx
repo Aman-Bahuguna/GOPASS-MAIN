@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Calendar,
@@ -9,11 +10,16 @@ import {
     X,
     Check,
     Image as ImageIcon,
+
     DollarSign,
     Users,
 } from 'lucide-react';
+import { createEvent } from '@/store/slices/eventsSlice';
+import { useAuth } from '@/context/AuthContext';
 
 const OrganizerCreateEventForm = ({ onNavigate }) => {
+    const dispatch = useDispatch();
+    const { user } = useAuth();
     const [formData, setFormData] = useState({
         eventName: '',
         dateTime: '',
@@ -127,9 +133,24 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
         setIsSubmitting(true);
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // Transform form data to match the event structure
+            const eventPayload = {
+                title: formData.eventName,
+                date: formData.dateTime,
+                venue: formData.venue,
+                category: "Custom", // Default or add category field
+                organizerId: user?.id || 'unknown',
+                organizerName: user?.fullName || 'Unknown Organizer',
+                description: formData.description,
+                fee: formData.paymentEnabled ? parseFloat(formData.ticketPrice) : 0,
+                maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : null,
+                contact: formData.contact,
+                posterUrl: preview, // In real app, upload file first and get URL
+                // Add default fields normally provided by backend
+                image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80", // Placeholder for grid view
+            };
 
-            console.log('Event Created:', formData);
+            await dispatch(createEvent(eventPayload)).unwrap();
 
             setFormData({
                 eventName: '',
@@ -147,6 +168,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
             onNavigate?.('my-events');
         } catch (error) {
             console.error('Error creating event:', error);
+            setErrors(prev => ({ ...prev, submit: 'Failed to create event. Please try again.' }));
         } finally {
             setIsSubmitting(false);
         }
@@ -196,11 +218,10 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     value={formData.eventName}
                                     onChange={handleInputChange}
                                     placeholder="e.g., Annual Tech Fest 2026"
-                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${
-                                        errors.eventName
-                                            ? 'border-red-300 bg-red-50'
-                                            : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                    }`}
+                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.eventName
+                                        ? 'border-red-300 bg-red-50'
+                                        : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                        }`}
                                 />
                                 {errors.eventName && (
                                     <p className="mt-1 text-sm text-red-600">{errors.eventName}</p>
@@ -218,11 +239,10 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     name="dateTime"
                                     value={formData.dateTime}
                                     onChange={handleInputChange}
-                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${
-                                        errors.dateTime
-                                            ? 'border-red-300 bg-red-50'
-                                            : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                    }`}
+                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.dateTime
+                                        ? 'border-red-300 bg-red-50'
+                                        : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                        }`}
                                 />
                                 {errors.dateTime && (
                                     <p className="mt-1 text-sm text-red-600">{errors.dateTime}</p>
@@ -257,11 +277,10 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     value={formData.venue}
                                     onChange={handleInputChange}
                                     placeholder="Enter event location"
-                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${
-                                        errors.venue
-                                            ? 'border-red-300 bg-red-50'
-                                            : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                    }`}
+                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.venue
+                                        ? 'border-red-300 bg-red-50'
+                                        : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                        }`}
                                 />
                                 {errors.venue && (
                                     <p className="mt-1 text-sm text-red-600">{errors.venue}</p>
@@ -280,11 +299,10 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     value={formData.contact}
                                     onChange={handleInputChange}
                                     placeholder="Phone number or email"
-                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${
-                                        errors.contact
-                                            ? 'border-red-300 bg-red-50'
-                                            : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                    }`}
+                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.contact
+                                        ? 'border-red-300 bg-red-50'
+                                        : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                        }`}
                                 />
                                 {errors.contact && (
                                     <p className="mt-1 text-sm text-red-600">{errors.contact}</p>
@@ -304,11 +322,10 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                 onChange={handleInputChange}
                                 placeholder="Describe your event, what participants can expect, any special requirements, etc."
                                 rows="4"
-                                className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none resize-none ${
-                                    errors.description
-                                        ? 'border-red-300 bg-red-50'
-                                        : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                }`}
+                                className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none resize-none ${errors.description
+                                    ? 'border-red-300 bg-red-50'
+                                    : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                    }`}
                             />
                             {errors.description && (
                                 <p className="mt-1 text-sm text-red-600">{errors.description}</p>
@@ -333,11 +350,10 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     className="sr-only"
                                 />
                                 <div
-                                    className={`w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center ${
-                                        formData.paymentEnabled
-                                            ? 'bg-brand-200 border-brand-200 shadow-lg shadow-brand-200/30'
-                                            : 'border-slate-300 bg-white'
-                                    }`}
+                                    className={`w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center ${formData.paymentEnabled
+                                        ? 'bg-brand-200 border-brand-200 shadow-lg shadow-brand-200/30'
+                                        : 'border-slate-300 bg-white'
+                                        }`}
                                 >
                                     {formData.paymentEnabled && (
                                         <Check className="w-4 h-4 text-white" />
@@ -378,11 +394,10 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                             placeholder="0.00"
                                             min="0"
                                             step="0.01"
-                                            className={`w-full pl-8 pr-4 py-3 rounded-xl border-2 transition-all outline-none ${
-                                                errors.ticketPrice
-                                                    ? 'border-red-300 bg-red-50'
-                                                    : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                            }`}
+                                            className={`w-full pl-8 pr-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.ticketPrice
+                                                ? 'border-red-300 bg-red-50'
+                                                : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                                }`}
                                         />
                                     </div>
                                     {errors.ticketPrice && (
@@ -414,11 +429,10 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                 onClick={() => fileInputRef.current?.click()}
                                 onDrop={handleFileDrop}
                                 onDragOver={handleFileDragOver}
-                                className={`border-3 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all ${
-                                    errors.poster
-                                        ? 'border-red-300 bg-red-50'
-                                        : 'border-slate-300 bg-slate-50 hover:border-brand-300 hover:bg-brand-50'
-                                }`}
+                                className={`border-3 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all ${errors.poster
+                                    ? 'border-red-300 bg-red-50'
+                                    : 'border-slate-300 bg-slate-50 hover:border-brand-300 hover:bg-brand-50'
+                                    }`}
                                 whileHover={{ scale: 1.02, borderColor: '#5596e6' }}
                             >
                                 <motion.div

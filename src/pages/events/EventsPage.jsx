@@ -1,14 +1,15 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, Calendar, MapPin, Filter, X, Sparkles,
     ChevronDown, SlidersHorizontal, LayoutGrid, List,
     TrendingUp, Users, CalendarDays, ChevronLeft, ChevronRight
 } from 'lucide-react';
-import { mockEvents } from '../../data/mockData';
 import { EVENT_STATUS } from '../../utils/constants';
 import { EventSearch, EventFilters, EventsGrid, EventModal } from './components';
+import { fetchEvents, selectAllEvents, selectEventsStatus } from '../../store/slices/eventsSlice';
 
 // Items per page
 const ITEMS_PER_PAGE = 6;
@@ -120,7 +121,13 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
 const EventsPage = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [searchParams, setSearchParams] = useSearchParams();
+
+    // Redux State
+    const events = useSelector(selectAllEvents);
+    const eventStatus = useSelector(selectEventsStatus);
+    const isLoading = eventStatus === 'loading' || eventStatus === 'idle';
 
     // Initialize state from URL params
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
@@ -133,17 +140,17 @@ const EventsPage = () => {
     const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'date-asc');
     const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page')) || 1);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
 
     // Modal state
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Simulate loading
+    // Fetch Events
     useEffect(() => {
-        const timer = setTimeout(() => setIsLoading(false), 800);
-        return () => clearTimeout(timer);
-    }, []);
+        if (eventStatus === 'idle') {
+            dispatch(fetchEvents());
+        }
+    }, [dispatch, eventStatus]);
 
     // Sync state to URL params whenever relevant state changes
     useEffect(() => {
@@ -168,7 +175,7 @@ const EventsPage = () => {
 
     // Filter and sort events
     const filteredEvents = useMemo(() => {
-        let result = [...mockEvents];
+        let result = [...events];
 
         // Filter by status (only upcoming or ongoing)
         result = result.filter(event =>
@@ -304,14 +311,14 @@ const EventsPage = () => {
 
     // Stats
     const stats = useMemo(() => ({
-        total: mockEvents.filter(e => e.status === EVENT_STATUS.UPCOMING).length,
-        thisWeek: mockEvents.filter(e => {
+        total: events.filter(e => e.status === EVENT_STATUS.UPCOMING).length,
+        thisWeek: events.filter(e => {
             const eventDate = new Date(e.date);
             const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
             return eventDate <= weekFromNow && e.status === EVENT_STATUS.UPCOMING;
         }).length,
-        totalRegistrations: mockEvents.reduce((acc, e) => acc + e.registeredCount, 0),
-    }), []);
+        totalRegistrations: events.reduce((acc, e) => acc + e.registeredCount, 0),
+    }), [events]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
