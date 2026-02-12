@@ -29,7 +29,23 @@ import { USER_STATUS, EVENT_STATUS } from '../../../utils/constants';
 import {
     StatCard,
     PendingOrganizerCard,
-    // ... imports ...
+    ApprovedOrganizerRow,
+    CollegeEventCard,
+    WelcomeBanner,
+    EmptyPendingState,
+    // Events Components
+    AdminCreateEventForm,
+    // Phase 2-3 Components
+    AllOrganizersModal,
+    CollegeEventsSection,
+    CollegeInfoCard,
+    CollegeEditModal,
+    ActivityLogSection,
+    ReportsSection,
+    AnalyticsDashboard,
+    NotificationsPanel,
+    NotificationBell,
+    NotificationSettings
 } from './components';
 
 import { useDispatch, useSelector } from 'react-redux';
