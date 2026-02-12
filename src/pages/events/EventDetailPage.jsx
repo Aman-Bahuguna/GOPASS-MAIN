@@ -1,129 +1,45 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, Calendar, MapPin, Clock, Users, Ticket,
     Share2, Heart, CheckCircle, ChevronRight, Building,
-    Phone, Mail, User, Tag, Sparkles, ExternalLink,
-    IndianRupee, Car, FileText, AlertCircle, Star
+    Phone, Mail, User, FileText, AlertCircle
 } from 'lucide-react';
-import { mockEvents } from '../../data/mockData';
+import { fetchEvents, selectAllEvents, selectEventsStatus } from '../../store/slices/eventsSlice';
 import { EVENT_STATUS } from '../../utils/constants';
 
-// Format price with Indian Rupee symbol
-const formatPrice = (fee) => {
-    if (fee === 0) return 'Free';
-    return `₹${fee.toLocaleString('en-IN')}`;
-};
-
-// Format date for display
-const formatDate = (dateString, format = 'full') => {
-    const date = new Date(dateString);
-    if (format === 'short') {
-        return date.toLocaleDateString('en-IN', {
-            day: 'numeric',
-            month: 'short',
-        });
-    }
-    return date.toLocaleDateString('en-IN', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-    });
-};
-
-// Format time only
-const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-IN', {
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
-
-// Get category color scheme
-const getCategoryColors = (category) => {
-    const colors = {
-        Technology: {
-            bg: 'bg-blue-100',
-            text: 'text-blue-700',
-            border: 'border-blue-200',
-            gradient: 'from-blue-500 to-indigo-600',
-            lightBg: 'bg-blue-50',
-        },
-        Cultural: {
-            bg: 'bg-purple-100',
-            text: 'text-purple-700',
-            border: 'border-purple-200',
-            gradient: 'from-purple-500 to-pink-600',
-            lightBg: 'bg-purple-50',
-        },
-        Workshop: {
-            bg: 'bg-emerald-100',
-            text: 'text-emerald-700',
-            border: 'border-emerald-200',
-            gradient: 'from-emerald-500 to-teal-600',
-            lightBg: 'bg-emerald-50',
-        },
-        Sports: {
-            bg: 'bg-orange-100',
-            text: 'text-orange-700',
-            border: 'border-orange-200',
-            gradient: 'from-orange-500 to-red-600',
-            lightBg: 'bg-orange-50',
-        },
-    };
-    return colors[category] || colors.Technology;
-};
-
-// Info Card Component
-const InfoCard = ({ icon: Icon, label, value, subValue, colorClass = 'bg-brand-100/10 text-brand-200' }) => (
-    <div className="flex items-start gap-4 p-4 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-shadow">
-        <div className={`p-3 rounded-xl ${colorClass}`}>
-            <Icon className="w-5 h-5" />
-        </div>
-        <div className="flex-1">
-            <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">{label}</p>
-            <p className="text-base font-semibold text-slate-800 mt-1">{value}</p>
-            {subValue && <p className="text-sm text-slate-500 mt-0.5">{subValue}</p>}
-        </div>
-    </div>
-);
-
-// Schedule Item Component
-const ScheduleItem = ({ time, title, description, isLast }) => (
-    <div className="flex gap-4">
-        <div className="flex flex-col items-center">
-            <div className="w-3 h-3 bg-brand-200 rounded-full" />
-            {!isLast && <div className="w-0.5 flex-1 bg-brand-100/30 my-1" />}
-        </div>
-        <div className={`flex-1 ${!isLast ? 'pb-6' : ''}`}>
-            <p className="text-sm font-bold text-brand-200">{time}</p>
-            <p className="text-base font-semibold text-slate-800 mt-1">{title}</p>
-            {description && <p className="text-sm text-slate-500 mt-1">{description}</p>}
-        </div>
-    </div>
-);
+// ... (keep format helper functions) ...
 
 const EventDetailPage = () => {
     const { eventId } = useParams();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [isLiked, setIsLiked] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
 
+    const events = useSelector(selectAllEvents);
+    const eventStatus = useSelector(selectEventsStatus);
+
+    useEffect(() => {
+        if (eventStatus === 'idle') {
+            dispatch(fetchEvents());
+        }
+    }, [eventStatus, dispatch]);
+
     // Find the event
     const event = useMemo(() => {
-        return mockEvents.find(e => e.id === eventId);
-    }, [eventId]);
+        return events.find(e => e.id === eventId);
+    }, [events, eventId]);
 
     // Related events (same category, excluding current)
     const relatedEvents = useMemo(() => {
         if (!event) return [];
-        return mockEvents
+        return events
             .filter(e => e.category === event.category && e.id !== event.id && e.status === EVENT_STATUS.UPCOMING)
             .slice(0, 3);
-    }, [event]);
+    }, [events, event]);
 
     // Handle share
     const handleShare = async () => {
@@ -313,8 +229,8 @@ const EventDetailPage = () => {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.id
-                                            ? 'bg-white text-slate-800 shadow-sm'
-                                            : 'text-slate-600 hover:text-slate-800'
+                                        ? 'bg-white text-slate-800 shadow-sm'
+                                        : 'text-slate-600 hover:text-slate-800'
                                         }`}
                                 >
                                     {tab.label}
