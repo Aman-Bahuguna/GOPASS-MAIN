@@ -25,37 +25,29 @@ import {
     getDashboardStats,
     mockOrganizers
 } from '../../../data/mockData';
-import { USER_STATUS } from '../../../utils/constants';
+import { USER_STATUS, EVENT_STATUS } from '../../../utils/constants';
 import {
     StatCard,
     PendingOrganizerCard,
-    ApprovedOrganizerRow,
-    CollegeEventCard,
-    WelcomeBanner,
-    EmptyPendingState,
-    // Events Components
-    AdminCreateEventForm,
-    // Phase 2-3 Components
-    AllOrganizersModal,
-    CollegeEventsSection,
-    CollegeInfoCard,
-    CollegeEditModal,
-    ActivityLogSection,
-    ReportsSection,
-    AnalyticsDashboard,
-    NotificationsPanel,
-    NotificationBell,
-    NotificationSettings
+    // ... imports ...
 } from './components';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEvents, selectAllEvents, selectEventsStatus } from '../../../store/slices/eventsSlice';
 
 // Main Admin Dashboard Component
 export default function AdminDashboard() {
+    const dispatch = useDispatch();
     const { user } = useAuth();
     const [currentPage, setCurrentPage] = useState('home');
     const [stats, setStats] = useState(null);
     const [pendingOrganizers, setPendingOrganizers] = useState([]);
     const [approvedOrganizers, setApprovedOrganizers] = useState([]);
-    const [collegeEvents, setCollegeEvents] = useState([]);
+    // const [collegeEvents, setCollegeEvents] = useState([]); // Derived from Redux
+
+    // Redux State
+    const events = useSelector(selectAllEvents);
+    const eventStatus = useSelector(selectEventsStatus);
 
     // Phase 2-3 State
     const [showNotificationsPanel, setShowNotificationsPanel] = useState(false);
@@ -77,19 +69,34 @@ export default function AdminDashboard() {
         { id: '3', type: 'organizer_rejected', title: 'Rejected Organizer', description: 'You rejected Mike Johnson', user: 'Mike Johnson', timestamp: new Date(Date.now() - 7200000).toISOString() },
     ]);
 
+    // Fetch Events
+    useEffect(() => {
+        if (eventStatus === 'idle') {
+            dispatch(fetchEvents());
+        }
+    }, [eventStatus, dispatch]);
+
+    // Derived College Events
+    const collegeEvents = events.filter(event =>
+        user?.college?.name && event.collegeId?.toLowerCase() === user.college.name.toLowerCase()
+    );
+
     useEffect(() => {
         if (user?.college) {
-            setStats(getDashboardStats(user));
-
-            // Get organizers from the same college
+            // Get organizers from the same college (still mock)
             const allOrganizers = getOrganizersByCollege(user.college.name, user.college.state);
             setPendingOrganizers(allOrganizers.filter(o => o.status === USER_STATUS.PENDING_ADMIN_APPROVAL));
             setApprovedOrganizers(allOrganizers.filter(o => o.isAdminApproved));
 
-            // Get college events
-            setCollegeEvents(getEventsByCollege(user.college.name));
+            // Calculate stats mixing mock organizers and Redux events
+            const statsBase = getDashboardStats(user);
+            setStats({
+                ...statsBase,
+                activeEvents: collegeEvents.filter(e => e.status === EVENT_STATUS.UPCOMING).length,
+                totalEvents: collegeEvents.length,
+            });
         }
-    }, [user]);
+    }, [user, events]); // Re-run when user or events change
 
     const handleApprove = (organizerId) => {
         setPendingOrganizers(prev => prev.filter(o => o.id !== organizerId));
