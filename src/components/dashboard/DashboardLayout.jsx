@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Home,
@@ -32,30 +32,15 @@ import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../utils/constants';
 
 // Animated Logo Component
-function AnimatedLogo() {
+const AnimatedLogo = React.memo(function AnimatedLogo() {
     return (
         <motion.div
             className="flex items-center gap-3"
             whileHover={{ scale: 1.02 }}
         >
-            <motion.div
-                className="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300 flex items-center justify-center shadow-lg shadow-brand-200/30"
-                animate={{
-                    boxShadow: [
-                        '0 10px 25px rgba(139, 92, 246, 0.3)',
-                        '0 10px 35px rgba(139, 92, 246, 0.5)',
-                        '0 10px 25px rgba(139, 92, 246, 0.3)'
-                    ]
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
-            >
+            <div className="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300 flex items-center justify-center shadow-lg shadow-brand-200/30">
                 <Zap className="w-6 h-6 text-white" />
-                <motion.div
-                    className="absolute inset-0 rounded-2xl bg-white/20"
-                    animate={{ opacity: [0, 0.3, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                />
-            </motion.div>
+            </div>
             <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
                     GoPass
@@ -64,54 +49,40 @@ function AnimatedLogo() {
             </div>
         </motion.div>
     );
-}
+});
 
 // User Status Badge
-function StatusBadge({ status }) {
+const StatusBadge = React.memo(function StatusBadge({ status }) {
     const isActive = status === 'ACTIVE';
     return (
-        <motion.div
+        <div
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${isActive
                 ? 'bg-emerald-100 text-emerald-700'
                 : 'bg-amber-100 text-amber-700'
                 }`}
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
         >
-            <motion.span
+            <span
                 className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-amber-500'}`}
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
             />
             {isActive ? 'Active' : 'Pending'}
-        </motion.div>
+        </div>
     );
-}
+});
 
 // Enhanced Sidebar Navigation Item
-function NavItem({ icon: Icon, label, isActive, onClick, badge, isCollapsed }) {
+const NavItem = React.memo(function NavItem({ icon: Icon, label, isActive, onClick, badge, isCollapsed }) {
     return (
-        <motion.button
+        <button
             onClick={onClick}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all relative overflow-hidden group ${isActive
                 ? 'bg-gradient-to-r from-brand-100/10 to-brand-200/10 text-brand-200'
                 : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`}
-            whileHover={{ x: 4 }}
-            whileTap={{ scale: 0.98 }}
         >
             {/* Active indicator */}
-            <AnimatePresence>
-                {isActive && (
-                    <motion.div
-                        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-brand-100 to-brand-300 rounded-r-full"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        exit={{ scaleY: 0 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                    />
-                )}
-            </AnimatePresence>
+            {isActive && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-brand-100 to-brand-300 rounded-r-full" />
+            )}
 
             {/* Icon container */}
             <div className={`relative p-2 rounded-lg transition-all ${isActive
@@ -120,28 +91,18 @@ function NavItem({ icon: Icon, label, isActive, onClick, badge, isCollapsed }) {
                 }`}>
                 <Icon className="w-4 h-4" />
                 {badge > 0 && (
-                    <motion.span
-                        className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: 'spring', stiffness: 500 }}
-                    >
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">
                         {badge}
-                    </motion.span>
+                    </span>
                 )}
             </div>
 
             {!isCollapsed && (
                 <span className="flex-1 text-left">{label}</span>
             )}
-
-            {/* Hover glow effect */}
-            <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-brand-100/0 via-brand-100/5 to-brand-100/0 opacity-0 group-hover:opacity-100 transition-opacity"
-            />
-        </motion.button>
+        </button>
     );
-}
+});
 
 // Premium Sidebar
 function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {

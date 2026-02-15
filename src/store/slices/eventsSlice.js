@@ -2,15 +2,11 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { mockEvents } from '../../data/mockData';
 import { EVENT_STATUS } from '../../utils/constants';
 
-// --- Helper simulation delay ---
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 // --- Async Thunks ---
 
 // 1. Fetch All Events
 export const fetchEvents = createAsyncThunk('events/fetchAll', async (_, { rejectWithValue }) => {
     try {
-        await delay(800);
         // In a real app, this would be an API call
         return mockEvents;
     } catch (error) {
@@ -21,7 +17,6 @@ export const fetchEvents = createAsyncThunk('events/fetchAll', async (_, { rejec
 // 2. Fetch Single Event Details
 export const fetchEventById = createAsyncThunk('events/fetchById', async (eventId, { rejectWithValue }) => {
     try {
-        await delay(500);
         const event = mockEvents.find(e => e.id === eventId);
         if (!event) throw new Error('Event not found');
         return event;
@@ -33,7 +28,6 @@ export const fetchEventById = createAsyncThunk('events/fetchById', async (eventI
 // 3. Create Event
 export const createEvent = createAsyncThunk('events/create', async (eventData, { rejectWithValue }) => {
     try {
-        await delay(1000);
         const newEvent = {
             ...eventData,
             id: `evt_${Date.now()}`,
@@ -52,7 +46,6 @@ export const createEvent = createAsyncThunk('events/create', async (eventData, {
 export const updateEvent = createAsyncThunk('events/update', async ({ id, updates }, { rejectWithValue }) => {
     try {
         await delay(500);
-        // Simulate API patch
         return { id, updates };
     } catch (error) {
         return rejectWithValue(error.message);
@@ -62,7 +55,6 @@ export const updateEvent = createAsyncThunk('events/update', async ({ id, update
 // 5. Delete Event
 export const deleteEvent = createAsyncThunk('events/delete', async (eventId, { rejectWithValue }) => {
     try {
-        await delay(500);
         return eventId;
     } catch (error) {
         return rejectWithValue(error.message);

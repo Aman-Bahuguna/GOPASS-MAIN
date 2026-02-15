@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
@@ -26,8 +26,6 @@ export default function UserDashboard() {
     const dispatch = useDispatch();
     const { user } = useAuth();
     const [currentPage, setCurrentPage] = useState('home');
-    const [stats, setStats] = useState(null);
-    const [registrations, setRegistrations] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [showRegistrationModal, setShowRegistrationModal] = useState(false);
@@ -35,30 +33,27 @@ export default function UserDashboard() {
     // Redux State
     const events = useSelector(selectAllEvents);
     const eventStatus = useSelector(selectEventsStatus);
-    const [dashboardLoading, setDashboardLoading] = useState(true);
 
-    // Fetch dashboard data
+    // Fetch events once on mount
     useEffect(() => {
-        const loadData = async () => {
-            if (user) {
-                setDashboardLoading(true);
-                // Fetch events if needed
-                if (eventStatus === 'idle') {
-                    await dispatch(fetchEvents()).unwrap();
-                }
+        if (eventStatus === 'idle' && user) {
+            dispatch(fetchEvents());
+        }
+    }, [eventStatus, user, dispatch]);
 
-                // Simulate API call for user-specific data
-                setTimeout(() => {
-                    setStats(getDashboardStats(user));
-                    setRegistrations(getUserRegistrations(user.id));
-                    setDashboardLoading(false);
-                }, 500);
-            }
-        };
-        loadData();
-    }, [user, dispatch, eventStatus]);
+    // Get dashboard stats - memoized
+    const stats = useMemo(() => {
+        if (!user) return null;
+        return getDashboardStats(user);
+    }, [user]);
 
-    const loading = dashboardLoading || eventStatus === 'loading';
+    // Get registrations - memoized
+    const registrations = useMemo(() => {
+        if (!user) return [];
+        return getUserRegistrations(user.id);
+    }, [user]);
+
+    const loading = eventStatus === 'loading';
 
     // Get all events for the events page
     const allEvents = events;
@@ -74,9 +69,9 @@ export default function UserDashboard() {
         [allEvents, favorites]);
 
     // Check if user is registered for an event
-    const isRegisteredForEvent = (eventId) => {
+    const isRegisteredForEvent = useCallback((eventId) => {
         return registrations.some(r => r.eventId === eventId);
-    };
+    }, [registrations]);
 
     // Handlers
     const handleRegister = (event) => {

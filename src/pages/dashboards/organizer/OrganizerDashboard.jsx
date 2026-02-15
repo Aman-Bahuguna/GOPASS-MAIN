@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { Lock } from 'lucide-react';
@@ -23,17 +23,16 @@ export default function OrganizerDashboard() {
     const eventStatus = useSelector(selectEventsStatus);
 
     const [currentPage, setCurrentPage] = useState('home');
-    const [stats, setStats] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const canCreate = canOrganizerCreateEvents(user);
 
     // Fetch Events if not loaded
     useEffect(() => {
-        if (eventStatus === 'idle') {
+        if (eventStatus === 'idle' && user) {
             dispatch(fetchEvents());
         }
-    }, [dispatch, eventStatus]);
+    }, [dispatch, eventStatus, user]);
 
     // Derived state for organizer events
     const organizerEvents = useMemo(() => {
@@ -42,32 +41,19 @@ export default function OrganizerDashboard() {
     }, [allEvents, user]);
 
     // Fetch dashboard stats (still mock for now)
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                if (user) {
-                    // Simulate API call delay
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    setStats(getDashboardStats(user));
-                }
-            } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
+    const stats = useMemo(() => {
+        if (!user) return null;
+        // Simulate API call delay
+        return getDashboardStats(user);
     }, [user]);
 
     // Combined loading state
-    const isDashboardLoading = isLoading || eventStatus === 'loading';
+    const isDashboardLoading = eventStatus === 'loading';
 
     // Navigation handler
-    const handleNavigate = (page) => {
+    const handleNavigate = useCallback((page) => {
         setCurrentPage(page);
-    };
+    }, []);
 
     // Get page title based on current page
     const getPageTitle = () => {

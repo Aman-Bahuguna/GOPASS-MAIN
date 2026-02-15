@@ -3,14 +3,15 @@ import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Calendar,
+    Clock,
     MapPin,
+    Mail,
     Phone,
     FileText,
     Upload,
     X,
     Check,
     Image as ImageIcon,
-
     DollarSign,
     Users,
 } from 'lucide-react';
@@ -22,8 +23,10 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
     const { user } = useAuth();
     const [formData, setFormData] = useState({
         eventName: '',
-        dateTime: '',
+        startDate: '',
+        endDate: '',
         venue: '',
+        email: '',
         contact: '',
         description: '',
         poster: null,
@@ -94,11 +97,8 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
     const validateForm = () => {
         const newErrors = {};
 
-        if (!formData.eventName.trim()) {
-            newErrors.eventName = 'Event name is required';
-        }
-        if (!formData.dateTime) {
-            newErrors.dateTime = 'Date and time are required';
+        if (!formData.startDate) {
+            newErrors.startDate = 'Start date is required';
         }
         if (!formData.venue.trim()) {
             newErrors.venue = 'Venue is required';
@@ -136,26 +136,28 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
             // Transform form data to match the event structure
             const eventPayload = {
                 title: formData.eventName,
-                date: formData.dateTime,
+                startDate: formData.startDate,
+                endDate: formData.endDate || null,
                 venue: formData.venue,
-                category: "Custom", // Default or add category field
+                email: formData.email || null,
+                category: "Custom",
                 organizerId: user?.id || 'unknown',
                 organizerName: user?.fullName || 'Unknown Organizer',
                 description: formData.description,
                 fee: formData.paymentEnabled ? parseFloat(formData.ticketPrice) : 0,
                 maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : null,
                 contact: formData.contact,
-                posterUrl: preview, // In real app, upload file first and get URL
-                // Add default fields normally provided by backend
-                image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80", // Placeholder for grid view
+                posterUrl: preview,
             };
 
             await dispatch(createEvent(eventPayload)).unwrap();
 
             setFormData({
                 eventName: '',
-                dateTime: '',
+                startDate: '',
+                endDate: '',
                 venue: '',
+                email: '',
                 contact: '',
                 description: '',
                 poster: null,
@@ -184,25 +186,25 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-4xl mx-auto"
         >
-            <div className="bg-white rounded-2xl border border-slate-200/60 p-8 shadow-sm">
+            <div className="bg-white rounded-3xl border border-slate-200/60 p-8 shadow-lg shadow-slate-200/20">
                 {/* Header */}
                 <div className="mb-8">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-200 to-brand-100 flex items-center justify-center">
-                            <Calendar className="w-6 h-6 text-white" />
+                    <div className="flex items-center gap-4 mb-3">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-200 to-brand-100 flex items-center justify-center shadow-lg shadow-brand-200/30">
+                            <Calendar className="w-7 h-7 text-white" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-slate-900">Create New Event</h2>
-                            <p className="text-slate-600 text-sm mt-1">Add event details and configure settings</p>
+                            <h2 className="text-3xl font-bold text-slate-900">Create New Event</h2>
+                            <p className="text-slate-600 text-base mt-1">Fill in the details to create and publish your event</p>
                         </div>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Event Basic Info Section */}
-                    <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-2xl p-6 border border-slate-200/40">
-                        <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-                            <div className="w-1 h-6 bg-brand-200 rounded-full" />
+                    <div className="bg-gradient-to-br from-slate-50/80 to-slate-100/50 rounded-2xl p-6 border border-slate-200/40">
+                        <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-3">
+                            <div className="w-1.5 h-7 bg-gradient-to-b from-brand-200 to-brand-100 rounded-full" />
                             Event Information
                         </h3>
 
@@ -228,25 +230,63 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                 )}
                             </div>
 
-                            {/* Date & Time */}
+                            {/* Date & Location Section */}
+                            <h4 className="md:col-span-2 text-sm font-semibold text-slate-700 mb-4 flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-brand-200" />
+                                Event Dates
+                            </h4>
+
+                            {/* Start Date */}
                             <div>
                                 <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                     <Calendar className="w-4 h-4 text-brand-200" />
-                                    Date & Time <span className="text-red-500">*</span>
+                                    Start Date <span className="text-red-500">*</span>
                                 </label>
                                 <input
-                                    type="datetime-local"
-                                    name="dateTime"
-                                    value={formData.dateTime}
+                                    type="date"
+                                    name="startDate"
+                                    value={formData.startDate}
                                     onChange={handleInputChange}
-                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.dateTime
+                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.startDate
                                         ? 'border-red-300 bg-red-50'
                                         : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
                                         }`}
                                 />
-                                {errors.dateTime && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.dateTime}</p>
+                                {errors.startDate && (
+                                    <p className="mt-1 text-sm text-red-600">{errors.startDate}</p>
                                 )}
+                            </div>
+
+                            {/* End Date (Optional) */}
+                            <div>
+                                <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                                    <Calendar className="w-4 h-4 text-slate-400" />
+                                    End Date <span className="text-slate-400 text-xs">(Optional)</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    name="endDate"
+                                    value={formData.endDate}
+                                    onChange={handleInputChange}
+                                    min={formData.startDate}
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white focus:border-brand-300 focus:shadow-md transition-all outline-none"
+                                />
+                            </div>
+
+                            {/* Email (Optional) */}
+                            <div>
+                                <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                                    <Mail className="w-4 h-4 text-slate-400" />
+                                    Email <span className="text-slate-400 text-xs">(Optional)</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    placeholder="contact@example.com"
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white focus:border-brand-300 focus:shadow-md transition-all outline-none"
+                                />
                             </div>
 
                             {/* Max Participants */}
@@ -334,9 +374,9 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                     </div>
 
                     {/* Payment Section */}
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl p-6 border border-blue-200/40">
-                        <h3 className="text-lg font-semibold text-slate-900 mb-5 flex items-center gap-2">
-                            <div className="w-1 h-6 bg-brand-200 rounded-full" />
+                    <div className="bg-gradient-to-br from-blue-50/80 to-blue-100/50 rounded-2xl p-6 border border-blue-200/40">
+                        <h3 className="text-lg font-semibold text-slate-900 mb-5 flex items-center gap-3">
+                            <div className="w-1.5 h-7 bg-gradient-to-b from-blue-400 to-blue-300 rounded-full" />
                             Payment Settings
                         </h3>
 
@@ -487,12 +527,12 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-4 pt-6 border-t border-slate-200">
+                    <div className="flex gap-4 pt-8 border-t border-slate-200">
                         <motion.button
                             type="button"
                             onClick={handleCancel}
                             disabled={isSubmitting}
-                            className="flex-1 px-6 py-3 rounded-xl border-2 border-slate-300 text-slate-700 font-semibold hover:bg-slate-50 hover:border-slate-400 transition-all disabled:opacity-50"
+                            className="flex-1 px-6 py-3.5 rounded-xl font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all disabled:opacity-50 border-2 border-transparent hover:border-slate-300"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                         >
@@ -502,7 +542,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                         <motion.button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-200 to-brand-100 text-white font-semibold hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                            className="flex-1 px-6 py-3.5 rounded-xl text-white font-semibold bg-gradient-to-r from-brand-200 to-brand-100 hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                             whileHover={{ scale: 1.02, boxShadow: '0 20px 25px rgba(85, 150, 230, 0.3)' }}
                             whileTap={{ scale: 0.98 }}
                         >

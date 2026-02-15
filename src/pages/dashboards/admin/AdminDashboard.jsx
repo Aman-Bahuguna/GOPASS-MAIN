@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Users,
@@ -56,100 +56,104 @@ export default function AdminDashboard() {
     const dispatch = useDispatch();
     const { user } = useAuth();
     const [currentPage, setCurrentPage] = useState('home');
-    const [stats, setStats] = useState(null);
-    const [pendingOrganizers, setPendingOrganizers] = useState([]);
-    const [approvedOrganizers, setApprovedOrganizers] = useState([]);
-    // const [collegeEvents, setCollegeEvents] = useState([]); // Derived from Redux
+    const [showNotificationsPanel, setShowNotificationsPanel] = useState(false);
+    const [showNotificationSettings, setShowNotificationSettings] = useState(false);
+    const [showAllOrganizers, setShowAllOrganizers] = useState(false);
+    const [showEditCollege, setShowEditCollege] = useState(false);
+    const [pendingOrganizerState, setPendingOrganizerState] = useState({});
+    const [approvedOrganizerState, setApprovedOrganizerState] = useState({});
 
     // Redux State
     const events = useSelector(selectAllEvents);
     const eventStatus = useSelector(selectEventsStatus);
 
-    // Phase 2-3 State
-    const [showNotificationsPanel, setShowNotificationsPanel] = useState(false);
-    const [showNotificationSettings, setShowNotificationSettings] = useState(false);
-    const [showAllOrganizers, setShowAllOrganizers] = useState(false);
-    const [showEditCollege, setShowEditCollege] = useState(false);
+    // Fetch Events once
+    useEffect(() => {
+        if (eventStatus === 'idle' && user) {
+            dispatch(fetchEvents());
+        }
+    }, [eventStatus, user, dispatch]);
 
-    // Mock notifications data
-    const [notifications, setNotifications] = useState([
+    // Memoized notifications data
+    const notifications = useMemo(() => [
         { id: '1', type: 'new_organizer', title: 'New Organizer Request', message: 'John Doe has requested to become an organizer', timestamp: new Date().toISOString(), read: false, actionable: true },
         { id: '2', type: 'new_event', title: 'New Event Created', message: 'Tech Fest 2024 has been created by an organizer', timestamp: new Date(Date.now() - 3600000).toISOString(), read: false, actionable: true },
         { id: '3', type: 'system', title: 'System Update', message: 'Platform will undergo maintenance tonight', timestamp: new Date(Date.now() - 86400000).toISOString(), read: true, actionable: false },
-    ]);
+    ], []);
 
-    // Mock activities data
+    // Memoized activities data
     const [activities, setActivities] = useState([
         { id: '1', type: 'organizer_approved', title: 'Approved Organizer', description: 'You approved Jane Smith as organizer', user: 'Jane Smith', timestamp: new Date().toISOString() },
         { id: '2', type: 'event_created', title: 'Event Created', description: 'New event "Hackathon 2024" was created', user: 'John Doe', timestamp: new Date(Date.now() - 3600000).toISOString() },
         { id: '3', type: 'organizer_rejected', title: 'Rejected Organizer', description: 'You rejected Mike Johnson', user: 'Mike Johnson', timestamp: new Date(Date.now() - 7200000).toISOString() },
     ]);
 
-    // Fetch Events
-    useEffect(() => {
-        if (eventStatus === 'idle') {
-            dispatch(fetchEvents());
-        }
-    }, [eventStatus, dispatch]);
+    // Derived College Events - memoized
+    const collegeEvents = useMemo(() => {
+        return events.filter(event =>
+            user?.college?.name && event.collegeId?.toLowerCase() === user.college.name.toLowerCase()
+        );
+    }, [events, user?.college?.name]);
 
-    // Derived College Events
-    const collegeEvents = events.filter(event =>
-        user?.college?.name && event.collegeId?.toLowerCase() === user.college.name.toLowerCase()
-    );
+    // Memoized organizers
+    const organizers = useMemo(() => {
+        if (!user?.college) return { pending: [], approved: [] };
+        const allOrganizers = getOrganizersByCollege(user.college.name, user.college.state);
+        const pending = allOrganizers.filter(o => o.status === USER_STATUS.PENDING_ADMIN_APPROVAL && !pendingOrganizerState[o.id]?.rejected);
+        const approved = allOrganizers.filter(o => o.isAdminApproved || pendingOrganizerState[o.id]?.approved);
+        return { pending, approved };
+    }, [user?.college, pendingOrganizerState]);
 
-    useEffect(() => {
-        if (user?.college) {
-            // Get organizers from the same college (still mock)
-            const allOrganizers = getOrganizersByCollege(user.college.name, user.college.state);
-            setPendingOrganizers(allOrganizers.filter(o => o.status === USER_STATUS.PENDING_ADMIN_APPROVAL));
-            setApprovedOrganizers(allOrganizers.filter(o => o.isAdminApproved));
+    // Memoized stats
+    const stats = useMemo(() => {
+        if (!user?.college) return null;
+        const statsBase = getDashboardStats(user);
+        return {
+            ...statsBase,
+            activeEvents: collegeEvents.filter(e => e.status === EVENT_STATUS.UPCOMING).length,
+            totalEvents: collegeEvents.length,
+        };
+    }, [user, collegeEvents]);
 
-            // Calculate stats mixing mock organizers and Redux events
-            const statsBase = getDashboardStats(user);
-            setStats({
-                ...statsBase,
-                activeEvents: collegeEvents.filter(e => e.status === EVENT_STATUS.UPCOMING).length,
-                totalEvents: collegeEvents.length,
-            });
-        }
-    }, [user, events]); // Re-run when user or events change
-
-    const handleApprove = (organizerId) => {
-        setPendingOrganizers(prev => prev.filter(o => o.id !== organizerId));
-        const approved = pendingOrganizers.find(o => o.id === organizerId);
+    const handleApprove = useCallback((organizerId) => {
+        const approved = organizers.pending.find(o => o.id === organizerId);
+        setPendingOrganizerState(prev => ({
+            ...prev,
+            [organizerId]: { approved: true }
+        }));
         if (approved) {
-            setApprovedOrganizers(prev => [...prev, { ...approved, isAdminApproved: true }]);
+            setActivities(prev => [{
+                id: Date.now().toString(),
+                type: 'organizer_approved',
+                title: 'Approved Organizer',
+                description: `You approved ${approved.fullName}`,
+                user: approved.fullName,
+                timestamp: new Date().toISOString()
+            }, ...prev]);
         }
-        // Add to activities
-        setActivities(prev => [{
-            id: Date.now().toString(),
-            type: 'organizer_approved',
-            title: 'Approved Organizer',
-            description: `You approved ${approved?.fullName}`,
-            user: approved?.fullName,
-            timestamp: new Date().toISOString()
-        }, ...prev]);
-        console.log('Approved organizer:', organizerId);
-    };
+    }, [organizers.pending]);
 
-    const handleReject = (organizerId) => {
-        const rejected = pendingOrganizers.find(o => o.id === organizerId);
-        setPendingOrganizers(prev => prev.filter(o => o.id !== organizerId));
-        // Add to activities
-        setActivities(prev => [{
-            id: Date.now().toString(),
-            type: 'organizer_rejected',
-            title: 'Rejected Organizer',
-            description: `You rejected ${rejected?.fullName}`,
-            user: rejected?.fullName,
-            timestamp: new Date().toISOString()
-        }, ...prev]);
-        console.log('Rejected organizer:', organizerId);
-    };
+    const handleReject = useCallback((organizerId) => {
+        const rejected = organizers.pending.find(o => o.id === organizerId);
+        setPendingOrganizerState(prev => ({
+            ...prev,
+            [organizerId]: { rejected: true }
+        }));
+        if (rejected) {
+            setActivities(prev => [{
+                id: Date.now().toString(),
+                type: 'organizer_rejected',
+                title: 'Rejected Organizer',
+                description: `You rejected ${rejected.fullName}`,
+                user: rejected.fullName,
+                timestamp: new Date().toISOString()
+            }, ...prev]);
+        }
+    }, [organizers.pending]);
 
-    const handleNavigate = (page) => {
+    const handleNavigate = useCallback((page) => {
         setCurrentPage(page);
-    };
+    }, []);
 
     // Notification handlers
     const handleMarkAsRead = (id) => {
@@ -216,9 +220,9 @@ export default function AdminDashboard() {
                                         <AlertCircle className="w-5 h-5 text-orange-600" />
                                     </div>
                                     Pending Approvals
-                                    {pendingOrganizers.length > 0 && (
+                                    {organizers.pending.length > 0 && (
                                         <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-bold">
-                                            {pendingOrganizers.length}
+                                            {organizers.pending.length}
                                         </span>
                                     )}
                                 </h2>
@@ -230,9 +234,9 @@ export default function AdminDashboard() {
                                 </button>
                             </div>
                             <AnimatePresence mode="popLayout">
-                                {pendingOrganizers.length > 0 ? (
+                                {organizers.pending.length > 0 ? (
                                     <div className="space-y-4">
-                                        {pendingOrganizers.map((organizer, index) => (
+                                        {organizers.pending.map((organizer, index) => (
                                             <PendingOrganizerCard
                                                 key={organizer.id}
                                                 organizer={organizer}
@@ -259,17 +263,17 @@ export default function AdminDashboard() {
                                 <div className="p-2 bg-emerald-100 rounded-lg">
                                     <UserCheck className="w-5 h-5 text-emerald-600" />
                                 </div>
-                                Approved Organizers ({approvedOrganizers.length})
+                                Approved Organizers ({organizers.approved.length})
                             </h3>
                             <div className="space-y-2">
-                                {approvedOrganizers.slice(0, 5).map((organizer, index) => (
+                                {organizers.approved.slice(0, 5).map((organizer, index) => (
                                     <ApprovedOrganizerRow
                                         key={organizer.id}
                                         organizer={organizer}
                                         index={index}
                                     />
                                 ))}
-                                {approvedOrganizers.length === 0 && (
+                                {organizers.approved.length === 0 && (
                                     <p className="text-slate-500 text-center py-4">No approved organizers yet</p>
                                 )}
                             </div>
@@ -368,7 +372,7 @@ export default function AdminDashboard() {
                                     </div>
                                     <span className="text-slate-600 font-medium">Total Organizers</span>
                                 </div>
-                                <p className="text-3xl font-bold text-slate-900">{approvedOrganizers.length}</p>
+                                <p className="text-3xl font-bold text-slate-900">{organizers.approved.length}</p>
                             </div>
                             <div className="bg-white rounded-2xl border border-slate-200/60 p-6">
                                 <div className="flex items-center gap-3 mb-3">
@@ -482,10 +486,10 @@ export default function AdminDashboard() {
                             <StatCard
                                 icon={Clock}
                                 label="Pending Approvals"
-                                value={pendingOrganizers.length}
+                                value={organizers.pending.length}
                                 color="orange"
                                 delay={0}
-                                highlight={pendingOrganizers.length > 0}
+                                highlight={organizers.pending.length > 0}
                                 subtitle="Awaiting your review"
                             />
                             <StatCard
@@ -531,22 +535,18 @@ export default function AdminDashboard() {
                                                 <AlertCircle className="w-5 h-5 text-orange-600" />
                                             </div>
                                             Pending Approvals
-                                            {pendingOrganizers.length > 0 && (
-                                                <motion.span
-                                                    className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-bold"
-                                                    animate={{ scale: [1, 1.1, 1] }}
-                                                    transition={{ duration: 2, repeat: Infinity }}
-                                                >
-                                                    {pendingOrganizers.length}
-                                                </motion.span>
+                                            {organizers.pending.length > 0 && (
+                                                <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-bold">
+                                                    {organizers.pending.length}
+                                                </span>
                                             )}
                                         </h2>
                                     </div>
 
                                     <AnimatePresence mode="popLayout">
-                                        {pendingOrganizers.length > 0 ? (
+                                        {organizers.pending.length > 0 ? (
                                             <div className="space-y-4">
-                                                {pendingOrganizers.map((organizer, index) => (
+                                                {organizers.pending.map((organizer, index) => (
                                                     <PendingOrganizerCard
                                                         key={organizer.id}
                                                         organizer={organizer}
@@ -584,8 +584,8 @@ export default function AdminDashboard() {
                                         </motion.button>
                                     </div>
                                     <div className="bg-white rounded-2xl border border-slate-200/60 divide-y divide-slate-100 overflow-hidden shadow-sm">
-                                        {approvedOrganizers.length > 0 ? (
-                                            approvedOrganizers.slice(0, 5).map((organizer, index) => (
+                                        {organizers.approved.length > 0 ? (
+                                            organizers.approved.slice(0, 5).map((organizer, index) => (
                                                 <ApprovedOrganizerRow key={organizer.id} organizer={organizer} index={index} />
                                             ))
                                         ) : (
