@@ -30,7 +30,8 @@ function DashboardHome({
     onToggleFavorite,
     onViewTicket,
     onExploreEvents,
-    onRefreshStats
+    onRefreshStats,
+    onRefreshEvents
 }) {
     const [selectedTicket, setSelectedTicket] = useState(null);
 
@@ -127,6 +128,7 @@ function DashboardHome({
                         onViewDetails={onViewDetails}
                         onToggleFavorite={onToggleFavorite}
                         onViewAll={onExploreEvents}
+                        onRefresh={onRefreshEvents}
                         maxDisplay={6}
                     />
                 </div>

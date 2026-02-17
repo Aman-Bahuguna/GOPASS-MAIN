@@ -7,7 +7,7 @@ import ProfilePage from '../ProfilePage';
 import { SettingsPage } from '../settings';
 import OrganizerCreateEventForm from './components/OrganizerCreateEventForm';
 import { useAuth } from '../../../context/AuthContext';
-import { getDashboardStats } from '../../../data/mockData';
+import { getDashboardStats } from '../../../api';
 import { canOrganizerCreateEvents } from '../../../utils/roleConfig';
 import { DashboardHome } from './components';
 import { fetchEvents, selectAllEvents, selectEventsStatus } from '../../../store/slices/eventsSlice';

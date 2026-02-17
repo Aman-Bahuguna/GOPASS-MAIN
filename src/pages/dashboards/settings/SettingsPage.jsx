@@ -301,8 +301,8 @@ export default function SettingsPage({ onNavigate }) {
                 className="flex items-center justify-between"
             >
                 <div>
-                    <h1 className="text-3xl font-bold text-white">Settings</h1>
-                    <p className="text-ui-500 mt-1">Manage your account settings and preferences</p>
+                    <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
+                    <p className="text-slate-500 mt-1">Manage your account settings and preferences</p>
                 </div>
 
                 {/* Save Status Indicator */}
@@ -311,14 +311,15 @@ export default function SettingsPage({ onNavigate }) {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0 }}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm ${saveStatus === 'saving'
-                            ? 'bg-brand-200/10 text-brand-200'
-                            : 'bg-green-500/10 text-green-500'
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${saveStatus === 'saving'
+                            ? 'bg-brand-100/10 text-brand-200 border border-brand-200/20'
+                            : 'bg-emerald-50 text-emerald-600 border border-emerald-200/50'
                             }`}
                     >
                         {saveStatus === 'saving' ? (
                             <>
                                 <div className="w-3 h-3 border-2 border-brand-200 border-t-transparent rounded-full animate-spin" />
+
                                 <span>Saving...</span>
                             </>
                         ) : (

@@ -4,9 +4,9 @@ import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
 import { SettingsPage } from '../settings';
 import { useAuth } from '../../../context/AuthContext';
-import { getUserRegistrations, getDashboardStats } from '../../../data/mockData';
+import { getUserRegistrations, getDashboardStats } from '../../../api';
 import { EVENT_STATUS } from '../../../utils/constants';
-import { fetchEvents, selectAllEvents, selectEventsStatus } from '../../../store/slices/eventsSlice';
+import { fetchEvents, selectAllEvents, selectEventsStatus, resetStatus } from '../../../store/slices/eventsSlice';
 
 // Import components from new structure
 import {
@@ -110,10 +110,16 @@ export default function UserDashboard() {
         setCurrentPage('events');
     };
 
+    // Refresh events from the store (API re-fetch)
+    const handleRefreshEvents = async () => {
+        dispatch(resetStatus());
+        await dispatch(fetchEvents());
+    };
+
     const handleRefreshStats = async () => {
         if (user) {
-            setStats(getDashboardStats(user));
-            setRegistrations(getUserRegistrations(user.id));
+            // Also refresh events
+            await handleRefreshEvents();
         }
     };
 
@@ -165,8 +171,9 @@ export default function UserDashboard() {
                             onRegister={handleRegister}
                             onViewDetails={handleViewEventDetails}
                             onToggleFavorite={handleToggleFavorite}
+                            onRefresh={handleRefreshEvents}
                             showHeader={false}
-                            maxDisplay={null} // Show all events
+                            maxDisplay={null}
                             showViewAll={false}
                         />
 
@@ -278,6 +285,7 @@ export default function UserDashboard() {
                             onViewTicket={handleViewTicket}
                             onExploreEvents={handleExploreEvents}
                             onRefreshStats={handleRefreshStats}
+                            onRefreshEvents={handleRefreshEvents}
                         />
 
                         {/* Registration Modal */}

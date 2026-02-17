@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     X,
@@ -9,7 +9,6 @@ import {
     Ticket,
     Heart,
     Share2,
-    ExternalLink,
     CheckCircle2,
     ChevronLeft,
     ChevronRight,
@@ -21,11 +20,15 @@ import {
     Info,
     Star,
     MessageCircle,
-    Navigation
+    Navigation,
+    Phone,
+    Mail,
+    ExternalLink
 } from 'lucide-react';
 
 /**
- * Full-screen event detail modal with comprehensive event information
+ * Full-screen event detail modal with comprehensive event information.
+ * Handles both old and new event data structures gracefully.
  */
 function EventDetailModal({
     event,
@@ -39,6 +42,7 @@ function EventDetailModal({
     const [activeTab, setActiveTab] = useState('about');
     const [copied, setCopied] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [imageLoadError, setImageLoadError] = useState(false);
 
     // Handle escape key
     useEffect(() => {
@@ -49,9 +53,14 @@ function EventDetailModal({
         return () => document.removeEventListener('keydown', handleEscape);
     }, [onClose]);
 
-    // Prevent body scroll when modal is open
+    // Prevent body scroll when modal is open & scroll to top
+    const scrollContainerRef = useRef(null);
     useEffect(() => {
         document.body.style.overflow = 'hidden';
+        // Ensure modal starts scrolled to the very top
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTop = 0;
+        }
         return () => {
             document.body.style.overflow = 'unset';
         };
@@ -59,14 +68,32 @@ function EventDetailModal({
 
     if (!event) return null;
 
-    // Event images (fallback to placeholder)
-    const images = event.images || [event.image || '/placeholder-event.jpg'];
+    // --- Normalize event data ---
+    const title = event.title || event.eventName || 'Untitled Event';
+    const description = event.description || event.shortDescription || 'No description available.';
+    const shortDescription = event.shortDescription || event.description || '';
+    const venue = event.venue || 'TBA';
+    const venueName = event.venueName || venue;
+    const venueAddress = event.venueAddress || venue;
+    const fee = event.fee ?? 0;
+    const category = event.category || (event.tags && event.tags.length > 0 ? event.tags[0] : 'Event');
+    const maxCapacity = event.maxCapacity || event.capacity || event.maxParticipants || 0;
+    const registeredCount = event.registeredCount || 0;
+    const image = event.image || event.posterUrl || null;
+    const dateStr = event.date || event.startDate || null;
+    const endDateStr = event.endDate || null;
+    const contact = event.contact || event.organizer?.phone || null;
+    const email = event.email || event.organizer?.email || null;
+
+    // Event images (fallback to poster or placeholder)
+    const images = event.images || (image ? [image] : []);
 
     // Format date
-    const eventDate = new Date(event.date);
-    const endDate = event.endDate ? new Date(event.endDate) : null;
+    const eventDate = dateStr ? new Date(dateStr) : null;
+    const endDate = endDateStr ? new Date(endDateStr) : null;
 
     const formatDate = (date) => {
+        if (!date || isNaN(date.getTime())) return 'Date TBA';
         return date.toLocaleDateString('en-IN', {
             weekday: 'long',
             day: 'numeric',
@@ -76,6 +103,7 @@ function EventDetailModal({
     };
 
     const formatTime = (date) => {
+        if (!date || isNaN(date.getTime())) return '';
         return date.toLocaleTimeString('en-IN', {
             hour: '2-digit',
             minute: '2-digit',
@@ -86,8 +114,8 @@ function EventDetailModal({
     // Handle share
     const handleShare = async () => {
         const shareData = {
-            title: event.title,
-            text: `Check out ${event.title} on GoPass!`,
+            title: title,
+            text: `Check out ${title} on GoPass!`,
             url: window.location.href
         };
 
@@ -98,7 +126,6 @@ function EventDetailModal({
                 console.log('Share cancelled');
             }
         } else {
-            // Fallback: copy to clipboard
             handleCopyLink();
         }
     };
@@ -110,8 +137,8 @@ function EventDetailModal({
     };
 
     const handleGetDirections = () => {
-        if (event.venue) {
-            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.venue)}`;
+        if (venue) {
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venue)}`;
             window.open(mapsUrl, '_blank');
         }
     };
@@ -125,16 +152,16 @@ function EventDetailModal({
     };
 
     // Calculate spots remaining
-    const spotsRemaining = event.maxCapacity - (event.registeredCount || 0);
-    const isAlmostFull = spotsRemaining <= 10 && spotsRemaining > 0;
-    const isFull = spotsRemaining <= 0;
+    const spotsRemaining = maxCapacity > 0 ? maxCapacity - registeredCount : null;
+    const isAlmostFull = spotsRemaining !== null && spotsRemaining <= 10 && spotsRemaining > 0;
+    const isFull = spotsRemaining !== null && spotsRemaining <= 0;
 
     // Tabs configuration
     const tabs = [
         { id: 'about', label: 'About', icon: Info },
         { id: 'schedule', label: 'Schedule', icon: Clock },
         { id: 'venue', label: 'Venue', icon: MapPin },
-        { id: 'organizer', label: 'Organizer', icon: User }
+        { id: 'contact', label: 'Contact', icon: User }
     ];
 
     return (
@@ -144,6 +171,7 @@ function EventDetailModal({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm overflow-y-auto"
+                ref={scrollContainerRef}
                 onClick={onClose}
             >
                 <motion.div
@@ -169,8 +197,8 @@ function EventDetailModal({
                             <motion.button
                                 onClick={() => onToggleFavorite?.(event.id, !isFavorite)}
                                 className={`w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-colors ${isFavorite
-                                        ? 'bg-red-500 text-white'
-                                        : 'bg-black/30 text-white hover:bg-black/50'
+                                    ? 'bg-red-500 text-white'
+                                    : 'bg-black/30 text-white hover:bg-black/50'
                                     }`}
                                 whileTap={{ scale: 0.9 }}
                             >
@@ -186,12 +214,13 @@ function EventDetailModal({
                         </div>
 
                         {/* Image */}
-                        {images.length > 0 && (
+                        {images.length > 0 && !imageLoadError ? (
                             <>
                                 <img
                                     src={images[currentImageIndex]}
-                                    alt={event.title}
+                                    alt={title}
                                     className="w-full h-full object-cover"
+                                    onError={() => setImageLoadError(true)}
                                 />
 
                                 {/* Image overlay gradient */}
@@ -220,8 +249,8 @@ function EventDetailModal({
                                                     key={idx}
                                                     onClick={() => setCurrentImageIndex(idx)}
                                                     className={`w-2 h-2 rounded-full transition-all ${idx === currentImageIndex
-                                                            ? 'bg-white w-6'
-                                                            : 'bg-white/50 hover:bg-white/70'
+                                                        ? 'bg-white w-6'
+                                                        : 'bg-white/50 hover:bg-white/70'
                                                         }`}
                                                 />
                                             ))}
@@ -229,12 +258,35 @@ function EventDetailModal({
                                     </>
                                 )}
                             </>
+                        ) : (
+                            /* Polished fallback when no image or image fails */
+                            <>
+                                {/* Soft mesh gradient overlay */}
+                                <div className="absolute inset-0">
+                                    <div className="absolute -top-12 -right-12 w-52 h-52 bg-white/10 rounded-full blur-3xl" />
+                                    <div className="absolute -bottom-10 -left-10 w-44 h-44 bg-white/10 rounded-full blur-3xl" />
+                                    <div className="absolute top-1/3 left-1/3 w-60 h-60 bg-white/5 rounded-full blur-3xl" />
+                                </div>
+                                {/* Dot pattern */}
+                                <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+                                {/* Centered icon + title */}
+                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-8">
+                                    <div className="w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                                        <Calendar className="w-10 h-10 text-white" />
+                                    </div>
+                                    <p className="text-white/70 text-base font-semibold text-center max-w-[60%] line-clamp-2">
+                                        {title}
+                                    </p>
+                                </div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                            </>
                         )}
 
                         {/* Category Badge */}
                         <div className="absolute bottom-4 left-4">
-                            <span className="px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full">
-                                {event.category}
+                            <span className="px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full flex items-center gap-1.5">
+                                <Tag className="w-3.5 h-3.5" />
+                                {category}
                             </span>
                         </div>
                     </div>
@@ -245,7 +297,7 @@ function EventDetailModal({
                         <div className="mb-6">
                             <div className="flex items-start justify-between gap-4 mb-3">
                                 <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
-                                    {event.title}
+                                    {title}
                                 </h1>
                                 {isRegistered && (
                                     <span className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
@@ -257,17 +309,25 @@ function EventDetailModal({
 
                             {/* Quick Info */}
                             <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600">
-                                <div className="flex items-center gap-1.5">
-                                    <Calendar className="w-4 h-4 text-brand-200" />
-                                    {formatDate(eventDate)}
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                    <Clock className="w-4 h-4 text-brand-200" />
-                                    {formatTime(eventDate)}
-                                </div>
+                                {eventDate && (
+                                    <div className="flex items-center gap-1.5">
+                                        <Calendar className="w-4 h-4 text-brand-200" />
+                                        {formatDate(eventDate)}
+                                    </div>
+                                )}
+                                {eventDate && formatTime(eventDate) && (
+                                    <div className="flex items-center gap-1.5">
+                                        <Clock className="w-4 h-4 text-brand-200" />
+                                        {formatTime(eventDate)}
+                                    </div>
+                                )}
                                 <div className="flex items-center gap-1.5">
                                     <Users className="w-4 h-4 text-brand-200" />
-                                    {event.registeredCount || 0} registered
+                                    {registeredCount} registered
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                    <MapPin className="w-4 h-4 text-brand-200" />
+                                    {venue}
                                 </div>
                             </div>
                         </div>
@@ -278,19 +338,21 @@ function EventDetailModal({
                                 <div>
                                     <p className="text-sm text-slate-500 mb-1">Registration Fee</p>
                                     <p className="text-3xl font-bold text-slate-900">
-                                        {event.fee === 0 ? (
+                                        {fee === 0 ? (
                                             <span className="text-emerald-600">FREE</span>
                                         ) : (
                                             <span className="flex items-center">
                                                 <IndianRupee className="w-6 h-6" />
-                                                {event.fee}
+                                                {fee}
                                             </span>
                                         )}
                                     </p>
                                 </div>
 
                                 <div className="text-right">
-                                    {isFull ? (
+                                    {spotsRemaining === null ? (
+                                        <span className="text-slate-500">Open registration</span>
+                                    ) : isFull ? (
                                         <span className="text-red-500 font-medium">Event Full</span>
                                     ) : isAlmostFull ? (
                                         <span className="text-amber-600 font-medium">
@@ -310,8 +372,8 @@ function EventDetailModal({
                                     onClick={() => onRegister?.(event)}
                                     disabled={isFull}
                                     className={`w-full mt-4 py-4 rounded-xl font-semibold text-lg flex items-center justify-center gap-2 transition-all ${isFull
-                                            ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                                            : 'bg-gradient-to-r from-brand-100 to-brand-200 text-white hover:shadow-lg hover:shadow-brand-200/30'
+                                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                                        : 'bg-gradient-to-r from-brand-100 to-brand-200 text-white hover:shadow-lg hover:shadow-brand-200/30'
                                         }`}
                                     whileHover={!isFull ? { scale: 1.02 } : {}}
                                     whileTap={!isFull ? { scale: 0.98 } : {}}
@@ -338,8 +400,8 @@ function EventDetailModal({
                                             key={tab.id}
                                             onClick={() => setActiveTab(tab.id)}
                                             className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.id
-                                                    ? 'border-brand-200 text-brand-200'
-                                                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                                                ? 'border-brand-200 text-brand-200'
+                                                : 'border-transparent text-slate-500 hover:text-slate-700'
                                                 }`}
                                         >
                                             <Icon className="w-4 h-4" />
@@ -366,7 +428,7 @@ function EventDetailModal({
                                         <div>
                                             <h3 className="font-semibold text-slate-900 mb-3">About This Event</h3>
                                             <p className="text-slate-600 leading-relaxed whitespace-pre-line">
-                                                {event.description || event.shortDescription || 'No description available.'}
+                                                {description}
                                             </p>
                                         </div>
 
@@ -422,14 +484,24 @@ function EventDetailModal({
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="p-4 bg-slate-50 rounded-xl">
                                                 <p className="text-sm text-slate-500 mb-1">Start Date & Time</p>
-                                                <p className="font-semibold text-slate-900">{formatDate(eventDate)}</p>
-                                                <p className="text-brand-200">{formatTime(eventDate)}</p>
+                                                {eventDate ? (
+                                                    <>
+                                                        <p className="font-semibold text-slate-900">{formatDate(eventDate)}</p>
+                                                        {formatTime(eventDate) && (
+                                                            <p className="text-brand-200">{formatTime(eventDate)}</p>
+                                                        )}
+                                                    </>
+                                                ) : (
+                                                    <p className="font-semibold text-slate-500">To be announced</p>
+                                                )}
                                             </div>
                                             {endDate && (
                                                 <div className="p-4 bg-slate-50 rounded-xl">
                                                     <p className="text-sm text-slate-500 mb-1">End Date & Time</p>
                                                     <p className="font-semibold text-slate-900">{formatDate(endDate)}</p>
-                                                    <p className="text-brand-200">{formatTime(endDate)}</p>
+                                                    {formatTime(endDate) && (
+                                                        <p className="text-brand-200">{formatTime(endDate)}</p>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
@@ -484,10 +556,10 @@ function EventDetailModal({
                                                 </div>
                                                 <div className="flex-1">
                                                     <h3 className="font-semibold text-slate-900 mb-1">
-                                                        {event.venueName || event.venue}
+                                                        {venueName}
                                                     </h3>
                                                     <p className="text-slate-600 text-sm">
-                                                        {event.venueAddress || event.venue}
+                                                        {venueAddress}
                                                     </p>
                                                 </div>
                                             </div>
@@ -522,27 +594,29 @@ function EventDetailModal({
                                     </div>
                                 )}
 
-                                {/* Organizer Tab */}
-                                {activeTab === 'organizer' && (
+                                {/* Contact Tab */}
+                                {activeTab === 'contact' && (
                                     <div className="space-y-6">
                                         {/* Organizer Card */}
-                                        <div className="p-4 bg-slate-50 rounded-xl">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-300 flex items-center justify-center text-white text-2xl font-bold">
-                                                    {event.organizer?.name?.charAt(0) || 'O'}
-                                                </div>
-                                                <div className="flex-1">
-                                                    <h3 className="font-semibold text-slate-900 text-lg">
-                                                        {event.organizer?.name || 'Event Organizer'}
-                                                    </h3>
-                                                    {event.organizer?.department && (
-                                                        <p className="text-slate-500 text-sm">
-                                                            {event.organizer.department}
-                                                        </p>
-                                                    )}
+                                        {event.organizer && (
+                                            <div className="p-4 bg-slate-50 rounded-xl">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-300 flex items-center justify-center text-white text-2xl font-bold">
+                                                        {event.organizer?.name?.charAt(0) || 'O'}
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <h3 className="font-semibold text-slate-900 text-lg">
+                                                            {event.organizer?.name || 'Event Organizer'}
+                                                        </h3>
+                                                        {event.organizer?.department && (
+                                                            <p className="text-slate-500 text-sm">
+                                                                {event.organizer.department}
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        )}
 
                                         {/* Organizer Bio */}
                                         {event.organizer?.bio && (
@@ -552,35 +626,38 @@ function EventDetailModal({
                                             </div>
                                         )}
 
-                                        {/* Contact Info */}
+                                        {/* Contact Information */}
                                         <div>
                                             <h3 className="font-semibold text-slate-900 mb-3">Contact Information</h3>
                                             <div className="space-y-2">
-                                                {event.organizer?.email && (
+                                                {/* Email from event or organizer */}
+                                                {(email || event.organizer?.email) && (
                                                     <a
-                                                        href={`mailto:${event.organizer.email}`}
+                                                        href={`mailto:${email || event.organizer?.email}`}
                                                         className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors"
                                                     >
                                                         <div className="w-10 h-10 rounded-lg bg-brand-100/10 flex items-center justify-center">
-                                                            <MessageCircle className="w-5 h-5 text-brand-200" />
+                                                            <Mail className="w-5 h-5 text-brand-200" />
                                                         </div>
                                                         <div>
                                                             <p className="text-sm text-slate-500">Email</p>
-                                                            <p className="text-slate-900">{event.organizer.email}</p>
+                                                            <p className="text-slate-900">{email || event.organizer?.email}</p>
                                                         </div>
                                                     </a>
                                                 )}
-                                                {event.organizer?.phone && (
+
+                                                {/* Contact / Phone */}
+                                                {(contact || event.organizer?.phone) && (
                                                     <a
-                                                        href={`tel:${event.organizer.phone}`}
+                                                        href={`tel:${contact || event.organizer?.phone}`}
                                                         className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors"
                                                     >
                                                         <div className="w-10 h-10 rounded-lg bg-brand-100/10 flex items-center justify-center">
-                                                            <User className="w-5 h-5 text-brand-200" />
+                                                            <Phone className="w-5 h-5 text-brand-200" />
                                                         </div>
                                                         <div>
-                                                            <p className="text-sm text-slate-500">Phone</p>
-                                                            <p className="text-slate-900">{event.organizer.phone}</p>
+                                                            <p className="text-sm text-slate-500">Phone / Contact</p>
+                                                            <p className="text-slate-900">{contact || event.organizer?.phone}</p>
                                                         </div>
                                                     </a>
                                                 )}
@@ -588,7 +665,7 @@ function EventDetailModal({
                                         </div>
 
                                         {/* Default contact message */}
-                                        {!event.organizer?.email && !event.organizer?.phone && (
+                                        {!email && !event.organizer?.email && !contact && !event.organizer?.phone && !event.organizer && (
                                             <div className="text-center py-8 text-slate-500">
                                                 <User className="w-12 h-12 mx-auto mb-3 text-slate-300" />
                                                 <p>Contact information will be shared after registration</p>

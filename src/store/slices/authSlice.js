@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { ROLES, USER_STATUS, ROUTES } from '../../utils/constants';
 import { getDashboardRoute, isAccountFullyVerified, getPendingVerificationStep } from '../../utils/roleConfig';
-import { findUserByEmail } from '../../data/mockData';
+import { findUserByEmail } from '../../api';
 
 // --- Helper simulation delay ---
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

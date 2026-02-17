@@ -9,7 +9,7 @@ export default function ToggleSwitch({ enabled, onToggle, disabled = false }) {
         <motion.button
             onClick={() => !disabled && onToggle(!enabled)}
             className={`relative w-12 h-6 rounded-full transition-colors ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                } ${enabled ? 'bg-brand-100' : 'bg-ui-400'}`}
+                } ${enabled ? 'bg-brand-200' : 'bg-slate-300'}`}
             whileTap={!disabled ? { scale: 0.95 } : {}}
         >
             <motion.div

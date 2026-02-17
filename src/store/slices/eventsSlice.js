@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { mockEvents } from '../../data/mockData';
+import { fetchAllEvents as apiFetchAllEvents, fetchEventById as apiFetchEventById } from '../../api';
 import { EVENT_STATUS } from '../../utils/constants';
 
 // --- Async Thunks ---
@@ -7,8 +7,7 @@ import { EVENT_STATUS } from '../../utils/constants';
 // 1. Fetch All Events
 export const fetchEvents = createAsyncThunk('events/fetchAll', async (_, { rejectWithValue }) => {
     try {
-        // In a real app, this would be an API call
-        return mockEvents;
+        return await apiFetchAllEvents();
     } catch (error) {
         return rejectWithValue(error.message);
     }
@@ -17,9 +16,7 @@ export const fetchEvents = createAsyncThunk('events/fetchAll', async (_, { rejec
 // 2. Fetch Single Event Details
 export const fetchEventById = createAsyncThunk('events/fetchById', async (eventId, { rejectWithValue }) => {
     try {
-        const event = mockEvents.find(e => e.id === eventId);
-        if (!event) throw new Error('Event not found');
-        return event;
+        return await apiFetchEventById(eventId);
     } catch (error) {
         return rejectWithValue(error.message);
     }

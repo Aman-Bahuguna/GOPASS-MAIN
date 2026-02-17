@@ -23,8 +23,8 @@ import {
     getOrganizersByCollege,
     getEventsByCollege,
     getDashboardStats,
-    mockOrganizers
-} from '../../../data/mockData';
+} from '../../../api';
+import { mockOrganizers } from '../../../mocks';
 import { USER_STATUS, EVENT_STATUS } from '../../../utils/constants';
 import {
     StatCard,

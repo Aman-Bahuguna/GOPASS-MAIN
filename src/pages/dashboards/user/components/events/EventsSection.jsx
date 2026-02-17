@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Calendar } from 'lucide-react';
+import { useState, useMemo, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, RefreshCw } from 'lucide-react';
 import EventCard from './EventCard';
 import EventDetailModal from './EventDetailModal';
 import EventFilters from './EventFilters';
@@ -9,7 +9,7 @@ import EmptyEventsState from './EmptyEventsState';
 import { SectionHeader, SearchBar, LoadingState } from '../common';
 
 /**
- * Main events section container with search, filters, and event grid
+ * Main events section container with search, filters, event grid, and refresh
  */
 function EventsSection({
     events = [],
@@ -21,6 +21,7 @@ function EventsSection({
     onViewDetails,
     onToggleFavorite,
     onViewAll,
+    onRefresh,
     showHeader = true,
     showAllLink = true,
     showViewAll = true,
@@ -31,9 +32,11 @@ function EventsSection({
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [showFilters, setShowFilters] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [filters, setFilters] = useState({
         dateRange: 'all',
         priceRange: 'all',
+        statusFilter: 'all',
         sortBy: 'date',
         sortOrder: 'asc'
     });
@@ -44,9 +47,38 @@ function EventsSection({
         onViewDetails?.(event);
     };
 
+    // Handle refresh
+    const handleRefresh = useCallback(async () => {
+        if (isRefreshing) return;
+        setIsRefreshing(true);
+        try {
+            await onRefresh?.();
+        } finally {
+            // Add a small delay for the animation
+            setTimeout(() => setIsRefreshing(false), 600);
+        }
+    }, [onRefresh, isRefreshing]);
+
+    // Normalize event data helper
+    const getEventCategory = (event) => {
+        return event.category || (event.tags && event.tags.length > 0 ? event.tags[0] : 'General');
+    };
+
+    const getEventDate = (event) => {
+        return event.date || event.startDate || null;
+    };
+
+    const getEventFee = (event) => {
+        return event.fee ?? 0;
+    };
+
+    const getEventDescription = (event) => {
+        return event.shortDescription || event.description || '';
+    };
+
     // Get unique categories
     const categories = useMemo(() => {
-        const uniqueCategories = [...new Set(events.map(e => e.category))];
+        const uniqueCategories = [...new Set(events.map(e => getEventCategory(e)))];
         return ['All', ...uniqueCategories];
     }, [events]);
 
@@ -54,7 +86,8 @@ function EventsSection({
     const categoryCounts = useMemo(() => {
         const counts = { All: events.length };
         events.forEach(event => {
-            counts[event.category] = (counts[event.category] || 0) + 1;
+            const cat = getEventCategory(event);
+            counts[cat] = (counts[cat] || 0) + 1;
         });
         return counts;
     }, [events]);
@@ -72,50 +105,65 @@ function EventsSection({
     // Filter and sort events
     const filteredEvents = useMemo(() => {
         let result = events.filter(event => {
+            const eventCategory = getEventCategory(event);
+            const eventDesc = getEventDescription(event);
+            const eventTitle = event.title || event.eventName || '';
+
             // Search filter
             const matchesSearch =
-                event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                event.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (event.shortDescription && event.shortDescription.toLowerCase().includes(searchQuery.toLowerCase()));
+                eventTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                eventCategory.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                eventDesc.toLowerCase().includes(searchQuery.toLowerCase());
 
             // Category filter
-            const matchesCategory = selectedCategory === 'All' || event.category === selectedCategory;
+            const matchesCategory = selectedCategory === 'All' || eventCategory === selectedCategory;
 
             // Date filter
             let matchesDate = true;
             if (filters.dateRange !== 'all') {
-                const eventDate = new Date(event.date);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
+                const eventDateStr = getEventDate(event);
+                if (eventDateStr) {
+                    const eventDate = new Date(eventDateStr);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
 
-                switch (filters.dateRange) {
-                    case 'today':
-                        matchesDate = eventDate.toDateString() === today.toDateString();
-                        break;
-                    case 'week':
-                        const weekEnd = new Date(today);
-                        weekEnd.setDate(weekEnd.getDate() + 7);
-                        matchesDate = eventDate >= today && eventDate <= weekEnd;
-                        break;
-                    case 'month':
-                        const monthEnd = new Date(today);
-                        monthEnd.setMonth(monthEnd.getMonth() + 1);
-                        matchesDate = eventDate >= today && eventDate <= monthEnd;
-                        break;
-                    default:
-                        matchesDate = true;
+                    switch (filters.dateRange) {
+                        case 'today':
+                            matchesDate = eventDate.toDateString() === today.toDateString();
+                            break;
+                        case 'week':
+                            const weekEnd = new Date(today);
+                            weekEnd.setDate(weekEnd.getDate() + 7);
+                            matchesDate = eventDate >= today && eventDate <= weekEnd;
+                            break;
+                        case 'month':
+                            const monthEnd = new Date(today);
+                            monthEnd.setMonth(monthEnd.getMonth() + 1);
+                            matchesDate = eventDate >= today && eventDate <= monthEnd;
+                            break;
+                        default:
+                            matchesDate = true;
+                    }
                 }
             }
 
             // Price filter
             let matchesPrice = true;
+            const fee = getEventFee(event);
             if (filters.priceRange === 'free') {
-                matchesPrice = event.fee === 0;
+                matchesPrice = fee === 0;
             } else if (filters.priceRange === 'paid') {
-                matchesPrice = event.fee > 0;
+                matchesPrice = fee > 0;
             }
 
-            return matchesSearch && matchesCategory && matchesDate && matchesPrice;
+            // Status filter
+            let matchesStatus = true;
+            if (filters.statusFilter !== 'all') {
+                const eventStatus = event.status || 'UPCOMING';
+                matchesStatus = eventStatus === filters.statusFilter;
+            }
+
+            return matchesSearch && matchesCategory && matchesDate && matchesPrice && matchesStatus;
         });
 
         // Sort events
@@ -123,13 +171,15 @@ function EventsSection({
             let comparison = 0;
             switch (filters.sortBy) {
                 case 'date':
-                    comparison = new Date(a.date) - new Date(b.date);
+                    const dateA = getEventDate(a);
+                    const dateB = getEventDate(b);
+                    comparison = (dateA ? new Date(dateA) : 0) - (dateB ? new Date(dateB) : 0);
                     break;
                 case 'price':
-                    comparison = a.fee - b.fee;
+                    comparison = getEventFee(a) - getEventFee(b);
                     break;
                 case 'popularity':
-                    comparison = b.registeredCount - a.registeredCount;
+                    comparison = (b.registeredCount || 0) - (a.registeredCount || 0);
                     break;
                 default:
                     comparison = 0;
@@ -149,12 +199,13 @@ function EventsSection({
         setFilters({
             dateRange: 'all',
             priceRange: 'all',
+            statusFilter: 'all',
             sortBy: 'date',
             sortOrder: 'asc'
         });
     };
 
-    if (loading) {
+    if (loading && !isRefreshing) {
         return (
             <div className={className}>
                 <div className="mb-6">
@@ -168,8 +219,8 @@ function EventsSection({
 
     return (
         <div className={`space-y-6 ${className}`}>
-            {/* Search & Filter Bar */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            {/* Search & Filter Bar with Refresh */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <div className="flex-1">
                     <SearchBar
                         value={searchQuery}
@@ -177,25 +228,38 @@ function EventsSection({
                         placeholder="Search events by name, category..."
                     />
                 </div>
-                <EventFilters
-                    filters={filters}
-                    onFiltersChange={setFilters}
-                    categories={categories}
-                    showPanel={showFilters}
-                    onTogglePanel={() => setShowFilters(!showFilters)}
-                />
-            </div>
 
-            {/* Filter Panel (conditionally rendered by EventFilters) */}
-            {showFilters && (
-                <EventFilters
-                    filters={filters}
-                    onFiltersChange={setFilters}
-                    categories={categories}
-                    showPanel={true}
-                    onTogglePanel={() => setShowFilters(false)}
-                />
-            )}
+                <div className="flex items-center gap-2">
+                    {/* Refresh Button */}
+                    {onRefresh && (
+                        <motion.button
+                            onClick={handleRefresh}
+                            disabled={isRefreshing}
+                            className={`p-3.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-brand-100 transition-all flex items-center gap-2 text-slate-600 ${isRefreshing ? 'opacity-60 cursor-wait' : ''
+                                }`}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            title="Refresh events"
+                        >
+                            <motion.div
+                                animate={isRefreshing ? { rotate: 360 } : { rotate: 0 }}
+                                transition={isRefreshing ? { duration: 0.8, repeat: Infinity, ease: 'linear' } : {}}
+                            >
+                                <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'text-brand-200' : ''}`} />
+                            </motion.div>
+                        </motion.button>
+                    )}
+
+                    {/* Filter Toggle */}
+                    <EventFilters
+                        filters={filters}
+                        onFiltersChange={setFilters}
+                        categories={categories}
+                        showPanel={showFilters}
+                        onTogglePanel={() => setShowFilters(!showFilters)}
+                    />
+                </div>
+            </div>
 
             {/* Category Tabs */}
             <CategoryTabs
@@ -218,6 +282,26 @@ function EventsSection({
                 />
             )}
 
+            {/* Refreshing Indicator */}
+            <AnimatePresence>
+                {isRefreshing && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="flex items-center justify-center gap-2 py-3 px-4 bg-brand-50 border border-brand-100 rounded-xl text-brand-200 text-sm font-medium"
+                    >
+                        <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+                        >
+                            <RefreshCw className="w-4 h-4" />
+                        </motion.div>
+                        Refreshing events...
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Events Grid */}
             {displayEvents.length > 0 ? (
                 <motion.div
@@ -228,7 +312,7 @@ function EventsSection({
                 >
                     {displayEvents.map((event, index) => (
                         <EventCard
-                            key={event.id}
+                            key={event.id || index}
                             event={event}
                             index={index}
                             onRegister={onRegister}
@@ -244,7 +328,7 @@ function EventsSection({
                     title="No events found"
                     message="Try adjusting your search or filters to find more events"
                     variant="search"
-                    showCTA={searchQuery || selectedCategory !== 'All' || filters.dateRange !== 'all' || filters.priceRange !== 'all'}
+                    showCTA={searchQuery || selectedCategory !== 'All' || filters.dateRange !== 'all' || filters.priceRange !== 'all' || filters.statusFilter !== 'all'}
                     ctaLabel="Clear Filters"
                     onCTA={handleClearFilters}
                 />
