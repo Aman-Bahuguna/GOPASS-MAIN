@@ -1,93 +1,44 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Float, Stars, Sphere, Octahedron } from '@react-three/drei';
 import {
     Mail, Lock, Eye, EyeOff, UserPlus, User, Sparkles, Shield,
     ArrowRight, CheckCircle2, Calendar, Users, Zap, ArrowLeft,
     Home, Crown, Building2
 } from 'lucide-react';
-import gsap from 'gsap';
 import CollegeVerificationStep from '../components/auth/CollegeVerificationStep';
 import { useAuth } from '../context/AuthContext';
 import { ROLES } from '../utils/constants';
 import { validateStep3 } from '../utils/validators';
 import { sendPlatformVerificationRequest } from '../services/emailService';
 
-// 3D Molecular Network Structure
-function MolecularNetwork() {
-    const groupRef = useRef();
-
-    useFrame(({ clock }) => {
-        if (groupRef.current) {
-            groupRef.current.rotation.y = clock.getElapsedTime() * 0.2;
-            groupRef.current.rotation.x = Math.sin(clock.getElapsedTime() * 0.3) * 0.2;
-        }
-    });
-
-    const centerNodes = [
-        { pos: [0, 0, 0], size: 0.4, color: '#41d6c3' },
-        { pos: [2, 1, 0], size: 0.25, color: '#5596e6' },
-        { pos: [-2, 1, 0], size: 0.25, color: '#5596e6' },
-        { pos: [0, -2, 1], size: 0.25, color: '#3d70b2' },
-        { pos: [1.5, -1, -1], size: 0.2, color: '#41d6c3' },
-        { pos: [-1.5, -1, -1], size: 0.2, color: '#41d6c3' },
-    ];
-
+// Lightweight CSS-only animated background (replaces Three.js Canvas)
+function AnimatedBackground() {
     return (
-        <group ref={groupRef}>
-            <Float speed={1.5} rotationIntensity={1} floatIntensity={0.5}>
-                <Octahedron args={[0.6]} position={[0, 0, 0]}>
-                    <meshStandardMaterial
-                        color="#41d6c3"
-                        metalness={0.9}
-                        roughness={0.1}
-                        emissive="#41d6c3"
-                        emissiveIntensity={0.5}
-                        wireframe
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            {/* Animated gradient mesh blobs */}
+            <div className="signup-blob signup-blob-1" />
+            <div className="signup-blob signup-blob-2" />
+            <div className="signup-blob signup-blob-3" />
+
+            {/* Floating particles via CSS */}
+            <div className="signup-particles">
+                {Array.from({ length: 20 }).map((_, i) => (
+                    <div
+                        key={i}
+                        className="signup-particle"
+                        style={{
+                            '--x': `${Math.random() * 100}%`,
+                            '--y': `${Math.random() * 100}%`,
+                            '--size': `${2 + Math.random() * 4}px`,
+                            '--duration': `${6 + Math.random() * 10}s`,
+                            '--delay': `${Math.random() * -15}s`,
+                        }}
                     />
-                </Octahedron>
-            </Float>
+                ))}
+            </div>
 
-            {centerNodes.map((node, i) => (
-                <Float key={i} speed={2 + i * 0.3} rotationIntensity={0.5} floatIntensity={1}>
-                    <Sphere position={node.pos} args={[node.size, 32, 32]}>
-                        <meshStandardMaterial
-                            color={node.color}
-                            metalness={0.8}
-                            roughness={0.2}
-                            emissive={node.color}
-                            emissiveIntensity={0.4}
-                        />
-                    </Sphere>
-                </Float>
-            ))}
-        </group>
-    );
-}
-
-// 3D Background Scene
-function ThreeDBackground() {
-    return (
-        <div className="absolute inset-0 z-0 pointer-events-none">
-            <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
-                <ambientLight intensity={0.4} />
-                <directionalLight position={[10, 10, 5]} intensity={1.2} />
-                <pointLight position={[-10, -10, -5]} intensity={0.6} color="#5596e6" />
-                <spotLight position={[5, 5, 5]} intensity={0.8} color="#41d6c3" />
-                <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-                <MolecularNetwork />
-                <OrbitControls enableZoom={false} enablePan={false} autoRotate={false} />
-            </Canvas>
-        </div>
-    );
-}
-
-// Decorative Pattern
-function DecorativePattern() {
-    return (
-        <div className="absolute inset-0 overflow-hidden opacity-10">
-            <svg width="100%" height="100%">
+            {/* Subtle grid pattern */}
+            <svg className="absolute inset-0 w-full h-full opacity-[0.06]">
                 <defs>
                     <pattern id="signupGrid" width="60" height="60" patternUnits="userSpaceOnUse">
                         <path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" strokeWidth="0.5" />
@@ -99,13 +50,72 @@ function DecorativePattern() {
     );
 }
 
+/* Inline styles for the CSS-only animations — injected once */
+const animationStyles = `
+.signup-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    will-change: transform;
+}
+.signup-blob-1 {
+    width: 380px; height: 380px;
+    background: radial-gradient(circle, rgba(85, 150, 230, 0.5), transparent 70%);
+    top: -8%; left: -5%;
+    animation: signupBlobFloat1 14s ease-in-out infinite;
+}
+.signup-blob-2 {
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(65, 214, 195, 0.45), transparent 70%);
+    bottom: -5%; right: -5%;
+    animation: signupBlobFloat2 12s ease-in-out infinite;
+}
+.signup-blob-3 {
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(61, 112, 178, 0.35), transparent 70%);
+    top: 35%; right: 25%;
+    animation: signupBlobFloat3 11s ease-in-out infinite;
+}
+@keyframes signupBlobFloat1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(25px, 15px) scale(1.1); }
+    66% { transform: translate(-20px, -10px) scale(0.95); }
+}
+@keyframes signupBlobFloat2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-20px, -15px) scale(1.12); }
+    66% { transform: translate(15px, 10px) scale(0.92); }
+}
+@keyframes signupBlobFloat3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-18px, 20px) scale(1.15); }
+}
+.signup-particles {
+    position: absolute; inset: 0;
+}
+.signup-particle {
+    position: absolute;
+    left: var(--x); top: var(--y);
+    width: var(--size); height: var(--size);
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    animation: signupParticleFloat var(--duration) ease-in-out var(--delay) infinite;
+    will-change: transform, opacity;
+}
+@keyframes signupParticleFloat {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+    50% { transform: translateY(-25px) scale(1.3); opacity: 0.8; }
+}
+`;
+
 // Benefit Item
 function BenefitItem({ icon: Icon, title, description, delay }) {
     return (
         <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay, duration: 0.6 }}
+            transition={{ delay, duration: 0.5 }}
             className="flex gap-4"
         >
             <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
@@ -180,10 +190,6 @@ export default function SignupPage({ onNavigateToLogin, onNavigateToHome, onSign
     const [currentStep, setCurrentStep] = useState(1);
     const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-    const containerRef = useRef(null);
-    const leftPanelRef = useRef(null);
-    const formRef = useRef(null);
-
     // Determine total steps based on role
     const needsCollegeVerification = formData.role === ROLES.ADMIN || formData.role === ROLES.ORGANIZER;
     const totalSteps = needsCollegeVerification ? 3 : 2;
@@ -193,26 +199,6 @@ export default function SignupPage({ onNavigateToLogin, onNavigateToHome, onSign
         { role: 'ORGANIZER', icon: Shield, description: 'Create & manage events' },
         { role: 'ADMIN', icon: Crown, description: 'Full system control' },
     ];
-
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.from(leftPanelRef.current, {
-                x: -100,
-                opacity: 0,
-                duration: 1,
-                ease: 'power3.out',
-            });
-
-            gsap.from(formRef.current, {
-                x: 100,
-                opacity: 0,
-                duration: 1,
-                ease: 'power3.out',
-            });
-        }, containerRef);
-
-        return () => ctx.revert();
-    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -378,17 +364,19 @@ export default function SignupPage({ onNavigateToLogin, onNavigateToHome, onSign
     };
 
     return (
-        <div ref={containerRef} className="min-h-screen relative flex">
+        <div className="min-h-screen relative flex">
+            {/* Inject lightweight CSS animations */}
+            <style>{animationStyles}</style>
+
             {/* Left Panel - Marketing/Visual Section */}
-            <div
-                ref={leftPanelRef}
+            <motion.div
+                initial={{ opacity: 0, x: -60 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
                 className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-brand-300 via-brand-200 to-brand-100 p-12 flex-col justify-between overflow-hidden"
             >
-                {/* 3D Background */}
-                <ThreeDBackground />
-
-                {/* Decorative Pattern */}
-                <DecorativePattern />
+                {/* CSS Animated Background (replaces Three.js) */}
+                <AnimatedBackground />
 
                 {/* Dark overlay for better text contrast */}
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-900/40 via-slate-900/20 to-transparent z-[1]" />
@@ -461,24 +449,16 @@ export default function SignupPage({ onNavigateToLogin, onNavigateToHome, onSign
                     © 2026 GoPass. All rights reserved.
                 </motion.div>
 
-                {/* Floating Orbs */}
-                <motion.div
+                {/* Floating Orbs (CSS-driven for performance) */}
+                <div
                     className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"
-                    animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.3, 0.5, 0.3],
-                    }}
-                    transition={{ duration: 4, repeat: Infinity }}
+                    style={{ animation: 'signupBlobFloat1 8s ease-in-out infinite' }}
                 />
-                <motion.div
+                <div
                     className="absolute bottom-20 left-20 w-96 h-96 bg-brand-300/20 rounded-full blur-3xl"
-                    animate={{
-                        scale: [1, 1.3, 1],
-                        opacity: [0.2, 0.4, 0.2],
-                    }}
-                    transition={{ duration: 5, repeat: Infinity }}
+                    style={{ animation: 'signupBlobFloat2 10s ease-in-out infinite' }}
                 />
-            </div>
+            </motion.div>
 
             {/* Right Panel - Form Section */}
             <div className="w-full lg:w-1/2 h-screen overflow-y-auto bg-white relative">
@@ -506,7 +486,12 @@ export default function SignupPage({ onNavigateToLogin, onNavigateToHome, onSign
                         <span className="text-2xl font-bold text-slate-900 font-serif">GoPass</span>
                     </div>
 
-                    <div ref={formRef} className="w-full max-w-md mt-20 lg:mt-8 pb-8">
+                    <motion.div
+                        initial={{ opacity: 0, x: 60 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                        className="w-full max-w-md mt-20 lg:mt-8 pb-8"
+                    >
                         {/* Form Header */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -886,7 +871,7 @@ export default function SignupPage({ onNavigateToLogin, onNavigateToHome, onSign
                                 <span>GDPR Compliant</span>
                             </div>
                         </motion.div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </div>

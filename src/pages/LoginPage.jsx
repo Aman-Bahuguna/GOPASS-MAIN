@@ -1,97 +1,43 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Float, MeshDistortMaterial, Sphere, Stars, Cylinder } from '@react-three/drei';
 import { Mail, Lock, Eye, EyeOff, LogIn, Sparkles, ArrowRight, Calendar, Users, Zap, Shield, CheckCircle2, ArrowLeft, Home } from 'lucide-react';
-import gsap from 'gsap';
 import { useAuth } from '../context/AuthContext';
 
-// 3D DNA Helix Structure
-function DNAHelix() {
-    const groupRef = useRef();
-
-    useFrame(({ clock }) => {
-        if (groupRef.current) {
-            groupRef.current.rotation.y = clock.getElapsedTime() * 0.3;
-        }
-    });
-
-    const helixPoints = [];
-    const count = 20;
-
-    for (let i = 0; i < count; i++) {
-        const t = (i / count) * Math.PI * 4;
-        const x = Math.cos(t) * 1.5;
-        const y = (i / count) * 8 - 4;
-        const z = Math.sin(t) * 1.5;
-        helixPoints.push({ x, y, z, t });
-    }
-
+// Lightweight CSS-only animated background (replaces Three.js Canvas)
+function AnimatedBackground() {
     return (
-        <group ref={groupRef}>
-            {helixPoints.map((point, i) => (
-                <Float key={i} speed={2 + i * 0.1} rotationIntensity={0.5} floatIntensity={0.5}>
-                    <Sphere position={[point.x, point.y, point.z]} args={[0.15, 32, 32]}>
-                        <meshStandardMaterial
-                            color="#5596e6"
-                            metalness={0.8}
-                            roughness={0.2}
-                            emissive="#41d6c3"
-                            emissiveIntensity={0.3}
-                        />
-                    </Sphere>
-                    {i < helixPoints.length - 1 && (
-                        <Cylinder
-                            position={[
-                                (point.x + helixPoints[i + 1].x) / 2,
-                                (point.y + helixPoints[i + 1].y) / 2,
-                                (point.z + helixPoints[i + 1].z) / 2,
-                            ]}
-                            args={[0.03, 0.03, 0.4, 8]}
-                            rotation={[
-                                Math.atan2(helixPoints[i + 1].z - point.z, Math.sqrt(Math.pow(helixPoints[i + 1].x - point.x, 2) + Math.pow(helixPoints[i + 1].y - point.y, 2))),
-                                0,
-                                Math.atan2(helixPoints[i + 1].y - point.y, helixPoints[i + 1].x - point.x),
-                            ]}
-                        >
-                            <meshStandardMaterial color="#3d70b2" metalness={0.9} roughness={0.1} />
-                        </Cylinder>
-                    )}
-                </Float>
-            ))}
-        </group>
-    );
-}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            {/* Animated gradient mesh blobs */}
+            <div className="login-blob login-blob-1" />
+            <div className="login-blob login-blob-2" />
+            <div className="login-blob login-blob-3" />
 
-// 3D Background Scene
-function ThreeDBackground() {
-    return (
-        <div className="absolute inset-0 z-0 pointer-events-none">
-            <Canvas camera={{ position: [0, 0, 8], fov: 45 }}>
-                <ambientLight intensity={0.4} />
-                <directionalLight position={[10, 10, 5]} intensity={1.2} />
-                <pointLight position={[-10, -10, -5]} intensity={0.6} color="#41d6c3" />
-                <spotLight position={[0, 10, 0]} intensity={0.5} color="#5596e6" />
-                <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-                <DNAHelix />
-                <OrbitControls enableZoom={false} enablePan={false} autoRotate={false} />
-            </Canvas>
-        </div>
-    );
-}
+            {/* Floating particles via CSS */}
+            <div className="login-particles">
+                {Array.from({ length: 20 }).map((_, i) => (
+                    <div
+                        key={i}
+                        className="login-particle"
+                        style={{
+                            '--x': `${Math.random() * 100}%`,
+                            '--y': `${Math.random() * 100}%`,
+                            '--size': `${2 + Math.random() * 4}px`,
+                            '--duration': `${6 + Math.random() * 10}s`,
+                            '--delay': `${Math.random() * -15}s`,
+                        }}
+                    />
+                ))}
+            </div>
 
-// Decorative Pattern
-function DecorativePattern() {
-    return (
-        <div className="absolute inset-0 overflow-hidden opacity-10">
-            <svg width="100%" height="100%">
+            {/* Subtle grid pattern */}
+            <svg className="absolute inset-0 w-full h-full opacity-[0.06]">
                 <defs>
                     <pattern id="loginGrid" width="60" height="60" patternUnits="userSpaceOnUse">
                         <circle cx="30" cy="30" r="1.5" fill="white" />
-                        <circle cx="0" cy="0" r="1.5" fill="white" />
-                        <circle cx="60" cy="0" r="1.5" fill="white" />
-                        <circle cx="0" cy="60" r="1.5" fill="white" />
-                        <circle cx="60" cy="60" r="1.5" fill="white" />
+                        <circle cx="0" cy="0" r="1" fill="white" />
+                        <circle cx="60" cy="0" r="1" fill="white" />
+                        <circle cx="0" cy="60" r="1" fill="white" />
+                        <circle cx="60" cy="60" r="1" fill="white" />
                     </pattern>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#loginGrid)" />
@@ -100,13 +46,72 @@ function DecorativePattern() {
     );
 }
 
+/* Inline styles for the CSS-only animations — injected once */
+const animationStyles = `
+.login-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    will-change: transform;
+}
+.login-blob-1 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(65, 214, 195, 0.5), transparent 70%);
+    top: -10%; right: -5%;
+    animation: loginBlobFloat1 12s ease-in-out infinite;
+}
+.login-blob-2 {
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(85, 150, 230, 0.4), transparent 70%);
+    bottom: -5%; left: -5%;
+    animation: loginBlobFloat2 15s ease-in-out infinite;
+}
+.login-blob-3 {
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(61, 112, 178, 0.35), transparent 70%);
+    top: 40%; left: 30%;
+    animation: loginBlobFloat3 10s ease-in-out infinite;
+}
+@keyframes loginBlobFloat1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-30px, 20px) scale(1.1); }
+    66% { transform: translate(20px, -15px) scale(0.95); }
+}
+@keyframes loginBlobFloat2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(25px, -20px) scale(1.15); }
+    66% { transform: translate(-15px, 10px) scale(0.9); }
+}
+@keyframes loginBlobFloat3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(20px, 25px) scale(1.2); }
+}
+.login-particles {
+    position: absolute; inset: 0;
+}
+.login-particle {
+    position: absolute;
+    left: var(--x); top: var(--y);
+    width: var(--size); height: var(--size);
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    animation: loginParticleFloat var(--duration) ease-in-out var(--delay) infinite;
+    will-change: transform, opacity;
+}
+@keyframes loginParticleFloat {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+    50% { transform: translateY(-30px) scale(1.3); opacity: 0.8; }
+}
+`;
+
 // Feature Item
 function FeatureItem({ icon: Icon, text, delay }) {
     return (
         <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay, duration: 0.6 }}
+            transition={{ delay, duration: 0.5 }}
             className="flex items-center gap-3"
         >
             <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
@@ -142,30 +147,6 @@ export default function LoginPage({ onNavigateToSignup, onNavigateToHome, onLogi
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
-
-    const containerRef = useRef(null);
-    const leftPanelRef = useRef(null);
-    const formRef = useRef(null);
-
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.from(leftPanelRef.current, {
-                x: -100,
-                opacity: 0,
-                duration: 1,
-                ease: 'power3.out',
-            });
-
-            gsap.from(formRef.current, {
-                x: 100,
-                opacity: 0,
-                duration: 1,
-                ease: 'power3.out',
-            });
-        }, containerRef);
-
-        return () => ctx.revert();
-    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -220,17 +201,19 @@ export default function LoginPage({ onNavigateToSignup, onNavigateToHome, onLogi
     };
 
     return (
-        <div ref={containerRef} className="min-h-screen relative overflow-x-hidden flex">
+        <div className="min-h-screen relative overflow-x-hidden flex">
+            {/* Inject lightweight CSS animations */}
+            <style>{animationStyles}</style>
+
             {/* Left Panel - Marketing/Visual Section */}
-            <div
-                ref={leftPanelRef}
+            <motion.div
+                initial={{ opacity: 0, x: -60 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
                 className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300 p-12 flex-col justify-between overflow-hidden"
             >
-                {/* 3D Background */}
-                <ThreeDBackground />
-
-                {/* Decorative Pattern */}
-                <DecorativePattern />
+                {/* CSS Animated Background (replaces Three.js) */}
+                <AnimatedBackground />
 
                 {/* Dark overlay for better text contrast */}
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-900/40 via-slate-900/20 to-transparent z-[1]" />
@@ -290,24 +273,16 @@ export default function LoginPage({ onNavigateToSignup, onNavigateToHome, onLogi
                     © 2026 GoPass. All rights reserved.
                 </motion.div>
 
-                {/* Floating Orbs */}
-                <motion.div
+                {/* Floating Orbs (CSS-driven for performance) */}
+                <div
                     className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"
-                    animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.3, 0.5, 0.3],
-                    }}
-                    transition={{ duration: 4, repeat: Infinity }}
+                    style={{ animation: 'loginBlobFloat1 8s ease-in-out infinite' }}
                 />
-                <motion.div
+                <div
                     className="absolute bottom-20 left-20 w-96 h-96 bg-brand-300/20 rounded-full blur-3xl"
-                    animate={{
-                        scale: [1, 1.3, 1],
-                        opacity: [0.2, 0.4, 0.2],
-                    }}
-                    transition={{ duration: 5, repeat: Infinity }}
+                    style={{ animation: 'loginBlobFloat2 10s ease-in-out infinite' }}
                 />
-            </div>
+            </motion.div>
 
             {/* Right Panel - Form Section */}
             <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 bg-white relative">
@@ -334,7 +309,12 @@ export default function LoginPage({ onNavigateToSignup, onNavigateToHome, onLogi
                     <span className="text-2xl font-bold text-slate-900 font-serif">GoPass</span>
                 </div>
 
-                <div ref={formRef} className="w-full max-w-md mt-16 lg:mt-0">
+                <motion.div
+                    initial={{ opacity: 0, x: 60 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="w-full max-w-md mt-16 lg:mt-0"
+                >
                     {/* Form Header */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -547,21 +527,6 @@ export default function LoginPage({ onNavigateToSignup, onNavigateToHome, onLogi
                                     transition={{ duration: 0.3 }}
                                 />
 
-                                {/* Glow effect */}
-                                <motion.span
-                                    className="absolute inset-0 bg-brand-200/20 rounded-lg blur-md"
-                                    initial={{ opacity: 0 }}
-                                    animate={{
-                                        opacity: [0, 0.5, 0],
-                                        scale: [0.8, 1.2, 0.8],
-                                    }}
-                                    transition={{
-                                        duration: 2,
-                                        repeat: Infinity,
-                                        ease: 'easeInOut',
-                                    }}
-                                />
-
                                 <span className="relative">Create Account</span>
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </motion.button>
@@ -584,7 +549,7 @@ export default function LoginPage({ onNavigateToSignup, onNavigateToHome, onLogi
                             <span>Verified Platform</span>
                         </div>
                     </motion.div>
-                </div>
+                </motion.div>
             </div>
         </div>
     );
