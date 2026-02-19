@@ -25,6 +25,7 @@ import {
  * @param {Function} [props.onDelete] - Delete event handler
  * @param {Function} [props.onDuplicate] - Duplicate event handler
  * @param {Function} [props.onManage] - Manage event handler
+ * @param {Function} [props.onViewAttendees] - View attendee list handler
  * @param {boolean} [props.selected] - Whether card is selected
  * @param {Function} [props.onSelect] - Selection handler
  */
@@ -36,6 +37,7 @@ function OrganizerEventCard({
     onDelete,
     onDuplicate,
     onManage,
+    onViewAttendees,
     selected,
     onSelect
 }) {
@@ -269,14 +271,27 @@ function OrganizerEventCard({
                         <StatusIcon className="w-3.5 h-3.5" />
                         {status.label}
                     </span>
-                    <motion.button
-                        onClick={onManage}
-                        className="text-brand-200 hover:text-brand-100 text-sm font-semibold flex items-center gap-1.5 group/btn"
-                        whileHover={{ x: 3 }}
-                    >
-                        Manage
-                        <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                    </motion.button>
+                    <div className="flex items-center gap-4">
+                        {onViewAttendees && (
+                            <motion.button
+                                onClick={(e) => { e.stopPropagation(); onViewAttendees(event); }}
+                                className="text-slate-500 hover:text-slate-700 text-sm font-semibold flex items-center gap-1.5"
+                                whileHover={{ x: 3 }}
+                            >
+                                <Users className="w-4 h-4" />
+                                Attendees
+                            </motion.button>
+                        )}
+
+                        <motion.button
+                            onClick={onManage}
+                            className="text-brand-200 hover:text-brand-100 text-sm font-semibold flex items-center gap-1.5 group/btn"
+                            whileHover={{ x: 3 }}
+                        >
+                            Manage
+                            <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                        </motion.button>
+                    </div>
                 </div>
             </div>
         </motion.div>

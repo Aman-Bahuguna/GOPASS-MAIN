@@ -19,6 +19,7 @@ import EventActions from './EventActions';
  * @param {Function} [props.onDeleteEvent] - Delete event handler
  * @param {Function} [props.onDuplicateEvent] - Duplicate event handler
  * @param {Function} [props.onManageEvent] - Manage event handler
+ * @param {Function} [props.onViewAttendees] - View attendees handler
  * @param {Function} [props.onBulkDelete] - Bulk delete handler
  * @param {Function} [props.onBulkExport] - Bulk export handler
  */
@@ -32,6 +33,7 @@ export default function EventsSection({
     onDeleteEvent,
     onDuplicateEvent,
     onManageEvent,
+    onViewAttendees,
     onBulkDelete,
     onBulkExport
 }) {
@@ -245,6 +247,7 @@ export default function EventsSection({
                                 onDelete={() => onDeleteEvent?.(event)}
                                 onDuplicate={() => onDuplicateEvent?.(event)}
                                 onManage={() => onManageEvent?.(event)}
+                                onViewAttendees={() => onViewAttendees?.(event)}
                             />
                         ))}
                     </div>

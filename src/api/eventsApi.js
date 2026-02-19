@@ -131,7 +131,21 @@ export const getUserRegistrations = (userId) => {
  */
 export const getEventRegistrations = (eventId) => {
     const allUsers = [...mockAdmins, ...mockOrganizers, ...mockUsers];
-    const registrations = mockRegistrations.filter(reg => reg.eventId === eventId);
+    let registrations = mockRegistrations.filter(reg => reg.eventId === eventId);
+    // if there are no registrations for this event, provide a placeholder to make the UI less empty
+    if (registrations.length === 0) {
+        registrations = [
+            {
+                id: `placeholder_${eventId}`,
+                userId: allUsers[0]?.id || 'user_001',
+                eventId,
+                registeredAt: new Date().toISOString(),
+                paymentStatus: 'PENDING',
+                ticketNumber: 'SAMPLE-0001',
+                amount: 0,
+            },
+        ];
+    }
     return registrations.map(reg => ({
         ...reg,
         user: allUsers.find(u => u.id === reg.userId),

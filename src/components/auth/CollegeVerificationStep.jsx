@@ -33,8 +33,8 @@ function PositionSelector({ role, value, onChange, error }) {
                         type="button"
                         onClick={() => onChange(pos.value)}
                         className={`relative p-4 rounded-xl border-2 transition-all ${value === pos.value
-                                ? 'border-brand-200 bg-brand-50 shadow-md'
-                                : 'border-slate-200 bg-white hover:border-slate-300'
+                            ? 'border-brand-200 bg-brand-50 shadow-md'
+                            : 'border-slate-200 bg-white hover:border-slate-300'
                             }`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -166,10 +166,10 @@ function FileUploadZone({ file, onFileChange, error }) {
             {!file ? (
                 <motion.div
                     className={`relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${isDragging
-                            ? 'border-brand-200 bg-brand-50'
-                            : error
-                                ? 'border-red-300 bg-red-50'
-                                : 'border-slate-300 hover:border-brand-200 hover:bg-slate-50'
+                        ? 'border-brand-200 bg-brand-50'
+                        : error
+                            ? 'border-red-300 bg-red-50'
+                            : 'border-slate-300 hover:border-brand-200 hover:bg-slate-50'
                         }`}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
@@ -296,13 +296,15 @@ export default function CollegeVerificationStep({
                 </div>
             </motion.div>
 
-            {/* Position Selection */}
-            <PositionSelector
-                role={role}
-                value={formData.position}
-                onChange={(value) => handleChange('position', value)}
-                error={errors?.position}
-            />
+            {/* Position Selection - Only for Admin role */}
+            {role === ROLES.ADMIN && (
+                <PositionSelector
+                    role={role}
+                    value={formData.position}
+                    onChange={(value) => handleChange('position', value)}
+                    error={errors?.position}
+                />
+            )}
 
             {/* College Name */}
             <div>

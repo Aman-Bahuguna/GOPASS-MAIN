@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import WelcomeSection from './WelcomeSection';
 import { StatsGrid } from '../stats';
 import { EventsSection } from '../events';
-import { AccountStatus, ProTips, QuickActions } from '../sidebar';
+import { AccountStatus } from '../sidebar';
 import { ApprovalStatusBanner } from '../status';
 
 /**
@@ -14,6 +14,7 @@ import { ApprovalStatusBanner } from '../status';
  * @param {boolean} props.canCreate - Whether user can create events
  * @param {boolean} [props.isLoading] - Loading state
  * @param {Function} props.onNavigate - Navigation handler
+ * @param {Function} [props.onViewAttendees] - View attendees handler for each event card
  */
 export default function DashboardHome({
     user,
@@ -21,7 +22,10 @@ export default function DashboardHome({
     events,
     canCreate,
     isLoading = false,
-    onNavigate
+    onNavigate,
+    onViewAttendees,
+    fullActivated,
+    onActivateFull
 }) {
     // Event handlers
     const handleCreateEvent = () => onNavigate?.('create-event');
@@ -36,6 +40,16 @@ export default function DashboardHome({
         <>
             {/* Approval Status Banner */}
             <ApprovalStatusBanner user={user} />
+            {!fullActivated && (
+                <div className="mb-4 text-center">
+                    <button
+                        onClick={onActivateFull}
+                        className="px-6 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
+                    >
+                        Activate Full Dashboard
+                    </button>
+                </div>
+            )}
 
             {/* Welcome Section */}
             <WelcomeSection
@@ -82,6 +96,7 @@ export default function DashboardHome({
                             // Handle duplicate
                             console.log('Duplicate event:', event.id);
                         }}
+                        onViewAttendees={(event) => onViewAttendees?.(event)}
                     />
                 </div>
 
@@ -92,21 +107,6 @@ export default function DashboardHome({
                         user={user}
                         canCreate={canCreate}
                         delay={0.5}
-                    />
-
-                    {/* Pro Tips */}
-                    <ProTips delay={0.6} />
-
-                    {/* Quick Actions */}
-                    <QuickActions
-                        canCreate={canCreate}
-                        onCreateEvent={handleCreateEvent}
-                        onViewAnalytics={handleViewAnalytics}
-                        onViewRevenue={handleViewRevenue}
-                        onViewAttendees={handleViewAttendees}
-                        onOpenScanner={handleOpenScanner}
-                        onOpenSettings={handleOpenSettings}
-                        delay={0.7}
                     />
                 </div>
             </div>

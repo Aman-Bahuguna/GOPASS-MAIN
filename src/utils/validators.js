@@ -1,4 +1,4 @@
-import { FILE_UPLOAD } from './constants';
+import { FILE_UPLOAD, ROLES } from './constants';
 
 // Email validation
 export const validateEmail = (email) => {
@@ -55,8 +55,9 @@ export const validatePincode = (pincode) => {
     return null;
 };
 
-// Position validation
+// Position validation (only required for Admin role)
 export const validatePosition = (position, role) => {
+    if (role === ROLES.ORGANIZER) return null; // Position not required for organizers
     if (!position) return 'Please select your position';
     return null;
 };
@@ -134,8 +135,11 @@ export const validateStep3 = (formData) => {
     const pincodeError = validatePincode(formData.pincode);
     if (pincodeError) errors.pincode = pincodeError;
 
-    const positionError = validatePosition(formData.position, formData.role);
-    if (positionError) errors.position = positionError;
+    // Only validate position for Admin role (organizers don't have position selection)
+    if (formData.role === ROLES.ADMIN) {
+        const positionError = validatePosition(formData.position, formData.role);
+        if (positionError) errors.position = positionError;
+    }
 
     const idCardError = validateIdCardFile(formData.idCardFile);
     if (idCardError) errors.idCardFile = idCardError;

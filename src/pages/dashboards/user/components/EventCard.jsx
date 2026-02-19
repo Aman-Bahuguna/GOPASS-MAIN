@@ -27,13 +27,6 @@ function EventCard({ event, index, onRegister, isRegistered }) {
         >
             {/* Event Image */}
             <div className="h-44 bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300 relative overflow-hidden">
-                {/* Animated background pattern */}
-                <div className="absolute inset-0 opacity-20">
-                    <div className="absolute top-4 left-4 w-24 h-24 border border-white/50 rounded-full" />
-                    <div className="absolute bottom-4 right-4 w-16 h-16 border border-white/50 rounded-full" />
-                    <div className="absolute top-1/2 left-1/2 w-32 h-32 border border-white/30 rounded-full -translate-x-1/2 -translate-y-1/2" />
-                </div>
-
                 {/* Event icon */}
                 <div className="absolute inset-0 flex items-center justify-center">
                     <motion.div
@@ -46,9 +39,9 @@ function EventCard({ event, index, onRegister, isRegistered }) {
 
                 {/* Price badge */}
                 <div className="absolute top-4 left-4">
-                    <span className={`px-4 py-1.5 rounded-full text-sm font-bold shadow-lg ${event.fee === 0
+                    <span className={`px-3 py-2 rounded-full text-xs font-bold shadow-lg whitespace-nowrap ${event.fee === 0
                         ? 'bg-emerald-500 text-white'
-                        : 'bg-white text-slate-800'
+                        : 'bg-white text-slate-900'
                         }`}>
                         {event.fee === 0 ? 'FREE' : `₹${event.fee}`}
                     </span>

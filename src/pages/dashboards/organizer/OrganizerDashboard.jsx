@@ -6,10 +6,12 @@ import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
 import { SettingsPage } from '../settings';
 import OrganizerCreateEventForm from './components/OrganizerCreateEventForm';
+import AttendeeSection from './components/attendees/AttendeeSection';
 import { useAuth } from '../../../context/AuthContext';
-import { getDashboardStats } from '../../../api';
+import { getDashboardStats, getEventRegistrations } from '../../../api';
 import { canOrganizerCreateEvents } from '../../../utils/roleConfig';
 import { DashboardHome } from './components';
+import { EventsSection } from './components/events';
 import { fetchEvents, selectAllEvents, selectEventsStatus } from '../../../store/slices/eventsSlice';
 
 /**
@@ -24,8 +26,11 @@ export default function OrganizerDashboard() {
 
     const [currentPage, setCurrentPage] = useState('home');
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [eventAttendees, setEventAttendees] = useState([]);
+    const [fullActivated, setFullActivated] = useState(false);
 
-    const canCreate = canOrganizerCreateEvents(user);
+    const canCreate = fullActivated || canOrganizerCreateEvents(user);
 
     // Fetch Events if not loaded
     useEffect(() => {
@@ -52,8 +57,30 @@ export default function OrganizerDashboard() {
 
     // Navigation handler
     const handleNavigate = useCallback((page) => {
+        // reset attendee selection when changing pages
+        if (page !== 'attendees') {
+            setSelectedEvent(null);
+            setEventAttendees([]);
+        }
         setCurrentPage(page);
     }, []);
+
+    const handleViewEventAttendees = async (event) => {
+        setSelectedEvent(event);
+        const regs = getEventRegistrations(event.id);
+        setEventAttendees(regs);
+        // navigate to attendee page so the list is shown
+        handleNavigate('attendees');
+    };
+
+    const handleBackToEvents = () => {
+        setSelectedEvent(null);
+        setEventAttendees([]);
+    };
+
+    const handleActivateFull = () => {
+        setFullActivated(true);
+    };
 
     // Get page title based on current page
     const getPageTitle = () => {
@@ -142,14 +169,33 @@ export default function OrganizerDashboard() {
 
             case 'attendees':
                 return (
-                    <motion.div
-                        className="flex flex-col items-center justify-center py-16"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                    >
-                        <h3 className="text-xl font-bold text-slate-900 mb-2">Attendee Management</h3>
-                        <p className="text-slate-500">Coming soon...</p>
-                    </motion.div>
+                    <AttendeeSection
+                        events={organizerEvents}
+                        selectedEvent={selectedEvent}
+                        attendees={eventAttendees}
+                        onBack={handleBackToEvents}
+                    />
+                );
+
+            case 'my-events':
+                return (
+                    <div className="py-6">
+                        {/* only the event list, no stats or quick actions */}
+                        <EventsSection
+                            events={organizerEvents}
+                            canCreate={canCreate}
+                            isLoading={isDashboardLoading}
+                            onCreateEvent={() => handleNavigate('create-event')}
+                            onManageEvent={(event) => handleNavigate(`event/${event.id}`)}
+                            onViewEvent={(event) => handleNavigate(`event/${event.id}/view`)}
+                            onEditEvent={(event) => handleNavigate(`event/${event.id}/edit`)}
+                            onDeleteEvent={(event) => console.log('Delete event:', event.id)}
+                            onDuplicateEvent={(event) => console.log('Duplicate event:', event.id)}
+                            onViewAttendees={handleViewEventAttendees}
+                            onBulkDelete={() => {}}
+                            onBulkExport={() => {}}
+                        />
+                    </div>
                 );
 
             case 'scanner':
@@ -173,6 +219,9 @@ export default function OrganizerDashboard() {
                         canCreate={canCreate}
                         isLoading={isDashboardLoading}
                         onNavigate={handleNavigate}
+                        onViewAttendees={handleViewEventAttendees}
+                        fullActivated={fullActivated}
+                        onActivateFull={handleActivateFull}
                     />
                 );
         }

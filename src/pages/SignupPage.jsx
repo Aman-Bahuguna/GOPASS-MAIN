@@ -785,9 +785,10 @@ export default function SignupPage({ onNavigateToLogin, onNavigateToHome, onSign
                                     <motion.button
                                         type="button"
                                         onClick={handleBack}
-                                        className="flex-1 px-6 py-4 border-2 border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all"
+                                        className="px-6 py-4 border-2 border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all"
                                         whileHover={{ scale: 1.02, y: -2 }}
                                         whileTap={{ scale: 0.98 }}
+                                        style={{ minWidth: '120px' }}
                                     >
                                         Back
                                     </motion.button>
@@ -795,27 +796,29 @@ export default function SignupPage({ onNavigateToLogin, onNavigateToHome, onSign
                                 <motion.button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="flex-1 bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-brand-200/50 transition-all disabled:opacity-50 group relative overflow-hidden"
+                                    className="flex-1 bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 text-white py-4 px-6 rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-brand-200/50 transition-all disabled:opacity-50 group relative overflow-hidden"
                                     whileHover={{ scale: 1.02, y: -2 }}
                                     whileTap={{ scale: 0.98 }}
                                 >
-                                    {isLoading ? (
-                                        <motion.div
-                                            className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"
-                                            animate={{ rotate: 360 }}
-                                            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                                        />
-                                    ) : currentStep < totalSteps ? (
-                                        <>
-                                            Next Step
-                                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                        </>
-                                    ) : (
-                                        <>
-                                            <UserPlus className="w-5 h-5" />
-                                            {needsCollegeVerification ? 'Submit for Verification' : 'Create Account'}
-                                        </>
-                                    )}
+                                    <span className="relative z-10 flex items-center justify-center gap-2">
+                                        {isLoading ? (
+                                            <motion.div
+                                                className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"
+                                                animate={{ rotate: 360 }}
+                                                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                                            />
+                                        ) : currentStep < totalSteps ? (
+                                            <>
+                                                Next Step
+                                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                            </>
+                                        ) : (
+                                            <>
+                                                <UserPlus className="w-5 h-5 flex-shrink-0" />
+                                                <span>{needsCollegeVerification ? 'Submit for Verification' : 'Create Account'}</span>
+                                            </>
+                                        )}
+                                    </span>
 
                                     {/* Shine effect */}
                                     <motion.div
