@@ -236,7 +236,7 @@ export default function UserDashboard() {
                                 showViewAll={false}
                             />
                         ) : (
-                            <div className="text-center py-16 bg-white rounded-2xl border border-slate-200">
+                            <div className="text-center py-16 bg-[#f7f8fa] rounded-2xl border border-slate-200">
                                 <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-100 flex items-center justify-center">
                                     <Heart className="w-8 h-8 text-slate-300" />
                                 </div>
@@ -246,7 +246,7 @@ export default function UserDashboard() {
                                 </p>
                                 <button
                                     onClick={handleExploreEvents}
-                                    className="px-6 py-2.5 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-medium hover:shadow-lg transition-shadow"
+                                    className="px-6 py-2.5 bg-brand-100 text-white rounded-xl font-medium hover:shadow-lg transition-shadow"
                                 >
                                     Explore Events
                                 </button>

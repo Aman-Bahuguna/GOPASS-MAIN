@@ -49,28 +49,28 @@ function OrganizerEventCard({
             bg: 'bg-blue-100',
             text: 'text-blue-700',
             icon: Calendar,
-            gradient: 'from-blue-400 to-indigo-500',
+            solid: 'bg-blue-500',
             label: 'Upcoming'
         },
         ONGOING: {
             bg: 'bg-emerald-100',
             text: 'text-emerald-700',
             icon: Play,
-            gradient: 'from-emerald-400 to-teal-500',
+            solid: 'bg-emerald-500',
             label: 'Live'
         },
         COMPLETED: {
             bg: 'bg-slate-100',
             text: 'text-slate-600',
             icon: CheckCircle2,
-            gradient: 'from-slate-300 to-slate-400',
+            solid: 'bg-slate-400',
             label: 'Completed'
         },
         DRAFT: {
             bg: 'bg-amber-100',
             text: 'text-amber-700',
             icon: Edit,
-            gradient: 'from-amber-400 to-orange-500',
+            solid: 'bg-amber-500',
             label: 'Draft'
         }
     };
@@ -96,9 +96,9 @@ function OrganizerEventCard({
             whileHover={{ y: -5, boxShadow: '0 20px 50px rgba(0,0,0,0.1)' }}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            className={`relative bg-white rounded-2xl border overflow-hidden transition-all duration-300 group ${selected
+            className={`relative bg-[#f7f8fa] rounded-2xl border overflow-hidden transition-all duration-300 group ${selected
                     ? 'border-brand-200 ring-2 ring-brand-200/20'
-                    : 'border-slate-200/60 hover:border-slate-300'
+                    : 'border-slate-200 hover:border-slate-300'
                 }`}
         >
             {/* Selection checkbox */}
@@ -125,8 +125,8 @@ function OrganizerEventCard({
                 </motion.div>
             )}
 
-            {/* Top gradient bar based on status */}
-            <div className={`h-1.5 bg-gradient-to-r ${status.gradient}`} />
+            {/* Top accent bar based on status */}
+            <div className={`h-1.5 ${status.solid}`} />
 
             <div className="p-5">
                 <div className="flex items-start justify-between mb-4">
@@ -175,7 +175,7 @@ function OrganizerEventCard({
                                         initial={{ opacity: 0, scale: 0.95, y: -10 }}
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                                        className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-slate-200/50 py-2 z-50 overflow-hidden"
+                                        className="absolute right-0 mt-2 w-48 bg-[#f7f8fa] rounded-xl shadow-2xl border border-slate-200 py-2 z-50 overflow-hidden"
                                     >
                                         <motion.button
                                             onClick={(e) => handleMenuAction(onView, e)}
@@ -198,7 +198,7 @@ function OrganizerEventCard({
                                         >
                                             <Copy className="w-4 h-4 text-slate-400" /> Duplicate
                                         </motion.button>
-                                        <div className="my-1 border-t border-slate-100" />
+                                        <div className="my-1 border-t border-slate-200" />
                                         <motion.button
                                             onClick={(e) => handleMenuAction(onDelete, e)}
                                             className="w-full px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3"
@@ -255,8 +255,8 @@ function OrganizerEventCard({
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                         <motion.div
                             className={`h-full rounded-full ${fillPercentage >= 90
-                                    ? 'bg-gradient-to-r from-emerald-400 to-teal-500'
-                                    : 'bg-gradient-to-r from-brand-200 to-brand-300'
+                                    ? 'bg-emerald-500'
+                                    : 'bg-brand-200'
                                 }`}
                             initial={{ width: 0 }}
                             animate={{ width: `${fillPercentage}%` }}
@@ -266,7 +266,7 @@ function OrganizerEventCard({
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between pt-4 border-t border-slate-200">
                     <span className={`px-3 py-1.5 ${status.bg} ${status.text} rounded-lg text-xs font-semibold flex items-center gap-1.5`}>
                         <StatusIcon className="w-3.5 h-3.5" />
                         {status.label}

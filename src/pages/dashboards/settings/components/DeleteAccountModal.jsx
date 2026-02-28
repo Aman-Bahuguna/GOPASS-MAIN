@@ -60,7 +60,7 @@ export default function DeleteAccountModal({ isOpen, onClose, onConfirm }) {
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         className="fixed inset-0 z-50 flex items-center justify-center p-4"
                     >
-                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
+                        <div className="bg-[#f7f8fa] rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
                             {success ? (
                                 <div className="text-center py-8">
                                     <motion.div

@@ -86,9 +86,9 @@ function NotificationSettings({
                         className="fixed inset-0 flex items-center justify-center z-50 p-4"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="bg-[#f7f8fa] rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
                             {/* Header */}
-                            <div className="flex items-center justify-between p-6 pb-4 border-b border-slate-100">
+                            <div className="flex items-center justify-between p-6 pb-4 border-b border-slate-200">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-brand-100/20 rounded-xl">
                                         <Settings className="w-5 h-5 text-brand-200" />
@@ -192,7 +192,7 @@ function NotificationSettings({
                             </div>
 
                             {/* Actions */}
-                            <div className="flex items-center gap-3 p-6 pt-4 bg-slate-50 border-t border-slate-100">
+                            <div className="flex items-center gap-3 p-6 pt-4 bg-slate-50 border-t border-slate-200">
                                 <ActionButton
                                     onClick={onClose}
                                     label="Cancel"
@@ -228,7 +228,7 @@ function ToggleSwitch({ checked, onChange }) {
             whileTap={{ scale: 0.95 }}
         >
             <motion.div
-                className="absolute top-1 w-4 h-4 bg-white rounded-full shadow"
+                className="absolute top-1 w-4 h-4 bg-[#f7f8fa] rounded-full shadow"
                 animate={{ left: checked ? '24px' : '4px' }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             />

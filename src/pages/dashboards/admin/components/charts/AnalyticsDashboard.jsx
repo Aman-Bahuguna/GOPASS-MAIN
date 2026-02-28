@@ -121,7 +121,7 @@ function AnalyticsDashboard({
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-2xl border border-slate-200/60 p-6"
+                        className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6"
                     >
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 bg-blue-100 rounded-lg">
@@ -146,7 +146,7 @@ function AnalyticsDashboard({
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="bg-white rounded-2xl border border-slate-200/60 p-6"
+                        className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6"
                     >
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 bg-emerald-100 rounded-lg">
@@ -172,7 +172,7 @@ function AnalyticsDashboard({
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="bg-white rounded-2xl border border-slate-200/60 p-6"
+                        className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6"
                     >
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 bg-purple-100 rounded-lg">
@@ -198,7 +198,7 @@ function AnalyticsDashboard({
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="bg-white rounded-2xl border border-slate-200/60 p-6"
+                        className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6"
                     >
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 bg-amber-100 rounded-lg">

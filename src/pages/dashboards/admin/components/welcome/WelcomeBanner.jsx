@@ -3,7 +3,7 @@ import { Shield, Sparkles, ChevronRight, Bell } from 'lucide-react';
 
 /**
  * Premium Welcome Banner Component
- * Displays a gradient welcome banner with admin information
+ * Displays a welcome banner with admin information
  */
 function WelcomeBanner({ user, onViewNotifications, notificationCount = 0 }) {
     const getGreeting = () => {
@@ -19,7 +19,7 @@ function WelcomeBanner({ user, onViewNotifications, notificationCount = 0 }) {
 
     return (
         <motion.div
-            className="relative bg-gradient-to-r from-brand-200 via-purple-500 to-brand-100 rounded-2xl p-6 sm:p-8 text-white overflow-hidden mb-8"
+            className="relative bg-brand-200 rounded-2xl p-6 sm:p-8 text-white overflow-hidden mb-8"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -27,7 +27,7 @@ function WelcomeBanner({ user, onViewNotifications, notificationCount = 0 }) {
             {/* Background decorations */}
             <div className="absolute inset-0 overflow-hidden">
                 <motion.div
-                    className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4"
+                    className="absolute top-0 right-0 w-48 h-48 bg-[#f7f8fa]/10 rounded-full -translate-y-1/2 translate-x-1/4"
                     animate={{
                         scale: [1, 1.2, 1],
                         opacity: [0.1, 0.15, 0.1]
@@ -35,7 +35,7 @@ function WelcomeBanner({ user, onViewNotifications, notificationCount = 0 }) {
                     transition={{ duration: 6, repeat: Infinity }}
                 />
                 <motion.div
-                    className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/4"
+                    className="absolute bottom-0 left-0 w-32 h-32 bg-[#f7f8fa]/10 rounded-full translate-y-1/2 -translate-x-1/4"
                     animate={{
                         scale: [1, 1.3, 1],
                         opacity: [0.1, 0.2, 0.1]
@@ -43,7 +43,7 @@ function WelcomeBanner({ user, onViewNotifications, notificationCount = 0 }) {
                     transition={{ duration: 5, repeat: Infinity }}
                 />
                 <motion.div
-                    className="absolute top-1/2 right-1/4 w-20 h-20 bg-white/5 rounded-full"
+                    className="absolute top-1/2 right-1/4 w-20 h-20 bg-[#f7f8fa]/5 rounded-full"
                     animate={{
                         y: [-10, 10, -10],
                         x: [-5, 5, -5]
@@ -106,7 +106,7 @@ function WelcomeBanner({ user, onViewNotifications, notificationCount = 0 }) {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4 }}
                     >
-                        <span className="flex items-center gap-2 px-3 py-1.5 bg-white/20 rounded-full text-sm font-medium backdrop-blur-sm">
+                        <span className="flex items-center gap-2 px-3 py-1.5 bg-[#f7f8fa]/20 rounded-full text-sm font-medium backdrop-blur-sm">
                             <Shield className="w-4 h-4" />
                             {user?.position || 'Admin'}
                         </span>
@@ -127,7 +127,7 @@ function WelcomeBanner({ user, onViewNotifications, notificationCount = 0 }) {
                     {onViewNotifications && (
                         <motion.button
                             onClick={onViewNotifications}
-                            className="relative p-3 bg-white/20 hover:bg-white/30 rounded-xl backdrop-blur-sm transition-colors"
+                            className="relative p-3 bg-[#f7f8fa]/20 hover:bg-[#f7f8fa]/30 rounded-xl backdrop-blur-sm transition-colors"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
@@ -146,7 +146,7 @@ function WelcomeBanner({ user, onViewNotifications, notificationCount = 0 }) {
 
                     {/* CTA Button */}
                     <motion.button
-                        className="px-5 py-3 bg-white text-brand-200 rounded-xl font-semibold hover:bg-white/90 transition-colors flex items-center gap-2 shadow-lg"
+                        className="px-5 py-3 bg-[#f7f8fa] text-brand-200 rounded-xl font-semibold hover:bg-[#f7f8fa]/90 transition-colors flex items-center gap-2 shadow-lg"
                         whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
                     >

@@ -30,20 +30,20 @@ import { ROLES, USER_STATUS, ADMIN_POSITIONS, ORGANIZER_POSITIONS } from '../../
 // Profile Stat Card
 function ProfileStatCard({ icon: Icon, label, value, color = 'brand' }) {
     const colorClasses = {
-        brand: 'from-brand-100 to-brand-200 text-brand-300',
-        green: 'from-green-100 to-green-200 text-green-600',
-        blue: 'from-blue-100 to-blue-200 text-blue-600',
-        purple: 'from-purple-100 to-purple-200 text-purple-600',
-        amber: 'from-amber-100 to-amber-200 text-amber-600',
+        brand: 'bg-brand-100 text-white',
+        green: 'bg-green-500 text-white',
+        blue: 'bg-blue-500 text-white',
+        purple: 'bg-purple-500 text-white',
+        amber: 'bg-amber-500 text-white',
     };
 
     return (
         <motion.div
-            className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/50"
+            className="bg-[#f7f8fa] rounded-2xl p-5 shadow-sm border border-slate-200"
             whileHover={{ scale: 1.02, y: -2 }}
             transition={{ type: 'spring', stiffness: 300 }}
         >
-            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colorClasses[color]} flex items-center justify-center mb-3`}>
+            <div className={`w-12 h-12 rounded-xl ${colorClasses[color]} flex items-center justify-center mb-3`}>
                 <Icon className="w-6 h-6" />
             </div>
             <p className="text-2xl font-bold text-slate-900">{value}</p>
@@ -98,7 +98,7 @@ function EditableField({ label, value, icon: Icon, isEditing, onEdit, type = 'te
 
     return (
         <div className="flex items-start gap-4 p-4 bg-slate-50 rounded-xl">
-            <div className="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-slate-600">
+            <div className="w-10 h-10 rounded-lg bg-[#f7f8fa] shadow-sm flex items-center justify-center text-slate-600">
                 <Icon className="w-5 h-5" />
             </div>
             <div className="flex-1">
@@ -111,7 +111,7 @@ function EditableField({ label, value, icon: Icon, isEditing, onEdit, type = 'te
                                 setEditValue(e.target.value);
                                 onEdit && onEdit(e.target.value);
                             }}
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                            className="w-full px-3 py-2 bg-[#f7f8fa] border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-200"
                         >
                             {options.map(opt => (
                                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -125,7 +125,7 @@ function EditableField({ label, value, icon: Icon, isEditing, onEdit, type = 'te
                                 setEditValue(e.target.value);
                                 onEdit && onEdit(e.target.value);
                             }}
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                            className="w-full px-3 py-2 bg-[#f7f8fa] border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-200"
                         />
                     )
                 ) : (
@@ -171,13 +171,13 @@ function UserProfileSection({ user }) {
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
+            <div className="bg-[#f7f8fa] rounded-2xl p-6 shadow-sm border border-slate-200">
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">Interests & Preferences</h3>
                 <div className="flex flex-wrap gap-2">
                     {['Technology', 'Music', 'Art', 'Sports', 'Workshops', 'Networking'].map((interest) => (
                         <span
                             key={interest}
-                            className="px-4 py-2 bg-gradient-to-r from-slate-100 to-slate-50 rounded-full text-sm font-medium text-slate-700 border border-slate-200"
+                            className="px-4 py-2 bg-slate-100 rounded-full text-sm font-medium text-slate-700 border border-slate-200"
                         >
                             {interest}
                         </span>
@@ -221,7 +221,7 @@ function OrganizerProfileSection({ user }) {
             </div>
 
             {/* Organizer Info */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
+            <div className="bg-[#f7f8fa] rounded-2xl p-6 shadow-sm border border-slate-200">
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">Organization Details</h3>
                 <div className="grid md:grid-cols-2 gap-4">
                     <EditableField
@@ -252,7 +252,7 @@ function OrganizerProfileSection({ user }) {
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200"
+                    className="bg-amber-50 rounded-2xl p-6 border border-amber-200"
                 >
                     <div className="flex items-start gap-4">
                         <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
@@ -305,7 +305,7 @@ function AdminProfileSection({ user }) {
             </div>
 
             {/* Admin Info */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
+            <div className="bg-[#f7f8fa] rounded-2xl p-6 shadow-sm border border-slate-200">
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">Administrative Details</h3>
                 <div className="grid md:grid-cols-2 gap-4">
                     <EditableField
@@ -333,7 +333,7 @@ function AdminProfileSection({ user }) {
 
             {/* ID Card Preview */}
             {user?.idCardUrl && (
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
+                <div className="bg-[#f7f8fa] rounded-2xl p-6 shadow-sm border border-slate-200">
                     <h3 className="text-lg font-semibold text-slate-900 mb-4">Verification Document</h3>
                     <div className="flex items-center gap-4">
                         <div className="w-20 h-20 rounded-xl bg-slate-100 overflow-hidden">
@@ -416,7 +416,7 @@ export default function ProfilePage({ onNavigate }) {
                                 whileTap={{ scale: 0.98 }}
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className="px-4 py-2 bg-gradient-to-r from-brand-200 to-brand-300 text-white rounded-xl font-medium shadow-lg shadow-brand-200/30 flex items-center gap-2 disabled:opacity-50"
+                                className="px-4 py-2 bg-brand-200 text-white rounded-xl font-medium shadow-lg shadow-brand-200/30 flex items-center gap-2 disabled:opacity-50"
                             >
                                 <Save className="w-4 h-4" />
                                 {isSaving ? 'Saving...' : 'Save Changes'}
@@ -441,10 +441,10 @@ export default function ProfilePage({ onNavigate }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200/50 overflow-hidden"
+                className="bg-[#f7f8fa] rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden"
             >
                 {/* Cover Image */}
-                <div className="h-36 bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 relative">
+                <div className="h-36 bg-brand-200 relative">
                     <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-50"></div>
                 </div>
 
@@ -452,11 +452,11 @@ export default function ProfilePage({ onNavigate }) {
                 <div className="px-8 pb-8 -mt-16 relative">
                     {/* Avatar */}
                     <div className="relative inline-block">
-                        <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-brand-200 to-brand-400 flex items-center justify-center text-white text-4xl font-bold border-4 border-white shadow-xl">
+                        <div className="w-32 h-32 rounded-2xl bg-brand-200 flex items-center justify-center text-white text-4xl font-bold border-4 border-white shadow-xl">
                             {user?.fullName?.charAt(0).toUpperCase()}
                         </div>
                         {isEditing && (
-                            <button className="absolute bottom-2 right-2 w-8 h-8 bg-white rounded-lg shadow-lg flex items-center justify-center text-slate-600 hover:bg-slate-50">
+                            <button className="absolute bottom-2 right-2 w-8 h-8 bg-[#f7f8fa] rounded-lg shadow-lg flex items-center justify-center text-slate-600 hover:bg-slate-50">
                                 <Camera className="w-4 h-4" />
                             </button>
                         )}

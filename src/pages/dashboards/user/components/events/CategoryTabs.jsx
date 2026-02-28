@@ -88,10 +88,10 @@ function CategoryTabs({
         const color = categoryColors[category] || 'slate';
 
         if (isSelected) {
-            return `bg-gradient-to-r from-brand-100 to-brand-200 text-white shadow-lg shadow-brand-200/30`;
+            return `bg-brand-100 text-white shadow-lg shadow-brand-200/30`;
         }
 
-        return `bg-white hover:bg-${color}-50 text-slate-600 hover:text-${color}-700 border border-slate-200 hover:border-${color}-200`;
+        return `bg-[#f7f8fa] hover:bg-${color}-50 text-slate-600 hover:text-${color}-700 border border-slate-200 hover:border-${color}-200`;
     };
 
     return (
@@ -101,7 +101,7 @@ function CategoryTabs({
                 <motion.button
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center text-slate-600 hover:text-brand-200"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#f7f8fa] shadow-lg rounded-full flex items-center justify-center text-slate-600 hover:text-brand-200"
                     onClick={() => scroll('left')}
                 >
                     <ChevronLeft className="w-5 h-5" />
@@ -129,7 +129,7 @@ function CategoryTabs({
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all ${isSelected
-                                    ? 'bg-gradient-to-r from-brand-100 to-brand-200 text-white shadow-lg shadow-brand-200/30'
+                                    ? 'bg-brand-100 text-white shadow-lg shadow-brand-200/30'
                                     : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 hover:border-brand-100'
                                 }`}
                         >
@@ -137,7 +137,7 @@ function CategoryTabs({
                             {category}
                             {showCounts && count !== undefined && (
                                 <span className={`text-xs px-1.5 py-0.5 rounded-full ${isSelected
-                                        ? 'bg-white/20 text-white'
+                                        ? 'bg-[#f7f8fa]/20 text-white'
                                         : 'bg-slate-100 text-slate-500'
                                     }`}>
                                     {count}
@@ -153,7 +153,7 @@ function CategoryTabs({
                 <motion.button
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center text-slate-600 hover:text-brand-200"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#f7f8fa] shadow-lg rounded-full flex items-center justify-center text-slate-600 hover:text-brand-200"
                     onClick={() => scroll('right')}
                 >
                     <ChevronRight className="w-5 h-5" />

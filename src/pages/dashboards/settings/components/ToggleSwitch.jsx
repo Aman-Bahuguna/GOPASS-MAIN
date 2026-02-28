@@ -13,7 +13,7 @@ export default function ToggleSwitch({ enabled, onToggle, disabled = false }) {
             whileTap={!disabled ? { scale: 0.95 } : {}}
         >
             <motion.div
-                className="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-md"
+                className="absolute top-0.5 w-5 h-5 bg-[#f7f8fa] rounded-full shadow-md"
                 animate={{ x: enabled ? 26 : 2 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             />

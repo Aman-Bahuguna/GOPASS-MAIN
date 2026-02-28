@@ -54,7 +54,7 @@ export default function AccountStatus({ user, canCreate, delay = 0.5 }) {
 
     return (
         <motion.div
-            className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm"
+            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6 shadow-sm"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay }}
@@ -75,7 +75,7 @@ export default function AccountStatus({ user, canCreate, delay = 0.5 }) {
                 </div>
                 <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                     <motion.div
-                        className="h-full bg-gradient-to-r from-brand-100 to-brand-200 rounded-full"
+                        className="h-full bg-brand-100 rounded-full"
                         initial={{ width: 0 }}
                         animate={{ width: `${getProgress()}%` }}
                         transition={{ delay: delay + 0.2, duration: 0.8, ease: 'easeOut' }}

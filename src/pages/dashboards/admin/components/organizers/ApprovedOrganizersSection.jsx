@@ -68,7 +68,7 @@ function ApprovedOrganizersSection({
             )}
 
             {/* Organizer List */}
-            <div className="bg-white rounded-2xl border border-slate-200/60 divide-y divide-slate-100 overflow-hidden shadow-sm">
+            <div className="bg-[#f7f8fa] rounded-2xl border border-slate-200 divide-y divide-slate-200 overflow-hidden shadow-sm">
                 {displayedOrganizers.length > 0 ? (
                     <>
                         {displayedOrganizers.map((organizer, index) => (

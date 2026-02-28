@@ -3,7 +3,7 @@ import { Sparkles, TrendingUp, Clock, UserPlus } from 'lucide-react';
 
 /**
  * Quick Stats Card Component
- * Displays quick performance statistics in a gradient card
+ * Displays quick performance statistics card
  */
 function QuickStatsCard({ stats, delay = 0.7 }) {
     const defaultStats = {
@@ -15,7 +15,7 @@ function QuickStatsCard({ stats, delay = 0.7 }) {
 
     return (
         <motion.div
-            className="bg-gradient-to-br from-brand-100 via-brand-200 to-purple-600 rounded-2xl p-6 text-white overflow-hidden relative"
+            className="bg-brand-200 rounded-2xl p-6 text-white overflow-hidden relative"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay }}
@@ -23,12 +23,12 @@ function QuickStatsCard({ stats, delay = 0.7 }) {
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden">
                 <motion.div
-                    className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full"
+                    className="absolute -top-8 -right-8 w-32 h-32 bg-[#f7f8fa]/10 rounded-full"
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 4, repeat: Infinity }}
                 />
                 <motion.div
-                    className="absolute -bottom-8 -left-8 w-24 h-24 bg-white/10 rounded-full"
+                    className="absolute -bottom-8 -left-8 w-24 h-24 bg-[#f7f8fa]/10 rounded-full"
                     animate={{ scale: [1, 1.3, 1] }}
                     transition={{ duration: 5, repeat: Infinity }}
                 />
@@ -85,7 +85,7 @@ function QuickStatsCard({ stats, delay = 0.7 }) {
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-white/20 my-4" />
+                <div className="h-px bg-[#f7f8fa]/20 my-4" />
 
                 {/* View Reports Link */}
                 <motion.button

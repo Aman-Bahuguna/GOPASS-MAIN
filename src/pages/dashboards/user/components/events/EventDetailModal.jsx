@@ -179,11 +179,11 @@ function EventDetailModal({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 50, scale: 0.95 }}
                     transition={{ type: 'spring', duration: 0.5 }}
-                    className={`relative min-h-screen md:min-h-0 md:my-8 md:mx-auto md:max-w-4xl bg-white md:rounded-3xl shadow-2xl overflow-hidden ${className}`}
+                    className={`relative min-h-screen md:min-h-0 md:my-8 md:mx-auto md:max-w-4xl bg-[#f7f8fa] md:rounded-3xl shadow-2xl overflow-hidden ${className}`}
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header Image Section */}
-                    <div className="relative h-64 md:h-80 bg-gradient-to-br from-brand-100 to-brand-300">
+                    <div className="relative h-64 md:h-80 bg-brand-100">
                         {/* Back/Close button */}
                         <button
                             onClick={onClose}
@@ -223,8 +223,8 @@ function EventDetailModal({
                                     onError={() => setImageLoadError(true)}
                                 />
 
-                                {/* Image overlay gradient */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                                {/* Image overlay */}
+                                <div className="absolute inset-0 bg-black/40" />
 
                                 {/* Image navigation */}
                                 {images.length > 1 && (
@@ -250,7 +250,7 @@ function EventDetailModal({
                                                     onClick={() => setCurrentImageIndex(idx)}
                                                     className={`w-2 h-2 rounded-full transition-all ${idx === currentImageIndex
                                                         ? 'bg-white w-6'
-                                                        : 'bg-white/50 hover:bg-white/70'
+                                                        : 'bg-[#f7f8fa]/50 hover:bg-[#f7f8fa]/70'
                                                         }`}
                                                 />
                                             ))}
@@ -261,30 +261,30 @@ function EventDetailModal({
                         ) : (
                             /* Polished fallback when no image or image fails */
                             <>
-                                {/* Soft mesh gradient overlay */}
+                                {/* Soft mesh overlay */}
                                 <div className="absolute inset-0">
-                                    <div className="absolute -top-12 -right-12 w-52 h-52 bg-white/10 rounded-full blur-3xl" />
-                                    <div className="absolute -bottom-10 -left-10 w-44 h-44 bg-white/10 rounded-full blur-3xl" />
-                                    <div className="absolute top-1/3 left-1/3 w-60 h-60 bg-white/5 rounded-full blur-3xl" />
+                                    <div className="absolute -top-12 -right-12 w-52 h-52 bg-[#f7f8fa]/10 rounded-full blur-3xl" />
+                                    <div className="absolute -bottom-10 -left-10 w-44 h-44 bg-[#f7f8fa]/10 rounded-full blur-3xl" />
+                                    <div className="absolute top-1/3 left-1/3 w-60 h-60 bg-[#f7f8fa]/5 rounded-full blur-3xl" />
                                 </div>
                                 {/* Dot pattern */}
-                                <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+                                <div className="absolute inset-0 opacity-[0.06]"  />
                                 {/* Centered icon + title */}
                                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-8">
-                                    <div className="w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                                    <div className="w-20 h-20 rounded-2xl bg-[#f7f8fa]/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
                                         <Calendar className="w-10 h-10 text-white" />
                                     </div>
                                     <p className="text-white/70 text-base font-semibold text-center max-w-[60%] line-clamp-2">
                                         {title}
                                     </p>
                                 </div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                                <div className="absolute inset-0 bg-black/20" />
                             </>
                         )}
 
                         {/* Category Badge */}
                         <div className="absolute bottom-4 left-4">
-                            <span className="px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full flex items-center gap-1.5">
+                            <span className="px-3 py-1.5 bg-[#f7f8fa]/20 backdrop-blur-sm text-white text-sm font-medium rounded-full flex items-center gap-1.5">
                                 <Tag className="w-3.5 h-3.5" />
                                 {category}
                             </span>
@@ -333,7 +333,7 @@ function EventDetailModal({
                         </div>
 
                         {/* Price & Registration Card */}
-                        <div className="bg-gradient-to-r from-slate-50 to-slate-100/50 rounded-2xl p-5 mb-6 border border-slate-200/50">
+                        <div className="bg-slate-50 rounded-2xl p-5 mb-6 border border-slate-200">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm text-slate-500 mb-1">Registration Fee</p>
@@ -373,7 +373,7 @@ function EventDetailModal({
                                     disabled={isFull}
                                     className={`w-full mt-4 py-4 rounded-xl font-semibold text-lg flex items-center justify-center gap-2 transition-all ${isFull
                                         ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                                        : 'bg-gradient-to-r from-brand-100 to-brand-200 text-white hover:shadow-lg hover:shadow-brand-200/30'
+                                        : 'bg-brand-100 text-white hover:shadow-lg hover:shadow-brand-200/30'
                                         }`}
                                     whileHover={!isFull ? { scale: 1.02 } : {}}
                                     whileTap={!isFull ? { scale: 0.98 } : {}}
@@ -601,7 +601,7 @@ function EventDetailModal({
                                         {event.organizer && (
                                             <div className="p-4 bg-slate-50 rounded-xl">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-300 flex items-center justify-center text-white text-2xl font-bold">
+                                                    <div className="w-16 h-16 rounded-2xl bg-brand-100 flex items-center justify-center text-white text-2xl font-bold">
                                                         {event.organizer?.name?.charAt(0) || 'O'}
                                                     </div>
                                                     <div className="flex-1">

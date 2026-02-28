@@ -99,7 +99,7 @@ export default function QuickActions({
 
     return (
         <motion.div
-            className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm"
+            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6 shadow-sm"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay }}
@@ -119,7 +119,7 @@ export default function QuickActions({
                         key={action.id}
                         onClick={action.onClick}
                         className={`w-full p-3 text-left rounded-xl flex items-center gap-3 transition-all group ${action.primary
-                                ? 'bg-gradient-to-r from-brand-100 to-brand-200 text-white shadow-lg shadow-brand-200/20 hover:shadow-xl hover:shadow-brand-200/30'
+                                ? 'bg-brand-100 text-white shadow-lg shadow-brand-200/20 hover:shadow-xl hover:shadow-brand-200/30'
                                 : 'hover:bg-slate-50'
                             }`}
                         initial={{ opacity: 0, x: -10 }}
@@ -127,7 +127,7 @@ export default function QuickActions({
                         transition={{ delay: delay + index * 0.05 }}
                         whileHover={{ x: action.primary ? 0 : 4 }}
                     >
-                        <div className={`p-2 rounded-lg ${action.primary ? 'bg-white/20' : action.bgColor
+                        <div className={`p-2 rounded-lg ${action.primary ? 'bg-[#f7f8fa]/20' : action.bgColor
                             }`}>
                             <action.icon className={`w-4 h-4 ${action.primary ? 'text-white' : action.iconColor
                                 }`} />
@@ -151,7 +151,7 @@ export default function QuickActions({
             </div>
 
             {/* Footer actions */}
-            <div className="mt-4 pt-4 border-t border-slate-100">
+            <div className="mt-4 pt-4 border-t border-slate-200">
                 <motion.button
                     onClick={onOpenSettings}
                     className="w-full p-2.5 text-center text-sm text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center justify-center gap-2"

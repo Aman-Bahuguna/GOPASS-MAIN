@@ -56,7 +56,7 @@ export default function EventFilters({
 
     return (
         <motion.div
-            className="bg-white rounded-2xl border border-slate-200/60 p-4 mb-6"
+            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-4 mb-6"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
         >
@@ -154,7 +154,7 @@ export default function EventFilters({
                         transition={{ duration: 0.2 }}
                         className="overflow-hidden"
                     >
-                        <div className="pt-4 mt-4 border-t border-slate-100">
+                        <div className="pt-4 mt-4 border-t border-slate-200">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                 {/* Date range - From */}
                                 <div>
@@ -196,7 +196,7 @@ export default function EventFilters({
             {/* Active filter tags */}
             {hasActiveFilters && (
                 <motion.div
-                    className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-100"
+                    className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-200"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                 >

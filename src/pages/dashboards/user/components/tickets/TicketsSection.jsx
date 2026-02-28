@@ -117,7 +117,7 @@ function TicketsSection({
                         {tab.label}
                         {tab.count > 0 && (
                             <span className={`ml-1.5 px-1.5 py-0.5 rounded text-xs ${selectedTab === tab.id
-                                ? 'bg-white/20'
+                                ? 'bg-[#f7f8fa]/20'
                                 : 'bg-slate-200'
                                 }`}>
                                 {tab.count}

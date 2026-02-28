@@ -23,7 +23,7 @@ function SectionHeader({
         >
             <div className="flex items-center gap-3">
                 {Icon && (
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-100/10 to-brand-200/10 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
                         <Icon className="w-5 h-5 text-brand-200" />
                     </div>
                 )}

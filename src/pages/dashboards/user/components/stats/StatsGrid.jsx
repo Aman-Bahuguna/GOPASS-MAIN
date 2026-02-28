@@ -64,7 +64,7 @@ function StatsGrid({
                     Array.from({ length: 3 }).map((_, i) => (
                         <div
                             key={i}
-                            className="bg-white rounded-2xl border border-slate-200/60 p-5 animate-pulse"
+                            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-5 animate-pulse"
                         >
                             <div className="flex items-center gap-4">
                                 <div className="w-14 h-14 bg-slate-100 rounded-xl" />

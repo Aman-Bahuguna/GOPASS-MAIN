@@ -6,19 +6,19 @@ import AnimatedCounter from './AnimatedCounter';
 function StatCard({ icon: Icon, label, value, trend, color, delay, locked, subtitle }) {
     const colorConfig = {
         orange: {
-            gradient: 'from-orange-500 to-amber-500',
+            solid: 'bg-orange-500',
             glow: 'shadow-orange-200/50'
         },
         blue: {
-            gradient: 'from-blue-500 to-indigo-500',
+            solid: 'bg-blue-500',
             glow: 'shadow-blue-200/50'
         },
         green: {
-            gradient: 'from-emerald-500 to-teal-500',
+            solid: 'bg-emerald-500',
             glow: 'shadow-emerald-200/50'
         },
         purple: {
-            gradient: 'from-purple-500 to-violet-500',
+            solid: 'bg-purple-500',
             glow: 'shadow-purple-200/50'
         },
     };
@@ -31,13 +31,13 @@ function StatCard({ icon: Icon, label, value, trend, color, delay, locked, subti
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ delay, duration: 0.5, type: 'spring', stiffness: 100 }}
             whileHover={!locked ? { y: -5, transition: { duration: 0.2 } } : {}}
-            className={`relative bg-white rounded-2xl p-6 border shadow-sm overflow-hidden group cursor-pointer ${locked
+            className={`relative bg-[#f7f8fa] rounded-2xl p-6 border shadow-sm overflow-hidden group cursor-pointer ${locked
                 ? 'opacity-60 border-slate-200'
-                : 'border-slate-200/60 hover:border-slate-300 hover:shadow-xl'
+                : 'border-slate-200 hover:border-slate-300 hover:shadow-xl'
                 }`}
         >
             {/* Background decoration */}
-            <div className={`absolute -right-6 -top-6 w-28 h-28 rounded-full bg-gradient-to-br ${config.gradient} opacity-10 ${!locked ? 'group-hover:opacity-20' : ''} transition-all duration-500 ${!locked ? 'group-hover:scale-125' : ''}`} />
+            <div className={`absolute -right-6 -top-6 w-28 h-28 rounded-full ${config.solid} opacity-10 ${!locked ? 'group-hover:opacity-20' : ''} transition-all duration-500 ${!locked ? 'group-hover:scale-125' : ''}`} />
 
             {/* Lock overlay */}
             {locked && (
@@ -54,7 +54,7 @@ function StatCard({ icon: Icon, label, value, trend, color, delay, locked, subti
 
             <div className="relative flex items-start justify-between">
                 <div className="flex-1">
-                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${config.gradient} shadow-lg ${config.glow} mb-4`}>
+                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${config.solid} shadow-lg ${config.glow} mb-4`}>
                         <Icon className="w-6 h-6 text-white" />
                     </div>
                     <p className="text-slate-500 text-sm font-medium mb-1">{label}</p>
@@ -83,7 +83,7 @@ function StatCard({ icon: Icon, label, value, trend, color, delay, locked, subti
             {/* Hover effect */}
             {!locked && (
                 <motion.div
-                    className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${config.gradient}`}
+                    className={`absolute bottom-0 left-0 right-0 h-1 ${config.solid}`}
                     initial={{ scaleX: 0 }}
                     whileHover={{ scaleX: 1 }}
                     transition={{ duration: 0.3 }}

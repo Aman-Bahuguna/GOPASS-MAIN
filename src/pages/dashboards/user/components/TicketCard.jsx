@@ -15,12 +15,12 @@ function TicketCard({ registration, index, onViewTicket }) {
             onClick={() => onViewTicket(registration)}
             className={`flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all ${isPast
                 ? 'bg-slate-50 border-slate-200'
-                : 'bg-gradient-to-r from-white to-brand-50/30 border-brand-100/50 hover:shadow-lg hover:shadow-brand-100/20'
+                : 'bg-[#f7f8fa] border-brand-100/50 hover:shadow-lg hover:shadow-brand-100/20'
                 }`}
         >
             <div className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 ${isPast
                 ? 'bg-slate-200'
-                : 'bg-gradient-to-br from-brand-100 to-brand-300'
+                : 'bg-brand-100'
                 }`}>
                 <Ticket className={`w-7 h-7 ${isPast ? 'text-slate-400' : 'text-white'}`} />
             </div>

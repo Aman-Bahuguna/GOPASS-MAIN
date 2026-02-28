@@ -23,7 +23,7 @@ function LiveEventCard({ event, index }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="relative bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 rounded-2xl border border-red-200/50 p-5 overflow-hidden group hover:shadow-lg transition-all"
+            className="relative bg-red-50 rounded-2xl border border-red-200/50 p-5 overflow-hidden group hover:shadow-lg transition-all"
         >
             {/* Live Pulse Animation */}
             <div className="absolute top-4 right-4 flex items-center gap-2">
@@ -37,7 +37,7 @@ function LiveEventCard({ event, index }) {
 
             {/* Event Image/Banner */}
             <div className="flex gap-4">
-                <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-red-400 to-orange-500 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                <div className="w-20 h-20 rounded-xl bg-red-500 flex-shrink-0 flex items-center justify-center overflow-hidden">
                     {event.image ? (
                         <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
                     ) : (
@@ -70,7 +70,7 @@ function LiveEventCard({ event, index }) {
                 </div>
                 <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
                     <motion.div
-                        className="h-full bg-gradient-to-r from-red-500 to-orange-500 rounded-full"
+                        className="h-full bg-red-500 rounded-full"
                         initial={{ width: '30%' }}
                         animate={{ width: '70%' }}
                         transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
@@ -80,7 +80,7 @@ function LiveEventCard({ event, index }) {
 
             {/* View Button */}
             <motion.button
-                className="mt-4 w-full py-2.5 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-red-200/50"
+                className="mt-4 w-full py-2.5 bg-red-500 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-red-200/50"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
             >
@@ -110,12 +110,12 @@ function UpcomingEventCard({ event, index }) {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 hover:shadow-md transition-all group cursor-pointer"
+            className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl border border-blue-100 hover:shadow-md transition-all group cursor-pointer"
         >
             {/* Date Badge */}
-            <div className={`flex-shrink-0 w-14 h-14 rounded-xl flex flex-col items-center justify-center ${isToday ? 'bg-gradient-to-br from-emerald-500 to-green-600' :
-                    isTomorrow ? 'bg-gradient-to-br from-amber-500 to-orange-600' :
-                        'bg-gradient-to-br from-blue-500 to-indigo-600'
+            <div className={`flex-shrink-0 w-14 h-14 rounded-xl flex flex-col items-center justify-center ${isToday ? 'bg-emerald-500' :
+                    isTomorrow ? 'bg-amber-500' :
+                        'bg-blue-500'
                 } text-white shadow-lg`}>
                 <span className="text-xs font-medium opacity-90">
                     {eventDate.toLocaleDateString('en-IN', { weekday: 'short' })}
@@ -232,7 +232,7 @@ function CollegeEventsSection({
         <div className="space-y-6">
             {/* Header Card */}
             <motion.div
-                className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm"
+                className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6 shadow-sm"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
             >
@@ -251,7 +251,7 @@ function CollegeEventsSection({
                     {onCreateEvent && (
                         <motion.button
                             onClick={onCreateEvent}
-                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl text-sm font-medium shadow-lg shadow-brand-200/30"
+                            className="flex items-center gap-2 px-4 py-2 bg-brand-100 text-white rounded-xl text-sm font-medium shadow-lg shadow-brand-200/30"
                             whileHover={{ scale: 1.02, y: -1 }}
                             whileTap={{ scale: 0.98 }}
                         >
@@ -322,7 +322,7 @@ function CollegeEventsSection({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm"
+                    className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6 shadow-sm"
                 >
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
@@ -354,7 +354,7 @@ function CollegeEventsSection({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm"
+                    className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6 shadow-sm"
                 >
                     {!hasFilters && !hasLiveOrUpcoming && (
                         <div className="flex items-center gap-2 mb-4">
@@ -404,7 +404,7 @@ function CollegeEventsSection({
                             {onCreateEvent && (
                                 <motion.button
                                     onClick={onCreateEvent}
-                                    className="px-6 py-3 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-medium shadow-lg shadow-brand-200/30"
+                                    className="px-6 py-3 bg-brand-100 text-white rounded-xl font-medium shadow-lg shadow-brand-200/30"
                                     whileHover={{ scale: 1.02, y: -2 }}
                                     whileTap={{ scale: 0.98 }}
                                 >

@@ -8,7 +8,7 @@ import { Building2, MapPin, Shield, Edit2 } from 'lucide-react';
 function CollegeInfoCard({ user, onEdit }) {
     return (
         <motion.div
-            className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm"
+            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6 shadow-sm"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
@@ -35,7 +35,7 @@ function CollegeInfoCard({ user, onEdit }) {
 
             <div className="space-y-4">
                 {/* Institution Name */}
-                <div className="p-4 bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-xl">
+                <div className="p-4 bg-slate-50/50 rounded-xl">
                     <p className="text-xs text-slate-400 uppercase tracking-wider font-medium mb-1">
                         Institution
                     </p>
@@ -64,7 +64,7 @@ function CollegeInfoCard({ user, onEdit }) {
                 </div>
 
                 {/* Admin Role */}
-                <div className="p-4 bg-gradient-to-r from-brand-50 to-purple-50 rounded-xl border border-brand-100/30">
+                <div className="p-4 bg-brand-50 rounded-xl border border-brand-100/30">
                     <p className="text-xs text-slate-400 uppercase tracking-wider font-medium mb-1">
                         Your Role
                     </p>

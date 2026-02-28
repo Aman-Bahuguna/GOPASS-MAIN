@@ -31,12 +31,12 @@ function OrganizerEventCard({ event, index }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 * index, type: 'spring', stiffness: 100 }}
             whileHover={{ y: -5, boxShadow: '0 20px 50px rgba(0,0,0,0.1)' }}
-            className="bg-white rounded-2xl border border-slate-200/60 overflow-hidden hover:border-slate-300 transition-all duration-300 group"
+            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 overflow-hidden hover:border-slate-300 transition-all duration-300 group"
         >
-            {/* Top gradient bar based on status */}
-            <div className={`h-1.5 bg-gradient-to-r ${event.status === 'UPCOMING' ? 'from-blue-400 to-indigo-500' :
-                event.status === 'ONGOING' ? 'from-emerald-400 to-teal-500' :
-                    'from-slate-300 to-slate-400'
+            {/* Top accent bar based on status */}
+            <div className={`h-1.5 ${event.status === 'UPCOMING' ? 'bg-blue-500' :
+                event.status === 'ONGOING' ? 'bg-emerald-500' :
+                    'bg-slate-400'
                 }`} />
 
             <div className="p-5">
@@ -70,7 +70,7 @@ function OrganizerEventCard({ event, index }) {
                                         initial={{ opacity: 0, scale: 0.95, y: -10 }}
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                                        className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-slate-200/50 py-2 z-50 overflow-hidden"
+                                        className="absolute right-0 mt-2 w-48 bg-[#f7f8fa] rounded-xl shadow-2xl border border-slate-200 py-2 z-50 overflow-hidden"
                                     >
                                         <motion.button
                                             className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-3"
@@ -130,7 +130,7 @@ function OrganizerEventCard({ event, index }) {
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                         <motion.div
-                            className="h-full bg-gradient-to-r from-brand-200 to-brand-300 rounded-full"
+                            className="h-full bg-brand-200 rounded-full"
                             initial={{ width: 0 }}
                             animate={{ width: `${(event.registeredCount / event.capacity) * 100}%` }}
                             transition={{ delay: 0.3 + index * 0.1, duration: 0.8, ease: 'easeOut' }}
@@ -139,7 +139,7 @@ function OrganizerEventCard({ event, index }) {
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between pt-4 border-t border-slate-200">
                     <span className={`px-3 py-1.5 ${status.bg} ${status.text} rounded-lg text-xs font-semibold flex items-center gap-1.5`}>
                         <StatusIcon className="w-3.5 h-3.5" />
                         {event.status}

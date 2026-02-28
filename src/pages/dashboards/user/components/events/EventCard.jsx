@@ -132,10 +132,10 @@ function EventCard({
             whileHover={{ y: -8 }}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            className="bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group flex flex-col"
+            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group flex flex-col"
         >
             {/* Event Image / Poster */}
-            <div className="h-48 bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300 relative overflow-hidden flex-shrink-0">
+            <div className="h-48 bg-brand-200 relative overflow-hidden flex-shrink-0">
                 {/* Image if available and not errored */}
                 {norm._image && !imageError && (
                     <img
@@ -149,17 +149,17 @@ function EventCard({
                 {/* Fallback visual — shown when no image or image fails to load */}
                 {(!norm._image || imageError) && (
                     <>
-                        {/* Soft mesh gradient overlay */}
+                        {/* Soft mesh overlay */}
                         <div className="absolute inset-0">
-                            <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
-                            <div className="absolute -bottom-8 -left-8 w-36 h-36 bg-white/10 rounded-full blur-2xl" />
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-white/5 rounded-full blur-3xl" />
+                            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#f7f8fa]/10 rounded-full blur-2xl" />
+                            <div className="absolute -bottom-8 -left-8 w-36 h-36 bg-[#f7f8fa]/10 rounded-full blur-2xl" />
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#f7f8fa]/5 rounded-full blur-3xl" />
                         </div>
                         {/* Subtle grid pattern */}
-                        <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+                        <div className="absolute inset-0 opacity-[0.06]"  />
                         {/* Centered icon + title */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6">
-                            <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                            <div className="w-14 h-14 rounded-2xl bg-[#f7f8fa]/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
                                 <Calendar className="w-7 h-7 text-white" />
                             </div>
                             <p className="text-white/80 text-sm font-semibold text-center line-clamp-1 max-w-[80%]">
@@ -173,7 +173,7 @@ function EventCard({
                 <div className="absolute top-3 left-3">
                     <span className={`px-3.5 py-1.5 rounded-full text-sm font-bold shadow-lg backdrop-blur-sm ${norm._fee === 0
                         ? 'bg-emerald-500/90 text-white'
-                        : 'bg-white/90 text-slate-800'
+                        : 'bg-[#f7f8fa]/90 text-slate-800'
                         }`}>
                         {norm._fee === 0 ? '✨ FREE' : (
                             <span className="flex items-center gap-0.5">
@@ -186,7 +186,7 @@ function EventCard({
 
                 {/* Category badge */}
                 <div className="absolute top-3 right-3">
-                    <span className="px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-slate-700 flex items-center gap-1">
+                    <span className="px-3 py-1.5 bg-[#f7f8fa]/90 backdrop-blur-sm rounded-full text-xs font-semibold text-slate-700 flex items-center gap-1">
                         <Tag className="w-3 h-3" />
                         {norm._category}
                     </span>
@@ -196,7 +196,7 @@ function EventCard({
                 <div className="absolute bottom-3 right-3 flex gap-2">
                     <motion.button
                         onClick={handleShareClick}
-                        className="w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="w-9 h-9 rounded-full bg-[#f7f8fa]/90 backdrop-blur-sm flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                     >
@@ -204,7 +204,7 @@ function EventCard({
                     </motion.button>
                     <motion.button
                         onClick={handleFavoriteClick}
-                        className="w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg"
+                        className="w-9 h-9 rounded-full bg-[#f7f8fa]/90 backdrop-blur-sm flex items-center justify-center shadow-lg"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                     >
@@ -282,10 +282,10 @@ function EventCard({
                         <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                             <motion.div
                                 className={`h-full rounded-full ${isFull
-                                    ? 'bg-gradient-to-r from-red-400 to-red-500'
+                                    ? 'bg-red-500'
                                     : isAlmostFull
-                                        ? 'bg-gradient-to-r from-amber-400 to-red-500'
-                                        : 'bg-gradient-to-r from-brand-200 to-brand-300'
+                                        ? 'bg-amber-500'
+                                        : 'bg-brand-200'
                                     }`}
                                 initial={{ width: 0 }}
                                 animate={{ width: `${fillPercentage}%` }}
@@ -325,7 +325,7 @@ function EventCard({
                             ? 'bg-emerald-100 text-emerald-700 cursor-default border-2 border-emerald-200'
                             : isFull
                                 ? 'bg-slate-100 text-slate-400 cursor-not-allowed border-2 border-slate-200'
-                                : 'bg-gradient-to-r from-brand-100 to-brand-200 text-white hover:shadow-lg hover:shadow-brand-200/30'
+                                : 'bg-brand-100 text-white hover:shadow-lg hover:shadow-brand-200/30'
                             }`}
                         whileHover={!isRegistered && !isFull ? { scale: 1.02 } : {}}
                         whileTap={!isRegistered && !isFull ? { scale: 0.98 } : {}}

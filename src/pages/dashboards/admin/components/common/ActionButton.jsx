@@ -17,15 +17,15 @@ function ActionButton({
 }) {
     const variants = {
         primary: {
-            base: 'bg-gradient-to-r from-brand-200 to-purple-600 hover:from-brand-100 hover:to-purple-500 text-white shadow-lg shadow-brand-200/30',
+            base: 'bg-brand-200 hover:bg-brand-100 text-white shadow-lg shadow-brand-200/30',
             disabled: 'from-slate-300 to-slate-400'
         },
         secondary: {
             base: 'bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700',
-            disabled: 'border-slate-100 text-slate-400'
+            disabled: 'border-slate-200 text-slate-400'
         },
         success: {
-            base: 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-200/50',
+            base: 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-200/50',
             disabled: 'from-slate-300 to-slate-400'
         },
         danger: {

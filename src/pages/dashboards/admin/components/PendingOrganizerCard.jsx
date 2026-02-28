@@ -38,19 +38,19 @@ function PendingOrganizerCard({ organizer, index, onApprove, onReject }) {
             exit={{ opacity: 0, x: 30, scale: 0.95 }}
             transition={{ delay: 0.1 * index, type: 'spring', stiffness: 100 }}
             layout
-            className="group relative bg-white rounded-2xl border border-slate-200/60 overflow-hidden hover:shadow-xl hover:border-slate-300 transition-all duration-300"
+            className="group relative bg-[#f7f8fa] rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:border-slate-300 transition-all duration-300"
         >
             {/* Status indicator bar */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500" />
 
             <div className="p-6">
                 <div className="flex items-start gap-4">
-                    {/* Avatar with gradient */}
+                    {/* Avatar accent */}
                     <motion.div
                         className="relative flex-shrink-0"
                         whileHover={{ scale: 1.05 }}
                     >
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-200 to-purple-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-200/30">
+                        <div className="w-14 h-14 rounded-2xl bg-brand-200 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-200/30">
                             {organizer.fullName.charAt(0).toUpperCase()}
                         </div>
                         <motion.div
@@ -110,7 +110,7 @@ function PendingOrganizerCard({ organizer, index, onApprove, onReject }) {
                             transition={{ duration: 0.3 }}
                             className="overflow-hidden"
                         >
-                            <div className="mt-5 pt-5 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="mt-5 pt-5 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="p-4 bg-slate-50 rounded-xl">
                                     <div className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
                                         <Building2 className="w-4 h-4 text-brand-200" />
@@ -132,7 +132,7 @@ function PendingOrganizerCard({ organizer, index, onApprove, onReject }) {
                                         <FileText className="w-4 h-4 text-brand-200" />
                                         ID Card Preview
                                     </p>
-                                    <div className="h-40 bg-gradient-to-br from-slate-200 to-slate-300 rounded-xl flex items-center justify-center">
+                                    <div className="h-40 bg-slate-200 rounded-xl flex items-center justify-center">
                                         <div className="text-center">
                                             <FileText className="w-10 h-10 text-slate-400 mx-auto mb-2" />
                                             <span className="text-slate-500 text-sm">ID Card Document</span>
@@ -145,11 +145,11 @@ function PendingOrganizerCard({ organizer, index, onApprove, onReject }) {
                 </AnimatePresence>
 
                 {/* Action Buttons */}
-                <div className="flex items-center gap-3 mt-5 pt-5 border-t border-slate-100">
+                <div className="flex items-center gap-3 mt-5 pt-5 border-t border-slate-200">
                     <motion.button
                         onClick={handleApprove}
                         disabled={isProcessing}
-                        className="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-emerald-200/50 transition-all disabled:opacity-50"
+                        className="flex-1 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-emerald-200/50 transition-all disabled:opacity-50"
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                     >
@@ -169,7 +169,7 @@ function PendingOrganizerCard({ organizer, index, onApprove, onReject }) {
                     <motion.button
                         onClick={handleReject}
                         disabled={isProcessing}
-                        className="flex-1 py-3 bg-white border-2 border-red-200 hover:bg-red-50 text-red-600 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                        className="flex-1 py-3 bg-[#f7f8fa] border-2 border-red-200 hover:bg-red-50 text-red-600 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                     >

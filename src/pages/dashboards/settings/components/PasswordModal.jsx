@@ -107,7 +107,7 @@ export default function PasswordModal({ isOpen, onClose }) {
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         className="fixed inset-0 z-50 flex items-center justify-center p-4"
                     >
-                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
+                        <div className="bg-[#f7f8fa] rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
                             {success ? (
                                 <div className="text-center py-8">
                                     <motion.div
@@ -228,7 +228,7 @@ export default function PasswordModal({ isOpen, onClose }) {
                                             <button
                                                 type="submit"
                                                 disabled={isLoading || !currentPassword || !newPassword || !confirmPassword}
-                                                className="flex-1 py-3 px-4 bg-gradient-to-r from-brand-200 to-brand-300 text-white rounded-xl font-medium shadow-lg shadow-brand-200/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="flex-1 py-3 px-4 bg-brand-200 text-white rounded-xl font-medium shadow-lg shadow-brand-200/30 disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
                                                 {isLoading ? 'Updating...' : 'Update Password'}
                                             </button>

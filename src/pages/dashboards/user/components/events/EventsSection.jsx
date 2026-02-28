@@ -235,7 +235,7 @@ function EventsSection({
                         <motion.button
                             onClick={handleRefresh}
                             disabled={isRefreshing}
-                            className={`p-3.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-brand-100 transition-all flex items-center gap-2 text-slate-600 ${isRefreshing ? 'opacity-60 cursor-wait' : ''
+                            className={`p-3.5 bg-[#f7f8fa] border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-brand-100 transition-all flex items-center gap-2 text-slate-600 ${isRefreshing ? 'opacity-60 cursor-wait' : ''
                                 }`}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}

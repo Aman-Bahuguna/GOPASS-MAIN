@@ -86,7 +86,7 @@ export default function AttendeeSection({
             ) : (
                 <div className="space-y-4">
                     {events.map((evt) => (
-                        <div key={evt.id} className="flex items-center justify-between bg-white p-4 rounded-2xl shadow">
+                        <div key={evt.id} className="flex items-center justify-between bg-[#f7f8fa] p-4 rounded-2xl shadow">
                             <div>
                                 <h4 className="font-semibold text-slate-900">{evt.title}</h4>
                                 <p className="text-sm text-slate-500">{new Date(evt.date).toLocaleDateString()}</p>

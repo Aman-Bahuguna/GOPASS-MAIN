@@ -95,10 +95,10 @@ function NotificationsPanel({
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
+                        className="fixed right-0 top-0 h-full w-full max-w-md bg-[#f7f8fa] shadow-2xl z-50 flex flex-col"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between p-4 border-b border-slate-100">
+                        <div className="flex items-center justify-between p-4 border-b border-slate-200">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-brand-100/20 rounded-xl">
                                     <Bell className="w-5 h-5 text-brand-200" />
@@ -152,7 +152,7 @@ function NotificationsPanel({
                             >
                                 Unread
                                 {unreadCount > 0 && (
-                                    <span className={`px-1.5 py-0.5 rounded-full text-xs ${filter === 'unread' ? 'bg-white/20' : 'bg-brand-100 text-brand-200'
+                                    <span className={`px-1.5 py-0.5 rounded-full text-xs ${filter === 'unread' ? 'bg-[#f7f8fa]/20' : 'bg-brand-100 text-brand-200'
                                         }`}>
                                         {unreadCount}
                                     </span>
@@ -193,7 +193,7 @@ function NotificationsPanel({
                                     </p>
                                 </div>
                             ) : (
-                                <div className="divide-y divide-slate-100">
+                                <div className="divide-y divide-slate-200">
                                     {Object.entries(groupedNotifications).map(([date, items]) => (
                                         <div key={date}>
                                             <div className="px-4 py-2 bg-slate-50 sticky top-0">
@@ -219,7 +219,7 @@ function NotificationsPanel({
 
                         {/* Footer */}
                         {notifications.length > 0 && (
-                            <div className="p-4 border-t border-slate-100 bg-slate-50">
+                            <div className="p-4 border-t border-slate-200 bg-slate-50">
                                 <button
                                     onClick={onClearAll}
                                     className="w-full py-2 text-sm text-red-500 hover:text-red-600 font-medium flex items-center justify-center gap-2"

@@ -191,7 +191,7 @@ export default function EventsSection({
                     {canCreate && (
                         <motion.button
                             onClick={onCreateEvent}
-                            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-semibold shadow-lg shadow-brand-200/30"
+                            className="flex items-center gap-2 px-5 py-2.5 bg-brand-100 text-white rounded-xl font-semibold shadow-lg shadow-brand-200/30"
                             whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.98 }}
                         >
@@ -261,7 +261,7 @@ export default function EventsSection({
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-white rounded-2xl border border-slate-200/60 p-10 text-center"
+                    className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-10 text-center"
                 >
                     <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
                         <Calendar className="w-8 h-8 text-slate-400" />

@@ -7,7 +7,7 @@ function LockedEventCreation() {
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-dashed border-slate-300 rounded-3xl p-10 text-center"
+            className="bg-slate-50 border-2 border-dashed border-slate-300 rounded-3xl p-10 text-center"
         >
             <motion.div
                 className="w-20 h-20 rounded-2xl bg-slate-200 flex items-center justify-center mx-auto mb-5"

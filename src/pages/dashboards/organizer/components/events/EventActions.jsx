@@ -73,7 +73,7 @@ export default function EventActions({
                             {/* Export */}
                             <motion.button
                                 onClick={onBulkExport}
-                                className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                                className="flex items-center gap-2 px-4 py-2 bg-[#f7f8fa] border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
@@ -84,7 +84,7 @@ export default function EventActions({
                             {/* Status change dropdown */}
                             <div className="relative group">
                                 <motion.button
-                                    className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                                    className="flex items-center gap-2 px-4 py-2 bg-[#f7f8fa] border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                 >
@@ -93,7 +93,7 @@ export default function EventActions({
                                 </motion.button>
 
                                 {/* Dropdown menu */}
-                                <div className="absolute top-full right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-slate-200 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
+                                <div className="absolute top-full right-0 mt-2 w-40 bg-[#f7f8fa] rounded-xl shadow-xl border border-slate-200 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
                                     {['DRAFT', 'UPCOMING', 'ONGOING', 'COMPLETED'].map(status => (
                                         <button
                                             key={status}

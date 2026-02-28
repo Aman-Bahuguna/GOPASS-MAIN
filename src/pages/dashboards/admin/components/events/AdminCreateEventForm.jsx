@@ -188,11 +188,11 @@ const AdminCreateEventForm = ({ onNavigate }) => {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-4xl mx-auto"
         >
-            <div className="bg-white rounded-3xl border border-slate-200/60 p-8 shadow-lg shadow-slate-200/20">
+            <div className="bg-[#f7f8fa] rounded-3xl border border-slate-200 p-8 shadow-lg shadow-slate-200/20">
                 {/* Header */}
                 <div className="mb-8">
                     <div className="flex items-center gap-4 mb-3">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-200 to-brand-100 flex items-center justify-center shadow-lg shadow-brand-200/30">
+                        <div className="w-14 h-14 rounded-2xl bg-brand-200 flex items-center justify-center shadow-lg shadow-brand-200/30">
                             <Calendar className="w-7 h-7 text-white" />
                         </div>
                         <div>
@@ -204,9 +204,9 @@ const AdminCreateEventForm = ({ onNavigate }) => {
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Event Basic Info Section */}
-                    <div className="bg-gradient-to-br from-slate-50/80 to-slate-100/50 rounded-2xl p-6 border border-slate-200/40">
+                    <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
                         <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-3">
-                            <div className="w-1.5 h-7 bg-gradient-to-b from-brand-200 to-brand-100 rounded-full" />
+                            <div className="w-1.5 h-7 bg-brand-200 rounded-full" />
                             Event Information
                         </h3>
 
@@ -222,11 +222,10 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                     value={formData.eventName}
                                     onChange={handleInputChange}
                                     placeholder="e.g., Annual Tech Fest 2026"
-                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${
-                                        errors.eventName
-                                            ? 'border-red-300 bg-red-50'
-                                            : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                    }`}
+                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.eventName
+                                        ? 'border-red-300 bg-red-50'
+                                        : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
+                                        }`}
                                 />
                                 {errors.eventName && (
                                     <p className="mt-1 text-sm text-red-600">{errors.eventName}</p>
@@ -250,11 +249,10 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                     name="startDate"
                                     value={formData.startDate}
                                     onChange={handleInputChange}
-                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${
-                                        errors.startDate
-                                            ? 'border-red-300 bg-red-50'
-                                            : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                    }`}
+                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.startDate
+                                        ? 'border-red-300 bg-red-50'
+                                        : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
+                                        }`}
                                 />
                                 {errors.startDate && (
                                     <p className="mt-1 text-sm text-red-600">{errors.startDate}</p>
@@ -273,7 +271,7 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                     value={formData.endDate}
                                     onChange={handleInputChange}
                                     min={formData.startDate}
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white focus:border-brand-300 focus:shadow-md transition-all outline-none"
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md transition-all outline-none"
                                 />
                             </div>
 
@@ -289,7 +287,7 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                     value={formData.email}
                                     onChange={handleInputChange}
                                     placeholder="contact@example.com"
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white focus:border-brand-300 focus:shadow-md transition-all outline-none"
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md transition-all outline-none"
                                 />
                             </div>
 
@@ -305,7 +303,7 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                     value={formData.maxParticipants}
                                     onChange={handleInputChange}
                                     placeholder="Leave blank for unlimited"
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white focus:border-brand-300 focus:shadow-md transition-all outline-none"
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md transition-all outline-none"
                                 />
                             </div>
 
@@ -321,11 +319,10 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                     value={formData.venue}
                                     onChange={handleInputChange}
                                     placeholder="Enter event location"
-                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${
-                                        errors.venue
-                                            ? 'border-red-300 bg-red-50'
-                                            : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                    }`}
+                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.venue
+                                        ? 'border-red-300 bg-red-50'
+                                        : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
+                                        }`}
                                 />
                                 {errors.venue && (
                                     <p className="mt-1 text-sm text-red-600">{errors.venue}</p>
@@ -344,11 +341,10 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                     value={formData.contact}
                                     onChange={handleInputChange}
                                     placeholder="Phone number or email"
-                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${
-                                        errors.contact
-                                            ? 'border-red-300 bg-red-50'
-                                            : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                    }`}
+                                    className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.contact
+                                        ? 'border-red-300 bg-red-50'
+                                        : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
+                                        }`}
                                 />
                                 {errors.contact && (
                                     <p className="mt-1 text-sm text-red-600">{errors.contact}</p>
@@ -368,11 +364,10 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                 onChange={handleInputChange}
                                 placeholder="Describe your event, what participants can expect, any special requirements, etc."
                                 rows="4"
-                                className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none resize-none ${
-                                    errors.description
-                                        ? 'border-red-300 bg-red-50'
-                                        : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                }`}
+                                className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none resize-none ${errors.description
+                                    ? 'border-red-300 bg-red-50'
+                                    : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
+                                    }`}
                             />
                             {errors.description && (
                                 <p className="mt-1 text-sm text-red-600">{errors.description}</p>
@@ -381,13 +376,13 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                     </div>
 
                     {/* Payment Section */}
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl p-6 border border-blue-200/40">
+                    <div className="bg-blue-50 rounded-2xl p-6 border border-blue-200/40">
                         <h3 className="text-lg font-semibold text-slate-900 mb-5 flex items-center gap-2">
                             <div className="w-1 h-6 bg-brand-200 rounded-full" />
                             Payment Settings
                         </h3>
 
-                        <label className="flex items-center gap-3 cursor-pointer p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-brand-300 transition-all">
+                        <label className="flex items-center gap-3 cursor-pointer p-4 rounded-xl bg-[#f7f8fa] border-2 border-slate-200 hover:border-brand-300 transition-all">
                             <div className="relative">
                                 <input
                                     type="checkbox"
@@ -397,11 +392,10 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                     className="sr-only"
                                 />
                                 <div
-                                    className={`w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center ${
-                                        formData.paymentEnabled
-                                            ? 'bg-brand-200 border-brand-200 shadow-lg shadow-brand-200/30'
-                                            : 'border-slate-300 bg-white'
-                                    }`}
+                                    className={`w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center ${formData.paymentEnabled
+                                        ? 'bg-brand-200 border-brand-200 shadow-lg shadow-brand-200/30'
+                                        : 'border-slate-300 bg-white'
+                                        }`}
                                 >
                                     {formData.paymentEnabled && (
                                         <Check className="w-4 h-4 text-white" />
@@ -442,11 +436,10 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                             placeholder="0.00"
                                             min="0"
                                             step="0.01"
-                                            className={`w-full pl-8 pr-4 py-3 rounded-xl border-2 transition-all outline-none ${
-                                                errors.ticketPrice
-                                                    ? 'border-red-300 bg-red-50'
-                                                    : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
-                                            }`}
+                                            className={`w-full pl-8 pr-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.ticketPrice
+                                                ? 'border-red-300 bg-red-50'
+                                                : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
+                                                }`}
                                         />
                                     </div>
                                     {errors.ticketPrice && (
@@ -482,7 +475,7 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                     ? 'border-red-300 bg-red-50'
                                     : 'border-slate-300 bg-slate-50 hover:border-brand-300 hover:bg-brand-50'
                                     }`}
-                                whileHover={{ scale: 1.02, borderColor: '#5596e6' }}
+                                whileHover={{ scale: 1.02, borderColor: '#00B4D8' }}
                             >
                                 <motion.div
                                     animate={{ y: [0, -5, 0] }}
@@ -523,7 +516,7 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
-                                <div className="px-4 py-3 bg-gradient-to-r from-emerald-50 to-emerald-100 border-t-2 border-emerald-300">
+                                <div className="px-4 py-3 bg-emerald-50 border-t-2 border-emerald-300">
                                     <p className="text-sm font-semibold text-emerald-900">
                                         ✓ {formData.poster?.name}
                                     </p>
@@ -551,8 +544,8 @@ const AdminCreateEventForm = ({ onNavigate }) => {
                         <motion.button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-1 px-6 py-3.5 rounded-xl text-white font-semibold bg-gradient-to-r from-brand-200 to-brand-100 hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                            whileHover={{ scale: 1.02, boxShadow: '0 20px 25px rgba(85, 150, 230, 0.3)' }}
+                            className="flex-1 px-6 py-3.5 rounded-xl text-white font-semibold bg-brand-200 hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                            whileHover={{ scale: 1.02, boxShadow: '0 20px 25px rgba(0, 180, 216, 0.3)' }}
                             whileTap={{ scale: 0.98 }}
                         >
                             {isSubmitting ? (

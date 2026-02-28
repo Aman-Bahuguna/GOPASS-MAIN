@@ -52,7 +52,7 @@ function SearchBar({
                     value={localValue}
                     onChange={(e) => setLocalValue(e.target.value)}
                     placeholder={placeholder}
-                    className="w-full pl-12 pr-10 py-3.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-brand-200 focus:ring-4 focus:ring-brand-100/20 transition-all text-slate-700 placeholder-slate-400"
+                    className="w-full pl-12 pr-10 py-3.5 bg-[#f7f8fa] border border-slate-200 rounded-xl focus:outline-none focus:border-brand-200 focus:ring-4 focus:ring-brand-100/20 transition-all text-slate-700 placeholder-slate-400"
                 />
 
                 {/* Clear button */}
@@ -74,7 +74,7 @@ function SearchBar({
             {showFilter && (
                 <motion.button
                     onClick={onFilterClick}
-                    className="p-3.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-brand-100 transition-all flex items-center gap-2 text-slate-600"
+                    className="p-3.5 bg-[#f7f8fa] border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-brand-100 transition-all flex items-center gap-2 text-slate-600"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >

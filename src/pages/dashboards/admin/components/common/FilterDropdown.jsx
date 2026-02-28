@@ -39,7 +39,7 @@ function FilterDropdown({
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
                     flex items-center gap-2 px-4 py-2.5 
-                    bg-white border-2 rounded-xl text-sm font-medium
+                    bg-[#f7f8fa] border-2 rounded-xl text-sm font-medium
                     transition-all duration-200
                     ${isOpen
                         ? 'border-brand-200 ring-4 ring-brand-50'
@@ -67,7 +67,7 @@ function FilterDropdown({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute top-full left-0 mt-2 w-full min-w-[180px] bg-white border border-slate-200 rounded-xl shadow-lg shadow-slate-200/50 z-20 overflow-hidden"
+                        className="absolute top-full left-0 mt-2 w-full min-w-[180px] bg-[#f7f8fa] border border-slate-200 rounded-xl shadow-lg shadow-slate-200/50 z-20 overflow-hidden"
                     >
                         <div className="py-1">
                             {/* All option to clear filter */}

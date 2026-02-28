@@ -1,6 +1,6 @@
 // Role constants
 export const ROLES = {
-    USER: 'USER',
+    USER: 'STUDENT',
     ORGANIZER: 'ORGANIZER',
     ADMIN: 'ADMIN',
 };

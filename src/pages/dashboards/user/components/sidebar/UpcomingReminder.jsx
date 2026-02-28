@@ -67,7 +67,7 @@ function UpcomingReminder({
 
     return (
         <motion.div
-            className={`bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-5 ${className}`}
+            className={`bg-blue-50 border border-blue-200 rounded-2xl p-5 ${className}`}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.45 }}
@@ -85,7 +85,7 @@ function UpcomingReminder({
 
             {/* Event Info */}
             <div
-                className="bg-white rounded-xl p-3 mb-4 cursor-pointer hover:shadow-md transition-shadow"
+                className="bg-[#f7f8fa] rounded-xl p-3 mb-4 cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => onViewTicket?.(registration)}
             >
                 <h5 className="font-medium text-slate-900 text-sm mb-1 line-clamp-1">
@@ -103,7 +103,7 @@ function UpcomingReminder({
 
             {/* Countdown */}
             <div className="grid grid-cols-3 gap-2 mb-4">
-                <div className="text-center p-2 bg-white rounded-xl">
+                <div className="text-center p-2 bg-[#f7f8fa] rounded-xl">
                     <motion.span
                         className="block text-2xl font-bold text-blue-600"
                         key={timeLeft.days}
@@ -114,7 +114,7 @@ function UpcomingReminder({
                     </motion.span>
                     <span className="text-xs text-slate-500">Days</span>
                 </div>
-                <div className="text-center p-2 bg-white rounded-xl">
+                <div className="text-center p-2 bg-[#f7f8fa] rounded-xl">
                     <motion.span
                         className="block text-2xl font-bold text-blue-600"
                         key={timeLeft.hours}
@@ -125,7 +125,7 @@ function UpcomingReminder({
                     </motion.span>
                     <span className="text-xs text-slate-500">Hours</span>
                 </div>
-                <div className="text-center p-2 bg-white rounded-xl">
+                <div className="text-center p-2 bg-[#f7f8fa] rounded-xl">
                     <motion.span
                         className="block text-2xl font-bold text-blue-600"
                         key={timeLeft.minutes}
@@ -142,7 +142,7 @@ function UpcomingReminder({
             <div className="grid grid-cols-2 gap-2">
                 <motion.button
                     onClick={handleGetDirections}
-                    className="flex items-center justify-center gap-1.5 py-2 bg-white hover:bg-blue-50 text-blue-700 rounded-xl text-xs font-medium transition-colors"
+                    className="flex items-center justify-center gap-1.5 py-2 bg-[#f7f8fa] hover:bg-blue-50 text-blue-700 rounded-xl text-xs font-medium transition-colors"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                 >

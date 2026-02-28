@@ -212,7 +212,7 @@ export default function AdminDashboard() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-white rounded-2xl border border-slate-200/60 p-6"
+                            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6"
                         >
                             <div className="flex items-center justify-between mb-5">
                                 <h2 className="text-xl font-bold text-slate-900 flex items-center gap-3">
@@ -257,7 +257,7 @@ export default function AdminDashboard() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="bg-white rounded-2xl border border-slate-200/60 p-6"
+                            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6"
                         >
                             <h3 className="text-xl font-bold text-slate-900 flex items-center gap-3 mb-5">
                                 <div className="p-2 bg-emerald-100 rounded-lg">
@@ -365,7 +365,7 @@ export default function AdminDashboard() {
                             transition={{ delay: 0.1 }}
                             className="grid grid-cols-1 md:grid-cols-3 gap-4"
                         >
-                            <div className="bg-white rounded-2xl border border-slate-200/60 p-6">
+                            <div className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="p-2 bg-blue-100 rounded-lg">
                                         <Users className="w-5 h-5 text-blue-600" />
@@ -374,7 +374,7 @@ export default function AdminDashboard() {
                                 </div>
                                 <p className="text-3xl font-bold text-slate-900">{organizers.approved.length}</p>
                             </div>
-                            <div className="bg-white rounded-2xl border border-slate-200/60 p-6">
+                            <div className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="p-2 bg-purple-100 rounded-lg">
                                         <Calendar className="w-5 h-5 text-purple-600" />
@@ -383,7 +383,7 @@ export default function AdminDashboard() {
                                 </div>
                                 <p className="text-3xl font-bold text-slate-900">{collegeEvents.length}</p>
                             </div>
-                            <div className="bg-white rounded-2xl border border-slate-200/60 p-6">
+                            <div className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="p-2 bg-emerald-100 rounded-lg">
                                         <CheckCircle2 className="w-5 h-5 text-emerald-600" />
@@ -424,10 +424,10 @@ export default function AdminDashboard() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-white rounded-2xl border border-slate-200/60 overflow-hidden"
+                            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 overflow-hidden"
                         >
                             {notifications.length > 0 ? (
-                                <div className="divide-y divide-slate-100">
+                                <div className="divide-y divide-slate-200">
                                     {notifications.map((notification, index) => (
                                         <motion.div
                                             key={notification.id}
@@ -583,7 +583,7 @@ export default function AdminDashboard() {
                                             <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                         </motion.button>
                                     </div>
-                                    <div className="bg-white rounded-2xl border border-slate-200/60 divide-y divide-slate-100 overflow-hidden shadow-sm">
+                                    <div className="bg-[#f7f8fa] rounded-2xl border border-slate-200 divide-y divide-slate-200 overflow-hidden shadow-sm">
                                         {organizers.approved.length > 0 ? (
                                             organizers.approved.slice(0, 5).map((organizer, index) => (
                                                 <ApprovedOrganizerRow key={organizer.id} organizer={organizer} index={index} />
@@ -602,7 +602,7 @@ export default function AdminDashboard() {
                             <div className="space-y-6">
                                 {/* College Info Card */}
                                 <motion.div
-                                    className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm"
+                                    className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6 shadow-sm"
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.5 }}
@@ -614,7 +614,7 @@ export default function AdminDashboard() {
                                         College Details
                                     </h3>
                                     <div className="space-y-4">
-                                        <div className="p-4 bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-xl">
+                                        <div className="p-4 bg-slate-50/50 rounded-xl">
                                             <p className="text-xs text-slate-400 uppercase tracking-wider font-medium mb-1">Institution</p>
                                             <p className="font-semibold text-slate-900">{user?.college?.name}</p>
                                         </div>
@@ -628,7 +628,7 @@ export default function AdminDashboard() {
                                                 <p className="font-medium text-slate-900 text-sm">{user?.college?.pincode}</p>
                                             </div>
                                         </div>
-                                        <div className="p-4 bg-gradient-to-r from-brand-50 to-purple-50 rounded-xl border border-brand-100/30">
+                                        <div className="p-4 bg-brand-50 rounded-xl border border-brand-100/30">
                                             <p className="text-xs text-slate-400 uppercase tracking-wider font-medium mb-1">Your Role</p>
                                             <p className="font-semibold text-brand-200 flex items-center gap-2">
                                                 <Shield className="w-4 h-4" />
@@ -648,7 +648,7 @@ export default function AdminDashboard() {
 
                                 {/* College Events Card */}
                                 <motion.div
-                                    className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm"
+                                    className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-6 shadow-sm"
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.6 }}
@@ -683,7 +683,7 @@ export default function AdminDashboard() {
 
                                 {/* Quick Stats Card */}
                                 <motion.div
-                                    className="bg-gradient-to-br from-brand-100 via-brand-200 to-purple-600 rounded-2xl p-6 text-white overflow-hidden relative"
+                                    className="bg-brand-200 rounded-2xl p-6 text-white overflow-hidden relative"
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.7 }}
@@ -691,12 +691,12 @@ export default function AdminDashboard() {
                                     {/* Background decoration */}
                                     <div className="absolute inset-0 overflow-hidden">
                                         <motion.div
-                                            className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full"
+                                            className="absolute -top-8 -right-8 w-32 h-32 bg-[#f7f8fa]/10 rounded-full"
                                             animate={{ scale: [1, 1.2, 1] }}
                                             transition={{ duration: 4, repeat: Infinity }}
                                         />
                                         <motion.div
-                                            className="absolute -bottom-8 -left-8 w-24 h-24 bg-white/10 rounded-full"
+                                            className="absolute -bottom-8 -left-8 w-24 h-24 bg-[#f7f8fa]/10 rounded-full"
                                             animate={{ scale: [1, 1.3, 1] }}
                                             transition={{ duration: 5, repeat: Infinity }}
                                         />

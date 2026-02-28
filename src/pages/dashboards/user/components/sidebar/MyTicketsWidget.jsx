@@ -18,7 +18,7 @@ function MyTicketsWidget({
 
     return (
         <motion.div
-            className={`bg-white rounded-2xl border border-slate-200 p-5 ${className}`}
+            className={`bg-[#f7f8fa] rounded-2xl border border-slate-200 p-5 ${className}`}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
@@ -46,13 +46,13 @@ function MyTicketsWidget({
                                 onClick={() => onViewTicket?.(reg)}
                                 className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${isPast
                                         ? 'bg-slate-50 border-slate-200'
-                                        : 'bg-gradient-to-r from-white to-brand-50/30 border-brand-100/50 hover:shadow-md'
+                                        : 'bg-[#f7f8fa] border-brand-100/50 hover:shadow-md'
                                     }`}
                             >
                                 {/* Mini ticket icon */}
                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isPast
                                         ? 'bg-slate-200'
-                                        : 'bg-gradient-to-br from-brand-100 to-brand-300'
+                                        : 'bg-brand-100'
                                     }`}>
                                     <Ticket className={`w-5 h-5 ${isPast ? 'text-slate-400' : 'text-white'}`} />
                                 </div>

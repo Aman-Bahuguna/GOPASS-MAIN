@@ -29,7 +29,7 @@ function EmptyEventsState({ onCreateEvent, filterActive }) {
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-3xl border border-slate-200/60 p-10 text-center relative overflow-hidden"
+            className="bg-[#f7f8fa] rounded-3xl border border-slate-200 p-10 text-center relative overflow-hidden"
         >
             {/* Decorative background elements */}
             <div className="absolute inset-0 overflow-hidden">
@@ -47,7 +47,7 @@ function EmptyEventsState({ onCreateEvent, filterActive }) {
 
             <div className="relative">
                 <motion.div
-                    className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-100/10 to-brand-200/10 flex items-center justify-center mx-auto mb-5"
+                    className="w-20 h-20 rounded-2xl bg-brand-50 flex items-center justify-center mx-auto mb-5"
                     animate={{ scale: [1, 1.05, 1] }}
                     transition={{ duration: 3, repeat: Infinity }}
                 >
@@ -62,13 +62,13 @@ function EmptyEventsState({ onCreateEvent, filterActive }) {
                 {content.showButton && (
                     <motion.button
                         onClick={onCreateEvent}
-                        className="px-8 py-4 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-bold flex items-center gap-3 mx-auto shadow-lg shadow-brand-200/30 relative overflow-hidden group"
+                        className="px-8 py-4 bg-brand-100 text-white rounded-xl font-bold flex items-center gap-3 mx-auto shadow-lg shadow-brand-200/30 relative overflow-hidden group"
                         whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                     >
                         {/* Shimmer effect on hover */}
                         <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                            className="absolute inset-0 bg-white/10"
                             initial={{ x: '-100%' }}
                             whileHover={{ x: '100%' }}
                             transition={{ duration: 0.6 }}

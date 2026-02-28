@@ -12,7 +12,7 @@ function ApprovedOrganizerRow({ organizer, index }) {
             className="flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all group"
         >
             <motion.div
-                className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold flex-shrink-0 shadow-md shadow-emerald-200/50"
+                className="w-11 h-11 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-bold flex-shrink-0 shadow-md shadow-emerald-200/50"
                 whileHover={{ scale: 1.05, rotate: 5 }}
             >
                 {organizer.fullName.charAt(0).toUpperCase()}

@@ -23,14 +23,14 @@ function EventCard({ event, index, onRegister, isRegistered }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 * index, duration: 0.4 }}
             whileHover={{ y: -8 }}
-            className="bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group"
+            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group"
         >
             {/* Event Image */}
-            <div className="h-44 bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300 relative overflow-hidden">
+            <div className="h-44 bg-brand-200 relative overflow-hidden">
                 {/* Event icon */}
                 <div className="absolute inset-0 flex items-center justify-center">
                     <motion.div
-                        className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center"
+                        className="w-16 h-16 rounded-2xl bg-[#f7f8fa]/20 backdrop-blur-sm flex items-center justify-center"
                         whileHover={{ scale: 1.1, rotate: 5 }}
                     >
                         <Calendar className="w-8 h-8 text-white" />
@@ -49,7 +49,7 @@ function EventCard({ event, index, onRegister, isRegistered }) {
 
                 {/* Category & Actions */}
                 <div className="absolute top-4 right-4 flex gap-2">
-                    <span className="px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-slate-700">
+                    <span className="px-3 py-1.5 bg-[#f7f8fa]/90 backdrop-blur-sm rounded-full text-xs font-semibold text-slate-700">
                         {event.category}
                     </span>
                 </div>
@@ -57,7 +57,7 @@ function EventCard({ event, index, onRegister, isRegistered }) {
                 {/* Like button */}
                 <motion.button
                     onClick={(e) => { e.stopPropagation(); setIsLiked(!isLiked); }}
-                    className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg"
+                    className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-[#f7f8fa]/90 backdrop-blur-sm flex items-center justify-center shadow-lg"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                 >
@@ -127,8 +127,8 @@ function EventCard({ event, index, onRegister, isRegistered }) {
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                         <motion.div
                             className={`h-full rounded-full ${isAlmostFull
-                                ? 'bg-gradient-to-r from-red-400 to-red-500'
-                                : 'bg-gradient-to-r from-brand-200 to-brand-300'
+                                ? 'bg-red-500'
+                                : 'bg-brand-200'
                                 }`}
                             initial={{ width: 0 }}
                             animate={{ width: `${(event.registeredCount / event.capacity) * 100}%` }}
@@ -143,7 +143,7 @@ function EventCard({ event, index, onRegister, isRegistered }) {
                     disabled={isRegistered}
                     className={`w-full py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${isRegistered
                         ? 'bg-emerald-100 text-emerald-700 cursor-default'
-                        : 'bg-gradient-to-r from-brand-100 to-brand-200 text-white hover:shadow-lg hover:shadow-brand-200/30 hover:scale-[1.02]'
+                        : 'bg-brand-100 text-white hover:shadow-lg hover:shadow-brand-200/30 hover:scale-[1.02]'
                         }`}
                     whileHover={!isRegistered ? { scale: 1.02 } : {}}
                     whileTap={!isRegistered ? { scale: 0.98 } : {}}

@@ -7,12 +7,12 @@ import { motion } from 'framer-motion';
  * @param {number} [props.count] - Number of skeleton items
  */
 export default function LoadingState({ variant = 'card', count = 1 }) {
-    const shimmerClass = "relative overflow-hidden bg-slate-200 after:absolute after:inset-0 after:-translate-x-full after:animate-[shimmer_2s_infinite] after:bg-gradient-to-r after:from-transparent after:via-white/60 after:to-transparent";
+    const shimmerClass = "relative overflow-hidden bg-slate-200 after:absolute after:inset-0 after:-translate-x-full after:animate-[shimmer_2s_infinite] after:bg-white/40";
 
     const renderStat = (index) => (
         <motion.div
             key={index}
-            className="bg-white rounded-2xl p-6 border border-slate-200/60"
+            className="bg-[#f7f8fa] rounded-2xl p-6 border border-slate-200"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
@@ -29,7 +29,7 @@ export default function LoadingState({ variant = 'card', count = 1 }) {
     const renderCard = (index) => (
         <motion.div
             key={index}
-            className="bg-white rounded-2xl border border-slate-200/60 overflow-hidden"
+            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 overflow-hidden"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
@@ -50,7 +50,7 @@ export default function LoadingState({ variant = 'card', count = 1 }) {
     const renderList = (index) => (
         <motion.div
             key={index}
-            className="bg-white rounded-xl p-4 border border-slate-200/60 flex items-center gap-4"
+            className="bg-[#f7f8fa] rounded-xl p-4 border border-slate-200 flex items-center gap-4"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.05 }}
@@ -66,7 +66,7 @@ export default function LoadingState({ variant = 'card', count = 1 }) {
 
     const renderChart = () => (
         <motion.div
-            className="bg-white rounded-2xl p-6 border border-slate-200/60"
+            className="bg-[#f7f8fa] rounded-2xl p-6 border border-slate-200"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
         >

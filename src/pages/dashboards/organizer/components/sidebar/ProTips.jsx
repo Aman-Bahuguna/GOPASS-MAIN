@@ -87,7 +87,7 @@ export default function ProTips({ delay = 0.6, customTips }) {
 
     return (
         <motion.div
-            className="bg-gradient-to-br from-brand-100 via-brand-200 to-purple-600 rounded-2xl p-6 text-white relative overflow-hidden"
+            className="bg-brand-200 rounded-2xl p-6 text-white relative overflow-hidden"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay }}
@@ -95,12 +95,12 @@ export default function ProTips({ delay = 0.6, customTips }) {
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden">
                 <motion.div
-                    className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full"
+                    className="absolute -top-8 -right-8 w-32 h-32 bg-[#f7f8fa]/10 rounded-full"
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 4, repeat: Infinity }}
                 />
                 <motion.div
-                    className="absolute -bottom-8 -left-8 w-24 h-24 bg-white/10 rounded-full"
+                    className="absolute -bottom-8 -left-8 w-24 h-24 bg-[#f7f8fa]/10 rounded-full"
                     animate={{ scale: [1, 1.3, 1] }}
                     transition={{ duration: 5, repeat: Infinity }}
                 />
@@ -117,7 +117,7 @@ export default function ProTips({ delay = 0.6, customTips }) {
                         <div className="flex items-center gap-1">
                             <motion.button
                                 onClick={handlePrev}
-                                className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+                                className="p-1.5 hover:bg-[#f7f8fa]/20 rounded-lg transition-colors"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                             >
@@ -125,7 +125,7 @@ export default function ProTips({ delay = 0.6, customTips }) {
                             </motion.button>
                             <motion.button
                                 onClick={handleNext}
-                                className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+                                className="p-1.5 hover:bg-[#f7f8fa]/20 rounded-lg transition-colors"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                             >
@@ -148,7 +148,7 @@ export default function ProTips({ delay = 0.6, customTips }) {
                         {/* Dismiss button */}
                         <motion.button
                             onClick={() => handleDismiss(currentTip.id)}
-                            className="absolute -top-2 -right-2 p-1 hover:bg-white/20 rounded-full transition-colors opacity-0 hover:opacity-100"
+                            className="absolute -top-2 -right-2 p-1 hover:bg-[#f7f8fa]/20 rounded-full transition-colors opacity-0 hover:opacity-100"
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                         >
@@ -156,7 +156,7 @@ export default function ProTips({ delay = 0.6, customTips }) {
                         </motion.button>
 
                         <div className="flex items-start gap-3 mb-3">
-                            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-[#f7f8fa]/20 flex items-center justify-center flex-shrink-0">
                                 <Star className="w-4 h-4" />
                             </div>
                             <div>
@@ -176,7 +176,7 @@ export default function ProTips({ delay = 0.6, customTips }) {
                                 onClick={() => setCurrentTipIndex(index)}
                                 className={`h-1.5 rounded-full transition-all ${index === currentTipIndex
                                         ? 'w-4 bg-white'
-                                        : 'w-1.5 bg-white/40 hover:bg-white/60'
+                                        : 'w-1.5 bg-[#f7f8fa]/40 hover:bg-[#f7f8fa]/60'
                                     }`}
                                 whileHover={{ scale: 1.2 }}
                             />
@@ -186,7 +186,7 @@ export default function ProTips({ delay = 0.6, customTips }) {
 
                 {/* Quick action link */}
                 <motion.button
-                    className="mt-4 w-full py-2.5 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                    className="mt-4 w-full py-2.5 bg-[#f7f8fa]/20 hover:bg-[#f7f8fa]/30 rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-2"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                 >

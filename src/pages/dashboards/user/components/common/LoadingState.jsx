@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 // Shimmer animation overlay
 const ShimmerOverlay = () => (
     <motion.div
-        className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
+        className="absolute inset-0 -translate-x-full bg-white/40"
         animate={{ translateX: ['0%', '200%'] }}
         transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
     />
@@ -17,7 +17,7 @@ const ShimmerOverlay = () => (
 // Single skeleton card
 export function CardSkeleton({ className = '' }) {
     return (
-        <div className={`bg-white rounded-2xl border border-slate-200/60 overflow-hidden ${className}`}>
+        <div className={`bg-[#f7f8fa] rounded-2xl border border-slate-200 overflow-hidden ${className}`}>
             {/* Image placeholder */}
             <div className="h-44 bg-slate-100 relative overflow-hidden">
                 <ShimmerOverlay />
@@ -52,7 +52,7 @@ export function CardSkeleton({ className = '' }) {
 // Stat card skeleton
 export function StatSkeleton({ className = '' }) {
     return (
-        <div className={`bg-white rounded-2xl border border-slate-200/60 p-5 ${className}`}>
+        <div className={`bg-[#f7f8fa] rounded-2xl border border-slate-200 p-5 ${className}`}>
             <div className="flex items-center gap-4">
                 <div className="w-14 h-14 bg-slate-100 rounded-xl relative overflow-hidden">
                     <ShimmerOverlay />
@@ -73,7 +73,7 @@ export function StatSkeleton({ className = '' }) {
 // List item skeleton
 export function ListItemSkeleton({ className = '' }) {
     return (
-        <div className={`bg-white rounded-xl border border-slate-200/60 p-4 flex items-center gap-4 ${className}`}>
+        <div className={`bg-[#f7f8fa] rounded-xl border border-slate-200 p-4 flex items-center gap-4 ${className}`}>
             <div className="w-12 h-12 bg-slate-100 rounded-xl relative overflow-hidden">
                 <ShimmerOverlay />
             </div>
@@ -95,7 +95,7 @@ export function ListItemSkeleton({ className = '' }) {
 // Ticket skeleton
 export function TicketSkeleton({ className = '' }) {
     return (
-        <div className={`flex items-center gap-4 p-4 rounded-2xl border border-slate-200/60 bg-white ${className}`}>
+        <div className={`flex items-center gap-4 p-4 rounded-2xl border border-slate-200 bg-[#f7f8fa] ${className}`}>
             <div className="w-14 h-14 bg-slate-100 rounded-xl relative overflow-hidden">
                 <ShimmerOverlay />
             </div>

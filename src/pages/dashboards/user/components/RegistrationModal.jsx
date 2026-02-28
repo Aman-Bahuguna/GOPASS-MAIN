@@ -74,20 +74,20 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl"
+                    className="bg-[#f7f8fa] rounded-3xl w-full max-w-md overflow-hidden shadow-2xl"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-brand-100 to-brand-300 p-6 text-white relative">
+                    <div className="bg-brand-100 p-6 text-white relative">
                         <button
                             onClick={onClose}
-                            className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-colors"
+                            className="absolute top-4 right-4 p-2 hover:bg-[#f7f8fa]/20 rounded-full transition-colors"
                         >
                             <X className="w-5 h-5" />
                         </button>
 
                         <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                            <div className="w-14 h-14 rounded-2xl bg-[#f7f8fa]/20 backdrop-blur-sm flex items-center justify-center">
                                 {step === 3 ? (
                                     <CheckCircle2 className="w-8 h-8" />
                                 ) : step === 2 ? (
@@ -108,7 +108,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                         {step < 3 && (
                             <div className="flex gap-2 mt-6">
                                 {[1, 2].map((s) => (
-                                    <div key={s} className={`flex-1 h-1 rounded-full ${s <= step ? 'bg-white' : 'bg-white/30'}`} />
+                                    <div key={s} className={`flex-1 h-1 rounded-full ${s <= step ? 'bg-white' : 'bg-[#f7f8fa]/30'}`} />
                                 ))}
                             </div>
                         )}
@@ -188,7 +188,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
 
                                 <motion.button
                                     type="submit"
-                                    className="w-full py-4 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-semibold flex items-center justify-center gap-2 mt-6"
+                                    className="w-full py-4 bg-brand-100 text-white rounded-xl font-semibold flex items-center justify-center gap-2 mt-6"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                 >
@@ -201,7 +201,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                         {step === 2 && (
                             <div className="space-y-6">
                                 {/* Payment Summary */}
-                                <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 text-white">
+                                <div className="bg-slate-900 rounded-2xl p-6 text-white">
                                     <div className="flex items-center justify-between mb-4">
                                         <span className="text-slate-400 text-sm">Amount to Pay</span>
                                         <IndianRupee className="w-5 h-5 text-slate-400" />
@@ -226,7 +226,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                                 <motion.button
                                     onClick={handlePayment}
                                     disabled={isProcessing}
-                                    className="w-full py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-70"
+                                    className="w-full py-4 bg-emerald-500 text-white rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-70"
                                     whileHover={!isProcessing ? { scale: 1.02 } : {}}
                                     whileTap={!isProcessing ? { scale: 0.98 } : {}}
                                 >
@@ -261,17 +261,17 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                                 <p className="text-slate-500 mb-6">Your registration was successful</p>
 
                                 {/* Ticket Card */}
-                                <div className="bg-gradient-to-br from-brand-100 to-brand-300 rounded-2xl p-6 text-white text-left relative overflow-hidden">
+                                <div className="bg-brand-100 rounded-2xl p-6 text-white text-left relative overflow-hidden">
                                     {/* Decorative circles */}
-                                    <div className="absolute -left-4 top-1/2 w-8 h-8 bg-white rounded-full" />
-                                    <div className="absolute -right-4 top-1/2 w-8 h-8 bg-white rounded-full" />
+                                    <div className="absolute -left-4 top-1/2 w-8 h-8 bg-[#f7f8fa] rounded-full" />
+                                    <div className="absolute -right-4 top-1/2 w-8 h-8 bg-[#f7f8fa] rounded-full" />
 
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
                                             <p className="text-white/80 text-xs uppercase tracking-wider">Ticket</p>
                                             <p className="font-mono font-bold text-lg">{ticketData.ticketNumber}</p>
                                         </div>
-                                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                                        <div className="w-12 h-12 bg-[#f7f8fa]/20 rounded-xl flex items-center justify-center">
                                             <QrCode className="w-6 h-6" />
                                         </div>
                                     </div>
@@ -301,7 +301,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                                     </motion.button>
                                     <motion.button
                                         onClick={handleDone}
-                                        className="flex-1 py-3 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-semibold"
+                                        className="flex-1 py-3 bg-brand-100 text-white rounded-xl font-semibold"
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                     >

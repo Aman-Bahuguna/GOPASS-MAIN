@@ -91,21 +91,21 @@ function TicketDetailModal({
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 20 }}
                     transition={{ type: 'spring', duration: 0.5 }}
-                    className={`bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto ${className}`}
+                    className={`bg-[#f7f8fa] rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto ${className}`}
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
-                    <div className="relative bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300 p-6 rounded-t-3xl">
+                    <div className="relative bg-brand-200 p-6 rounded-t-3xl">
                         {/* Close button */}
                         <button
                             onClick={onClose}
-                            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+                            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#f7f8fa]/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-[#f7f8fa]/30 transition-colors"
                         >
                             <X className="w-5 h-5" />
                         </button>
 
                         {/* Ticket Icon */}
-                        <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4">
+                        <div className="w-16 h-16 rounded-2xl bg-[#f7f8fa]/20 backdrop-blur-sm flex items-center justify-center mb-4">
                             <Ticket className="w-8 h-8 text-white" />
                         </div>
 
@@ -118,7 +118,7 @@ function TicketDetailModal({
 
                         {/* Status Badge */}
                         {isPast ? (
-                            <span className="inline-flex items-center gap-1 mt-3 px-3 py-1 bg-white/20 rounded-full text-white text-xs font-medium">
+                            <span className="inline-flex items-center gap-1 mt-3 px-3 py-1 bg-[#f7f8fa]/20 rounded-full text-white text-xs font-medium">
                                 <CheckCircle className="w-3.5 h-3.5" />
                                 Event Completed
                             </span>
@@ -131,7 +131,7 @@ function TicketDetailModal({
                     </div>
 
                     {/* QR Code Section */}
-                    <div className="p-6 border-b border-slate-100">
+                    <div className="p-6 border-b border-slate-200">
                         <div className="text-center">
                             <div className="w-48 h-48 mx-auto bg-slate-100 rounded-2xl flex items-center justify-center mb-4 relative overflow-hidden">
                                 {/* QR Code Placeholder - In real app, use qrcode.react */}
@@ -261,7 +261,7 @@ function TicketDetailModal({
 
                         <motion.button
                             onClick={onClose}
-                            className="w-full py-3.5 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-brand-200/30 transition-shadow"
+                            className="w-full py-3.5 bg-brand-100 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-brand-200/30 transition-shadow"
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
                         >

@@ -82,7 +82,7 @@ export default function ErrorState({
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
             >
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center">
+                <div className="w-24 h-24 rounded-full bg-red-50 flex items-center justify-center">
                     <motion.div
                         animate={{ rotate: [0, -10, 10, -10, 0] }}
                         transition={{ duration: 0.5, delay: 0.5 }}
@@ -127,7 +127,7 @@ export default function ErrorState({
                 {onRetry && (
                     <motion.button
                         onClick={onRetry}
-                        className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-semibold shadow-lg shadow-brand-200/30"
+                        className="flex items-center gap-2 px-6 py-3 bg-brand-100 text-white rounded-xl font-semibold shadow-lg shadow-brand-200/30"
                         whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                     >

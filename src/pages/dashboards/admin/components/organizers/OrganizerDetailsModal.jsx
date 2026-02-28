@@ -84,10 +84,10 @@ function OrganizerDetailsModal({
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: '100%' }}
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-white shadow-2xl z-50 overflow-hidden flex flex-col"
+                        className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-[#f7f8fa] shadow-2xl z-50 overflow-hidden flex flex-col"
                     >
                         {/* Header */}
-                        <div className="relative p-6 border-b border-slate-100">
+                        <div className="relative p-6 border-b border-slate-200">
                             <motion.button
                                 onClick={onClose}
                                 className="absolute top-4 right-4 p-2 hover:bg-slate-100 rounded-lg transition-colors"
@@ -98,7 +98,7 @@ function OrganizerDetailsModal({
                             </motion.button>
 
                             <div className="flex items-center gap-4">
-                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-200 to-purple-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-brand-200/30">
+                                <div className="w-16 h-16 rounded-2xl bg-brand-200 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-brand-200/30">
                                     {organizer.fullName?.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
@@ -116,7 +116,7 @@ function OrganizerDetailsModal({
                         </div>
 
                         {/* Tabs */}
-                        <div className="flex border-b border-slate-100">
+                        <div className="flex border-b border-slate-200">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}
@@ -266,7 +266,7 @@ function OrganizerDetailsModal({
 
                                             {organizer.idCardUrl ? (
                                                 <div
-                                                    className="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 rounded-xl flex items-center justify-center cursor-pointer hover:from-slate-300 hover:to-slate-400 transition-colors"
+                                                    className="aspect-video bg-slate-200 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-300 transition-colors"
                                                     onClick={() => onViewIdCard?.(organizer.idCardUrl, organizer.fullName)}
                                                 >
                                                     <div className="text-center">
@@ -357,7 +357,7 @@ function OrganizerDetailsModal({
 
                         {/* Footer Actions (for pending organizers) */}
                         {isPending && (
-                            <div className="p-6 border-t border-slate-100 bg-slate-50">
+                            <div className="p-6 border-t border-slate-200 bg-slate-50">
                                 <div className="flex items-center gap-3">
                                     <ActionButton
                                         onClick={handleReject}

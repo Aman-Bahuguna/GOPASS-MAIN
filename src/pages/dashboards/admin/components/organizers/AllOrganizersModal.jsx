@@ -143,10 +143,10 @@ function AllOrganizersModal({
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        className="fixed inset-4 md:inset-8 lg:inset-12 bg-white rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col"
+                        className="fixed inset-4 md:inset-8 lg:inset-12 bg-[#f7f8fa] rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col"
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between p-6 border-b border-slate-100">
+                        <div className="flex items-center justify-between p-6 border-b border-slate-200">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 bg-brand-100/20 rounded-xl flex items-center justify-center">
                                     <Users className="w-6 h-6 text-brand-200" />
@@ -169,7 +169,7 @@ function AllOrganizersModal({
                         </div>
 
                         {/* Filters Bar */}
-                        <div className="flex flex-wrap items-center gap-3 p-4 bg-slate-50 border-b border-slate-100">
+                        <div className="flex flex-wrap items-center gap-3 p-4 bg-slate-50 border-b border-slate-200">
                             <SearchInput
                                 value={searchQuery}
                                 onChange={handleFilterChange(setSearchQuery)}
@@ -236,7 +236,7 @@ function AllOrganizersModal({
                         {/* Table */}
                         <div className="flex-1 overflow-auto">
                             <table className="w-full">
-                                <thead className="sticky top-0 bg-white border-b border-slate-100">
+                                <thead className="sticky top-0 bg-[#f7f8fa] border-b border-slate-200">
                                     <tr>
                                         <th className="px-4 py-3 text-left">
                                             <input
@@ -266,7 +266,7 @@ function AllOrganizersModal({
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100">
+                                <tbody className="divide-y divide-slate-200">
                                     {paginatedOrganizers.map((organizer, index) => (
                                         <motion.tr
                                             key={organizer.id}
@@ -286,7 +286,7 @@ function AllOrganizersModal({
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-200 to-purple-500 flex items-center justify-center text-white font-bold">
+                                                    <div className="w-10 h-10 rounded-xl bg-brand-200 flex items-center justify-center text-white font-bold">
                                                         {organizer.fullName?.charAt(0).toUpperCase()}
                                                     </div>
                                                     <div>
@@ -374,7 +374,7 @@ function AllOrganizersModal({
 
                         {/* Pagination */}
                         {totalPages > 1 && (
-                            <div className="flex items-center justify-between p-4 border-t border-slate-100 bg-slate-50">
+                            <div className="flex items-center justify-between p-4 border-t border-slate-200 bg-slate-50">
                                 <p className="text-sm text-slate-500">
                                     Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
                                     {Math.min(currentPage * itemsPerPage, filteredOrganizers.length)} of{' '}

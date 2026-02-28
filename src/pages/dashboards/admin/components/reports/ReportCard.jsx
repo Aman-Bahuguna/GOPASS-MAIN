@@ -17,22 +17,22 @@ function ReportCard({ report, index, onGenerate, onExport, loading = false }) {
         blue: {
             bg: 'bg-blue-100',
             text: 'text-blue-600',
-            gradient: 'from-blue-500 to-indigo-500'
+            solid: 'bg-blue-500'
         },
         purple: {
             bg: 'bg-purple-100',
             text: 'text-purple-600',
-            gradient: 'from-purple-500 to-pink-500'
+            solid: 'bg-purple-500'
         },
         emerald: {
             bg: 'bg-emerald-100',
             text: 'text-emerald-600',
-            gradient: 'from-emerald-500 to-teal-500'
+            solid: 'bg-emerald-500'
         },
         amber: {
             bg: 'bg-amber-100',
             text: 'text-amber-600',
-            gradient: 'from-amber-500 to-orange-500'
+            solid: 'bg-amber-500'
         }
     };
 
@@ -63,10 +63,10 @@ function ReportCard({ report, index, onGenerate, onExport, loading = false }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 * index }}
             whileHover={{ y: -4, boxShadow: '0 20px 40px rgba(0,0,0,0.08)' }}
-            className="bg-white rounded-2xl border border-slate-200/60 overflow-hidden group"
+            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 overflow-hidden group"
         >
-            {/* Header with gradient */}
-            <div className={`h-2 bg-gradient-to-r ${config.gradient}`} />
+            {/* Header accent */}
+            <div className={`h-2 ${config.solid}`} />
 
             <div className="p-5">
                 <div className="flex items-start gap-4">
@@ -94,7 +94,7 @@ function ReportCard({ report, index, onGenerate, onExport, loading = false }) {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-200">
                     <motion.button
                         onClick={onGenerate}
                         disabled={loading}
@@ -126,7 +126,7 @@ function ReportCard({ report, index, onGenerate, onExport, loading = false }) {
 
                         {/* Export format options */}
                         <motion.div
-                            className="absolute bottom-full right-0 mb-2 w-40 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden opacity-0 invisible group-hover/export:opacity-100 group-hover/export:visible transition-all z-10"
+                            className="absolute bottom-full right-0 mb-2 w-40 bg-[#f7f8fa] rounded-xl shadow-lg border border-slate-200 overflow-hidden opacity-0 invisible group-hover/export:opacity-100 group-hover/export:visible transition-all z-10"
                         >
                             <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">
                                 <FilePdf className="w-4 h-4 text-red-500" />

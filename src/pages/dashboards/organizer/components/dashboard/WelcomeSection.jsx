@@ -33,7 +33,7 @@ export default function WelcomeSection({ user, stats, delay = 0 }) {
 
     return (
         <motion.div
-            className="relative bg-gradient-to-br from-brand-100 via-brand-200 to-purple-600 rounded-3xl p-8 text-white overflow-hidden mb-8"
+            className="relative bg-brand-200 rounded-3xl p-8 text-white overflow-hidden mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay }}
@@ -41,12 +41,12 @@ export default function WelcomeSection({ user, stats, delay = 0 }) {
             {/* Background decorations */}
             <div className="absolute inset-0 overflow-hidden">
                 <motion.div
-                    className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"
+                    className="absolute -top-20 -right-20 w-64 h-64 bg-[#f7f8fa]/10 rounded-full blur-3xl"
                     animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
                     transition={{ duration: 6, repeat: Infinity }}
                 />
                 <motion.div
-                    className="absolute -bottom-20 -left-20 w-48 h-48 bg-white/10 rounded-full blur-3xl"
+                    className="absolute -bottom-20 -left-20 w-48 h-48 bg-[#f7f8fa]/10 rounded-full blur-3xl"
                     animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.8, 0.5] }}
                     transition={{ duration: 8, repeat: Infinity }}
                 />
@@ -54,7 +54,7 @@ export default function WelcomeSection({ user, stats, delay = 0 }) {
                 {[...Array(5)].map((_, i) => (
                     <motion.div
                         key={i}
-                        className="absolute w-2 h-2 bg-white/30 rounded-full"
+                        className="absolute w-2 h-2 bg-[#f7f8fa]/30 rounded-full"
                         style={{
                             left: `${20 + i * 15}%`,
                             top: `${30 + (i % 3) * 20}%`
@@ -113,15 +113,15 @@ export default function WelcomeSection({ user, stats, delay = 0 }) {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: delay + 0.4 }}
                     >
-                        <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center min-w-[100px]">
-                            <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-white/20 flex items-center justify-center">
+                        <div className="bg-[#f7f8fa]/20 backdrop-blur-sm rounded-2xl p-4 text-center min-w-[100px]">
+                            <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-[#f7f8fa]/20 flex items-center justify-center">
                                 <Calendar className="w-5 h-5" />
                             </div>
                             <p className="text-2xl font-bold">{stats.activeEvents || 0}</p>
                             <p className="text-xs text-white/70">Active Events</p>
                         </div>
-                        <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center min-w-[100px]">
-                            <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-white/20 flex items-center justify-center">
+                        <div className="bg-[#f7f8fa]/20 backdrop-blur-sm rounded-2xl p-4 text-center min-w-[100px]">
+                            <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-[#f7f8fa]/20 flex items-center justify-center">
                                 <TrendingUp className="w-5 h-5" />
                             </div>
                             <p className="text-2xl font-bold">{stats.totalRegistrations || 0}</p>

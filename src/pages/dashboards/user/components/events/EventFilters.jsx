@@ -70,7 +70,7 @@ function EventFilters({
             {/* Filter Toggle Button */}
             <motion.button
                 onClick={onTogglePanel}
-                className={`p-3.5 bg-white border rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 text-slate-600 ${hasActiveFilters ? 'border-brand-200 bg-brand-50' : 'border-slate-200 hover:border-brand-100'
+                className={`p-3.5 bg-[#f7f8fa] border rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 text-slate-600 ${hasActiveFilters ? 'border-brand-200 bg-brand-50' : 'border-slate-200 hover:border-brand-100'
                     }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -102,7 +102,7 @@ function EventFilters({
                             transition={{ duration: 0.2 }}
                             className="absolute right-0 top-full mt-2 z-40 w-[340px] sm:w-[520px] lg:w-[720px]"
                         >
-                            <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xl shadow-slate-200/50">
+                            <div className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-5 shadow-xl shadow-slate-200/50">
                                 {/* Header */}
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="font-semibold text-slate-900 flex items-center gap-2">

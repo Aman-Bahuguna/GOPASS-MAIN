@@ -18,10 +18,10 @@ function CollegeEventCard({ event, index }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 * index }}
             whileHover={{ y: -2, boxShadow: '0 10px 40px rgba(0,0,0,0.08)' }}
-            className="flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-200/60 hover:border-slate-300 transition-all cursor-pointer group"
+            className="flex items-center gap-4 p-4 bg-[#f7f8fa] rounded-xl border border-slate-200 hover:border-slate-300 transition-all cursor-pointer group"
         >
             <motion.div
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-100 to-brand-300 flex items-center justify-center flex-shrink-0 shadow-lg shadow-brand-200/30"
+                className="w-12 h-12 rounded-xl bg-brand-100 flex items-center justify-center flex-shrink-0 shadow-lg shadow-brand-200/30"
                 whileHover={{ scale: 1.05, rotate: -5 }}
             >
                 <Calendar className="w-6 h-6 text-white" />

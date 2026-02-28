@@ -26,12 +26,12 @@ function ApprovalStatusBanner({ user }) {
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
-                className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-500 rounded-3xl p-8 text-white mb-8"
+                className="relative overflow-hidden bg-blue-600 rounded-3xl p-8 text-white mb-8"
             >
                 {/* Animated background patterns */}
                 <div className="absolute inset-0 overflow-hidden">
                     <motion.div
-                        className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl"
+                        className="absolute top-0 right-0 w-80 h-80 bg-[#f7f8fa]/10 rounded-full blur-3xl"
                         animate={{
                             x: [0, 30, 0],
                             y: [0, -20, 0],
@@ -40,7 +40,7 @@ function ApprovalStatusBanner({ user }) {
                         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
                     />
                     <motion.div
-                        className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-2xl"
+                        className="absolute bottom-0 left-0 w-48 h-48 bg-[#f7f8fa]/10 rounded-full blur-2xl"
                         animate={{
                             x: [0, -20, 0],
                             y: [0, 20, 0],
@@ -51,7 +51,7 @@ function ApprovalStatusBanner({ user }) {
 
                 <div className="relative flex items-start gap-5">
                     <motion.div
-                        className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg"
+                        className="w-16 h-16 rounded-2xl bg-[#f7f8fa]/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg"
                         animate={{ rotate: [0, 5, -5, 0] }}
                         transition={{ duration: 4, repeat: Infinity }}
                     >
@@ -66,7 +66,7 @@ function ApprovalStatusBanner({ user }) {
                         <p className="text-white/80 mb-4 max-w-lg">
                             Our team is reviewing your college credentials. This usually takes 24-48 hours. We'll notify you once verified!
                         </p>
-                        <div className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3 w-fit backdrop-blur-sm">
+                        <div className="flex items-center gap-3 bg-[#f7f8fa]/10 rounded-xl px-4 py-3 w-fit backdrop-blur-sm">
                             <motion.div
                                 className="w-2.5 h-2.5 bg-yellow-400 rounded-full"
                                 animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
@@ -86,12 +86,12 @@ function ApprovalStatusBanner({ user }) {
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
-                className="relative overflow-hidden bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 rounded-3xl p-8 text-white mb-8"
+                className="relative overflow-hidden bg-amber-500 rounded-3xl p-8 text-white mb-8"
             >
                 {/* Animated background patterns */}
                 <div className="absolute inset-0 overflow-hidden">
                     <motion.div
-                        className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl"
+                        className="absolute top-0 right-0 w-80 h-80 bg-[#f7f8fa]/10 rounded-full blur-3xl"
                         animate={{
                             x: [0, 40, 0],
                             y: [0, -30, 0],
@@ -102,7 +102,7 @@ function ApprovalStatusBanner({ user }) {
 
                 <div className="relative flex flex-col lg:flex-row items-start gap-5">
                     <motion.div
-                        className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg"
+                        className="w-16 h-16 rounded-2xl bg-[#f7f8fa]/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg"
                         animate={{ scale: [1, 1.05, 1] }}
                         transition={{ duration: 2, repeat: Infinity }}
                     >
@@ -119,12 +119,12 @@ function ApprovalStatusBanner({ user }) {
                         </p>
                         {collegeAdmin && (
                             <motion.div
-                                className="bg-white/15 backdrop-blur-sm rounded-2xl p-5 border border-white/10"
+                                className="bg-[#f7f8fa]/15 backdrop-blur-sm rounded-2xl p-5 border border-white/10"
                                 whileHover={{ scale: 1.02 }}
                             >
                                 <p className="text-sm font-medium text-white/70 mb-2">Your College Admin:</p>
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-lg font-bold">
+                                    <div className="w-12 h-12 rounded-xl bg-[#f7f8fa]/20 flex items-center justify-center text-lg font-bold">
                                         {collegeAdmin.fullName.charAt(0)}
                                     </div>
                                     <div>
@@ -146,12 +146,12 @@ function ApprovalStatusBanner({ user }) {
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
-                className="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 rounded-3xl p-8 text-white mb-8"
+                className="relative overflow-hidden bg-emerald-600 rounded-3xl p-8 text-white mb-8"
             >
                 {/* Confetti-like decorations */}
                 <div className="absolute inset-0 overflow-hidden">
                     <motion.div
-                        className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+                        className="absolute top-0 right-0 w-96 h-96 bg-[#f7f8fa]/10 rounded-full blur-3xl"
                         animate={{
                             x: [0, 50, 0],
                             y: [0, -30, 0],
@@ -160,7 +160,7 @@ function ApprovalStatusBanner({ user }) {
                         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
                     />
                     <motion.div
-                        className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-2xl"
+                        className="absolute bottom-0 left-0 w-64 h-64 bg-[#f7f8fa]/10 rounded-full blur-2xl"
                         animate={{
                             x: [0, -30, 0],
                             y: [0, 30, 0],
@@ -173,7 +173,7 @@ function ApprovalStatusBanner({ user }) {
                 <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                     <div className="flex items-start gap-5">
                         <motion.div
-                            className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg"
+                            className="w-20 h-20 rounded-2xl bg-[#f7f8fa]/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-lg"
                             whileHover={{ scale: 1.05, rotate: 5 }}
                         >
                             <Unlock className="w-10 h-10" />
@@ -195,7 +195,7 @@ function ApprovalStatusBanner({ user }) {
                         </div>
                     </div>
                     <motion.button
-                        className="px-8 py-4 bg-white text-emerald-600 rounded-xl font-bold flex items-center gap-3 shadow-xl shadow-black/10"
+                        className="px-8 py-4 bg-[#f7f8fa] text-emerald-600 rounded-xl font-bold flex items-center gap-3 shadow-xl shadow-black/10"
                         whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                     >

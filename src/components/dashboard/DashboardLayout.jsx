@@ -38,11 +38,11 @@ const AnimatedLogo = React.memo(function AnimatedLogo() {
             className="flex items-center gap-3"
             whileHover={{ scale: 1.02 }}
         >
-            <div className="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300 flex items-center justify-center shadow-lg shadow-brand-200/30">
+            <div className="relative w-11 h-11 rounded-2xl bg-brand-200 flex items-center justify-center shadow-lg shadow-brand-200/30">
                 <Zap className="w-6 h-6 text-white" />
             </div>
             <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
+                <h1 className="text-xl font-bold text-slate-900">
                     GoPass
                 </h1>
                 <p className="text-[10px] text-slate-400 -mt-0.5">Event Management</p>
@@ -74,20 +74,20 @@ const NavItem = React.memo(function NavItem({ icon: Icon, label, isActive, onCli
     return (
         <button
             onClick={onClick}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all relative overflow-hidden group ${isActive
-                ? 'bg-gradient-to-r from-brand-100/10 to-brand-200/10 text-brand-200'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 relative overflow-hidden group ${isActive
+                ? 'bg-brand-50 text-brand-300 shadow-sm'
+                : 'text-slate-500 hover:bg-brand-50/60 hover:text-brand-400'
                 }`}
         >
             {/* Active indicator */}
             {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-brand-100 to-brand-300 rounded-r-full" />
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-brand-200 rounded-r-full" />
             )}
 
             {/* Icon container */}
-            <div className={`relative p-2 rounded-lg transition-all ${isActive
-                ? 'bg-gradient-to-br from-brand-100 to-brand-200 text-white shadow-md shadow-brand-200/30'
-                : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700'
+            <div className={`relative p-2 rounded-lg transition-all duration-200 ${isActive
+                ? 'bg-brand-200 text-white shadow-md shadow-brand-200/30'
+                : 'bg-slate-100 text-slate-400 group-hover:bg-brand-100 group-hover:text-brand-400 group-hover:shadow-sm'
                 }`}>
                 <Icon className="w-4 h-4" />
                 {badge > 0 && (
@@ -163,11 +163,11 @@ function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
 
             {/* Sidebar */}
             <motion.aside
-                className={`fixed lg:static inset-y-0 left-0 z-50 w-72 h-screen bg-white/80 backdrop-blur-xl border-r border-slate-200/50 flex flex-col transform lg:transform-none transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+                className={`fixed lg:static inset-y-0 left-0 z-50 w-72 h-screen bg-[#f7f8fa]/90 backdrop-blur-xl border-r border-slate-200 flex flex-col transform lg:transform-none transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
                     }`}
             >
                 {/* Header */}
-                <div className="p-4 border-b border-slate-100 flex-shrink-0">
+                <div className="p-4 border-b border-slate-200 flex-shrink-0">
                     <div className="flex items-center justify-between">
                         <AnimatedLogo />
                         <button
@@ -182,7 +182,7 @@ function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
                 {/* User Profile Card */}
                 <div className="px-3 py-2 flex-shrink-0">
                     <motion.div
-                        className="relative p-3 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200/50 overflow-hidden"
+                        className="relative p-3 rounded-xl bg-slate-50 border border-slate-200 overflow-hidden"
                         whileHover={{ y: -1 }}
                     >
                         <div className="relative flex items-center gap-3">
@@ -190,7 +190,7 @@ function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
                                 className="relative"
                                 whileHover={{ scale: 1.05 }}
                             >
-                                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-100 to-brand-300 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-brand-200/30">
+                                <div className="w-10 h-10 rounded-lg bg-brand-200 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-brand-200/30">
                                     {user?.fullName?.charAt(0).toUpperCase()}
                                 </div>
                                 <motion.div
@@ -231,10 +231,10 @@ function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
                 </nav>
 
                 {/* Footer Actions */}
-                <div className="p-3 border-t border-slate-100 space-y-2 flex-shrink-0">
+                <div className="p-3 border-t border-slate-200 space-y-2 flex-shrink-0">
                     {/* Premium upgrade card - compact version */}
                     <motion.div
-                        className="relative p-3 rounded-xl bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300 text-white overflow-hidden"
+                        className="relative p-3 rounded-xl bg-brand-200 text-white overflow-hidden"
                         whileHover={{ scale: 1.02 }}
                     >
                         {/* Animated background circles */}
@@ -302,7 +302,7 @@ function Header({ onMenuClick, title, onNavigate }) {
     ];
 
     return (
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200/50">
+        <header className="sticky top-0 z-30 bg-[#f7f8fa]/80 backdrop-blur-xl border-b border-slate-200">
             <div className="px-4 lg:px-8 py-4">
                 <div className="flex items-center justify-between gap-4">
                     {/* Left section */}
@@ -398,9 +398,9 @@ function Header({ onMenuClick, title, onNavigate }) {
                                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/50 overflow-hidden z-50"
+                                            className="absolute right-0 mt-2 w-80 bg-[#f7f8fa] rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50"
                                         >
-                                            <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                                            <div className="p-4 border-b border-slate-200 flex items-center justify-between">
                                                 <h3 className="font-semibold text-slate-900">Notifications</h3>
                                                 <span className="px-2 py-0.5 bg-brand-100/10 text-brand-200 rounded-full text-xs font-medium">
                                                     {notifications.filter(n => n.unread).length} new
@@ -436,7 +436,7 @@ function Header({ onMenuClick, title, onNavigate }) {
                                                     </motion.div>
                                                 ))}
                                             </div>
-                                            <div className="p-3 border-t border-slate-100">
+                                            <div className="p-3 border-t border-slate-200">
                                                 <button className="w-full py-2 text-brand-200 hover:bg-brand-50 rounded-lg text-sm font-medium transition-colors">
                                                     View all notifications
                                                 </button>
@@ -460,7 +460,7 @@ function Header({ onMenuClick, title, onNavigate }) {
                                     <p className="text-xs text-slate-500 capitalize">{user?.role?.toLowerCase()}</p>
                                 </div>
                                 <div className="relative">
-                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-100 to-brand-300 flex items-center justify-center text-white font-bold shadow-lg shadow-brand-200/20">
+                                    <div className="w-10 h-10 rounded-xl bg-brand-200 flex items-center justify-center text-white font-bold shadow-lg shadow-brand-200/20">
                                         {user?.fullName?.charAt(0).toUpperCase()}
                                     </div>
                                 </div>
@@ -481,10 +481,10 @@ function Header({ onMenuClick, title, onNavigate }) {
                                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200/50 py-2 z-50 overflow-hidden"
+                                            className="absolute right-0 mt-2 w-64 bg-[#f7f8fa] rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 overflow-hidden"
                                         >
                                             {/* User info header */}
-                                            <div className="px-4 py-3 bg-gradient-to-r from-brand-50 to-purple-50 border-b border-slate-100">
+                                            <div className="px-4 py-3 bg-brand-50 border-b border-slate-200">
                                                 <p className="font-semibold text-slate-900">{user?.fullName}</p>
                                                 <p className="text-sm text-slate-500">{user?.email}</p>
                                             </div>
@@ -512,7 +512,7 @@ function Header({ onMenuClick, title, onNavigate }) {
                                                 </motion.button>
                                             </div>
 
-                                            <div className="pt-2 mt-2 border-t border-slate-100">
+                                            <div className="pt-2 mt-2 border-t border-slate-200">
                                                 <motion.button
                                                     onClick={logout}
                                                     className="w-full px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors"
@@ -546,11 +546,12 @@ export default function DashboardLayout({ children, title = 'Dashboard', onNavig
     };
 
     return (
-        <div className="h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 flex">
+        <div className="h-screen overflow-hidden bg-[#f7f8fa] flex">
             {/* Decorative background elements */}
+            {/* Subtle decorative background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-brand-100/5 to-purple-100/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-blue-100/5 to-emerald-100/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-50/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-50/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
             </div>
 
             <Sidebar

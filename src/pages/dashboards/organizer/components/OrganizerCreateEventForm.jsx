@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { createEvent } from '@/store/slices/eventsSlice';
 import { useAuth } from '@/context/AuthContext';
+import CustomFieldsBuilder from './CustomFieldsBuilder';
 
 const OrganizerCreateEventForm = ({ onNavigate }) => {
     const dispatch = useDispatch();
@@ -33,6 +34,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
         paymentEnabled: false,
         ticketPrice: '',
         maxParticipants: '',
+        customFields: [],
     });
 
     const [preview, setPreview] = useState(null);
@@ -148,6 +150,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                 maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : null,
                 contact: formData.contact,
                 posterUrl: preview,
+                customFields: formData.customFields,
             };
 
             await dispatch(createEvent(eventPayload)).unwrap();
@@ -164,6 +167,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                 paymentEnabled: false,
                 ticketPrice: '',
                 maxParticipants: '',
+                customFields: [],
             });
             setPreview(null);
 
@@ -186,11 +190,11 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-4xl mx-auto"
         >
-            <div className="bg-white rounded-3xl border border-slate-200/60 p-8 shadow-lg shadow-slate-200/20">
+            <div className="bg-[#f7f8fa] rounded-3xl border border-slate-200 p-8 shadow-lg shadow-slate-200/20">
                 {/* Header */}
                 <div className="mb-8">
                     <div className="flex items-center gap-4 mb-3">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-200 to-brand-100 flex items-center justify-center shadow-lg shadow-brand-200/30">
+                        <div className="w-14 h-14 rounded-2xl bg-brand-200 flex items-center justify-center shadow-lg shadow-brand-200/30">
                             <Calendar className="w-7 h-7 text-white" />
                         </div>
                         <div>
@@ -202,9 +206,9 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Event Basic Info Section */}
-                    <div className="bg-gradient-to-br from-slate-50/80 to-slate-100/50 rounded-2xl p-6 border border-slate-200/40">
+                    <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
                         <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-3">
-                            <div className="w-1.5 h-7 bg-gradient-to-b from-brand-200 to-brand-100 rounded-full" />
+                            <div className="w-1.5 h-7 bg-brand-200 rounded-full" />
                             Event Information
                         </h3>
 
@@ -222,7 +226,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     placeholder="e.g., Annual Tech Fest 2026"
                                     className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.eventName
                                         ? 'border-red-300 bg-red-50'
-                                        : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                        : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
                                         }`}
                                 />
                                 {errors.eventName && (
@@ -249,7 +253,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     onChange={handleInputChange}
                                     className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.startDate
                                         ? 'border-red-300 bg-red-50'
-                                        : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                        : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
                                         }`}
                                 />
                                 {errors.startDate && (
@@ -269,7 +273,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     value={formData.endDate}
                                     onChange={handleInputChange}
                                     min={formData.startDate}
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white focus:border-brand-300 focus:shadow-md transition-all outline-none"
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md transition-all outline-none"
                                 />
                             </div>
 
@@ -285,7 +289,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     value={formData.email}
                                     onChange={handleInputChange}
                                     placeholder="contact@example.com"
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white focus:border-brand-300 focus:shadow-md transition-all outline-none"
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md transition-all outline-none"
                                 />
                             </div>
 
@@ -301,7 +305,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     value={formData.maxParticipants}
                                     onChange={handleInputChange}
                                     placeholder="Leave blank for unlimited"
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white focus:border-brand-300 focus:shadow-md transition-all outline-none"
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md transition-all outline-none"
                                 />
                             </div>
 
@@ -319,7 +323,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     placeholder="Enter event location"
                                     className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.venue
                                         ? 'border-red-300 bg-red-50'
-                                        : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                        : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
                                         }`}
                                 />
                                 {errors.venue && (
@@ -341,7 +345,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     placeholder="Phone number or email"
                                     className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.contact
                                         ? 'border-red-300 bg-red-50'
-                                        : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                        : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
                                         }`}
                                 />
                                 {errors.contact && (
@@ -364,7 +368,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                 rows="4"
                                 className={`w-full px-4 py-3 rounded-xl border-2 transition-all outline-none resize-none ${errors.description
                                     ? 'border-red-300 bg-red-50'
-                                    : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                    : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
                                     }`}
                             />
                             {errors.description && (
@@ -374,13 +378,13 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                     </div>
 
                     {/* Payment Section */}
-                    <div className="bg-gradient-to-br from-blue-50/80 to-blue-100/50 rounded-2xl p-6 border border-blue-200/40">
+                    <div className="bg-blue-50 rounded-2xl p-6 border border-blue-200/40">
                         <h3 className="text-lg font-semibold text-slate-900 mb-5 flex items-center gap-3">
-                            <div className="w-1.5 h-7 bg-gradient-to-b from-blue-400 to-blue-300 rounded-full" />
+                            <div className="w-1.5 h-7 bg-blue-400 rounded-full" />
                             Payment Settings
                         </h3>
 
-                        <label className="flex items-center gap-3 cursor-pointer p-4 rounded-xl bg-white border-2 border-slate-200 hover:border-brand-300 transition-all">
+                        <label className="flex items-center gap-3 cursor-pointer p-4 rounded-xl bg-[#f7f8fa] border-2 border-slate-200 hover:border-brand-300 transition-all">
                             <div className="relative">
                                 <input
                                     type="checkbox"
@@ -436,7 +440,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                             step="0.01"
                                             className={`w-full pl-8 pr-4 py-3 rounded-xl border-2 transition-all outline-none ${errors.ticketPrice
                                                 ? 'border-red-300 bg-red-50'
-                                                : 'border-slate-200 bg-white focus:border-brand-300 focus:shadow-md'
+                                                : 'border-slate-200 bg-[#f7f8fa] focus:border-brand-300 focus:shadow-md'
                                                 }`}
                                         />
                                     </div>
@@ -473,7 +477,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                     ? 'border-red-300 bg-red-50'
                                     : 'border-slate-300 bg-slate-50 hover:border-brand-300 hover:bg-brand-50'
                                     }`}
-                                whileHover={{ scale: 1.02, borderColor: '#5596e6' }}
+                                whileHover={{ scale: 1.02, borderColor: '#00B4D8' }}
                             >
                                 <motion.div
                                     animate={{ y: [0, -5, 0] }}
@@ -514,7 +518,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
-                                <div className="px-4 py-3 bg-gradient-to-r from-emerald-50 to-emerald-100 border-t-2 border-emerald-300">
+                                <div className="px-4 py-3 bg-emerald-50 border-t-2 border-emerald-300">
                                     <p className="text-sm font-semibold text-emerald-900">
                                         ✓ {formData.poster?.name}
                                     </p>
@@ -525,6 +529,14 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                             <p className="mt-2 text-sm text-red-600">{errors.poster}</p>
                         )}
                     </div>
+
+                    {/* Custom Registration Fields */}
+                    <CustomFieldsBuilder
+                        fields={formData.customFields}
+                        onChange={(customFields) =>
+                            setFormData(prev => ({ ...prev, customFields }))
+                        }
+                    />
 
                     {/* Action Buttons */}
                     <div className="flex gap-4 pt-8 border-t border-slate-200">
@@ -542,8 +554,8 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                         <motion.button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-1 px-6 py-3.5 rounded-xl text-white font-semibold bg-gradient-to-r from-brand-200 to-brand-100 hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                            whileHover={{ scale: 1.02, boxShadow: '0 20px 25px rgba(85, 150, 230, 0.3)' }}
+                            className="flex-1 px-6 py-3.5 rounded-xl text-white font-semibold bg-brand-200 hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                            whileHover={{ scale: 1.02, boxShadow: '0 20px 25px rgba(0, 180, 216, 0.3)' }}
                             whileTap={{ scale: 0.98 }}
                         >
                             {isSubmitting ? (

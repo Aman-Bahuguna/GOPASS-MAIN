@@ -8,9 +8,11 @@ export default {
     extend: {
       colors: {
         brand: {
-          100: '#3d70b2',
-          200: '#5596e6',
-          300: '#41d6c3',
+          50: '#CAF0F8',
+          100: '#90E0EF',
+          200: '#00B4D8',
+          300: '#0077B6',
+          400: '#03045E',
         },
         ui: {
           100: '#ffffff',
@@ -19,7 +21,8 @@ export default {
           400: '#dfe3e6',
           500: '#8c9ba5',
         },
-        background: '#ffffff',
+        offwhite: '#f7f8fa',
+        background: '#f7f8fa',
         foreground: '#1a1a1a',
       },
       fontFamily: {

@@ -57,11 +57,18 @@ export const signup = createAsyncThunk('auth/signup', async (formData, { rejectW
             throw new Error('An account with this email already exists');
         }
 
+        // Direct Role Mapping (STUDENT, ADMIN, ORGANIZER)
+        let role = formData.role;
+        const normalized = String(role).toUpperCase();
+        if (normalized.includes('ADMIN')) role = ROLES.ADMIN;
+        else if (normalized.includes('ORGANIZER')) role = ROLES.ORGANIZER;
+        else if (normalized.includes('STUDENT') || normalized.includes('USER')) role = ROLES.USER;
+
         const newUser = {
-            id: `${formData.role.toLowerCase()}_${Date.now()}`,
+            id: `${role.toLowerCase()}_${Date.now()}`,
             fullName: formData.fullName,
             email: formData.email,
-            role: formData.role,
+            role: role,
             createdAt: new Date().toISOString(),
             avatar: null,
             // Additional fields based on role

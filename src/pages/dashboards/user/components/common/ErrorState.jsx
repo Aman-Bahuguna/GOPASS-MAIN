@@ -13,7 +13,7 @@ function ErrorState({
 }) {
     return (
         <motion.div
-            className={`text-center py-12 px-6 bg-white rounded-2xl border border-slate-200 ${className}`}
+            className={`text-center py-12 px-6 bg-[#f7f8fa] rounded-2xl border border-slate-200 ${className}`}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
@@ -43,7 +43,7 @@ function ErrorState({
                 {onRetry && (
                     <motion.button
                         onClick={onRetry}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-brand-200/30 transition-shadow"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-100 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-brand-200/30 transition-shadow"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                     >

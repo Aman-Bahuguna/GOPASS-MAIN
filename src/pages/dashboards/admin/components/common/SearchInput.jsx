@@ -41,7 +41,7 @@ function SearchInput({
                 placeholder={placeholder}
                 className={`
                     w-full pl-10 pr-10 py-2.5 
-                    bg-white border-2 rounded-xl 
+                    bg-[#f7f8fa] border-2 rounded-xl 
                     text-sm text-slate-900 placeholder-slate-400
                     focus:outline-none transition-all duration-200
                     ${isFocused

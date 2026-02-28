@@ -12,26 +12,20 @@ function LockedEventCreation({ reason, onContactSupport }) {
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl border border-slate-200/60 p-8 text-center relative overflow-hidden"
+            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-8 text-center relative overflow-hidden"
         >
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-5">
-                <div className="absolute inset-0" style={{
-                    backgroundImage: `repeating-linear-gradient(
-                        45deg,
-                        #64748b 0,
-                        #64748b 1px,
-                        transparent 0,
-                        transparent 50%
-                    )`,
-                    backgroundSize: '20px 20px'
+                <div className="absolute inset-0 bg-slate-400" style={{
+                    backgroundImage: 'none',
+                    backgroundColor: '#64748b'
                 }} />
             </div>
 
             <div className="relative">
                 {/* Lock icon */}
                 <motion.div
-                    className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center"
+                    className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-slate-100 flex items-center justify-center"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}

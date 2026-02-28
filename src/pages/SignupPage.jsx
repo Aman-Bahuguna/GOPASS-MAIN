@@ -195,7 +195,7 @@ export default function SignupPage({ onNavigateToLogin, onNavigateToHome, onSign
     const totalSteps = needsCollegeVerification ? 3 : 2;
 
     const roles = [
-        { role: 'USER', icon: User, description: 'Attend & explore events' },
+        { role: 'STUDENT', icon: User, description: 'Attend & explore events' },
         { role: 'ORGANIZER', icon: Shield, description: 'Create & manage events' },
         { role: 'ADMIN', icon: Crown, description: 'Full system control' },
     ];

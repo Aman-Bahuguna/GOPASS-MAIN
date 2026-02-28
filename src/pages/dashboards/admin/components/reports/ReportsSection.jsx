@@ -125,7 +125,7 @@ function ReportsSection({
 
             {/* Custom Report CTA */}
             <motion.div
-                className="p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100"
+                className="p-6 bg-indigo-50 rounded-2xl border border-indigo-100"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}

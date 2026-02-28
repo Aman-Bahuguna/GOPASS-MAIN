@@ -32,7 +32,7 @@ function QuickMetrics({ metrics = {}, timePeriod, loading = false }) {
             icon: Calendar,
             trend: defaultMetrics.eventsTrend,
             trendValue: '+3',
-            bg: 'from-blue-500 to-indigo-500'
+            bg: 'bg-blue-500'
         },
         {
             label: 'Registrations',
@@ -40,7 +40,7 @@ function QuickMetrics({ metrics = {}, timePeriod, loading = false }) {
             icon: Users,
             trend: defaultMetrics.registrationsTrend,
             trendValue: '+156',
-            bg: 'from-emerald-500 to-teal-500'
+            bg: 'bg-emerald-500'
         },
         {
             label: 'Growth Rate',
@@ -49,7 +49,7 @@ function QuickMetrics({ metrics = {}, timePeriod, loading = false }) {
             icon: TrendingUp,
             trend: defaultMetrics.growthTrend,
             trendValue: '+2.1%',
-            bg: 'from-purple-500 to-pink-500'
+            bg: 'bg-purple-500'
         },
         {
             label: 'Revenue',
@@ -58,7 +58,7 @@ function QuickMetrics({ metrics = {}, timePeriod, loading = false }) {
             icon: DollarSign,
             trend: defaultMetrics.revenueTrend,
             trendValue: '+₹8.2k',
-            bg: 'from-amber-500 to-orange-500'
+            bg: 'bg-amber-500'
         }
     ];
 
@@ -80,18 +80,18 @@ function QuickMetrics({ metrics = {}, timePeriod, loading = false }) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 * index }}
-                    className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/60 p-5 group hover:shadow-lg transition-shadow"
+                    className="relative overflow-hidden bg-[#f7f8fa] rounded-2xl border border-slate-200 p-5 group hover:shadow-lg transition-shadow"
                 >
-                    {/* Background gradient on hover */}
+                    {/* Background accent on hover */}
                     <motion.div
-                        className={`absolute inset-0 bg-gradient-to-br ${metric.bg} opacity-0 group-hover:opacity-5 transition-opacity`}
+                        className={`absolute inset-0 ${metric.bg} opacity-0 group-hover:opacity-5 transition-opacity`}
                     />
 
                     <div className="relative">
                         {/* Header */}
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-sm font-medium text-slate-500">{metric.label}</span>
-                            <div className={`p-2 rounded-lg bg-gradient-to-br ${metric.bg} bg-opacity-10`}>
+                            <div className={`p-2 rounded-lg ${metric.bg} bg-opacity-10`}>
                                 <metric.icon className="w-4 h-4 text-white" style={{
                                     filter: 'brightness(0) saturate(100%) invert(35%) sepia(94%) saturate(1352%) hue-rotate(213deg) brightness(91%) contrast(101%)'
                                 }} />

@@ -36,7 +36,7 @@ function EmptyTicketsState({
             {onCTA && (
                 <motion.button
                     onClick={onCTA}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-brand-100 to-brand-200 text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-brand-200/30"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-100 text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-brand-200/30"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                 >

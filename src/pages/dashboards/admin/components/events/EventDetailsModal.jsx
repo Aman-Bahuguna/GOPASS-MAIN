@@ -89,10 +89,10 @@ function EventDetailsModal({
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: '100%' }}
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-white shadow-2xl z-50 overflow-hidden flex flex-col"
+                        className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-[#f7f8fa] shadow-2xl z-50 overflow-hidden flex flex-col"
                     >
                         {/* Header */}
-                        <div className="relative p-6 border-b border-slate-100">
+                        <div className="relative p-6 border-b border-slate-200">
                             <motion.button
                                 onClick={onClose}
                                 className="absolute top-4 right-4 p-2 hover:bg-slate-100 rounded-lg transition-colors"
@@ -103,7 +103,7 @@ function EventDetailsModal({
                             </motion.button>
 
                             <div className="flex items-start gap-4 pr-8">
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-200 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-brand-200/30">
+                                <div className="w-14 h-14 rounded-2xl bg-brand-200 flex items-center justify-center text-white shadow-lg shadow-brand-200/30">
                                     <Calendar className="w-7 h-7" />
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -121,7 +121,7 @@ function EventDetailsModal({
                         </div>
 
                         {/* Tabs */}
-                        <div className="flex border-b border-slate-100">
+                        <div className="flex border-b border-slate-200">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}
@@ -266,14 +266,14 @@ function EventDetailsModal({
                                         className="space-y-6"
                                     >
                                         {/* Registration Progress */}
-                                        <div className="p-4 bg-gradient-to-r from-brand-50 to-purple-50 rounded-xl">
+                                        <div className="p-4 bg-brand-50 rounded-xl">
                                             <div className="flex items-center justify-between mb-2">
                                                 <span className="font-medium text-slate-700">Registration Progress</span>
                                                 <span className="text-brand-200 font-bold">
                                                     {event.registeredCount}/{event.capacity}
                                                 </span>
                                             </div>
-                                            <div className="h-3 bg-white rounded-full overflow-hidden">
+                                            <div className="h-3 bg-[#f7f8fa] rounded-full overflow-hidden">
                                                 <motion.div
                                                     initial={{ width: 0 }}
                                                     animate={{ width: `${fillPercentage}%` }}
@@ -361,7 +361,7 @@ function EventDetailsModal({
                         </div>
 
                         {/* Footer Actions */}
-                        <div className="p-6 border-t border-slate-100 bg-slate-50">
+                        <div className="p-6 border-t border-slate-200 bg-slate-50">
                             <div className="flex items-center gap-3">
                                 {onFeatureEvent && (
                                     <ActionButton

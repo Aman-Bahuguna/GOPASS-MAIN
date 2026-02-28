@@ -40,7 +40,7 @@ function WelcomeSection({
 
     return (
         <motion.div
-            className={`bg-gradient-to-r from-brand-50/50 via-white to-brand-50/30 rounded-2xl p-6 border border-brand-100/30 ${className}`}
+            className={`bg-brand-50/50 rounded-2xl p-6 border border-brand-100/30 ${className}`}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
@@ -49,7 +49,7 @@ function WelcomeSection({
                 <div className="flex items-center gap-4">
                     {/* Avatar */}
                     <motion.div
-                        className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-300 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-brand-200/30"
+                        className="w-14 h-14 rounded-2xl bg-brand-100 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-brand-200/30"
                         whileHover={{ scale: 1.05, rotate: 5 }}
                     >
                         {user?.avatar ? (
@@ -99,7 +99,7 @@ function WelcomeSection({
 
                 {/* Time indicator */}
                 <motion.div
-                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-slate-200 shadow-sm"
+                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#f7f8fa] rounded-xl border border-slate-200 shadow-sm"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 }}

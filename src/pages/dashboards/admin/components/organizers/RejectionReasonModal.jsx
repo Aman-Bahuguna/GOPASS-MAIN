@@ -64,7 +64,7 @@ function RejectionReasonModal({
                         className="fixed inset-0 flex items-center justify-center z-50 p-4"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+                        <div className="bg-[#f7f8fa] rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
                             {/* Header */}
                             <div className="relative p-6 pb-4">
                                 <motion.button
@@ -151,7 +151,7 @@ function RejectionReasonModal({
                             </div>
 
                             {/* Actions */}
-                            <div className="flex items-center gap-3 p-6 pt-4 bg-slate-50 border-t border-slate-100">
+                            <div className="flex items-center gap-3 p-6 pt-4 bg-slate-50 border-t border-slate-200">
                                 <ActionButton
                                     onClick={handleClose}
                                     label="Cancel"

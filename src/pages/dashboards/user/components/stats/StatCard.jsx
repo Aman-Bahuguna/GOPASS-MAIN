@@ -9,31 +9,31 @@ import AnimatedCounter from './AnimatedCounter';
 const colorVariants = {
     blue: {
         bg: 'bg-blue-50',
-        icon: 'bg-gradient-to-br from-blue-400 to-blue-600',
+        icon: 'bg-blue-500',
         text: 'text-blue-600',
         glow: 'hover:shadow-blue-200/50'
     },
     brand: {
         bg: 'bg-brand-50',
-        icon: 'bg-gradient-to-br from-brand-100 to-brand-300',
+        icon: 'bg-brand-100',
         text: 'text-brand-200',
         glow: 'hover:shadow-brand-200/30'
     },
     green: {
         bg: 'bg-emerald-50',
-        icon: 'bg-gradient-to-br from-emerald-400 to-emerald-600',
+        icon: 'bg-emerald-500',
         text: 'text-emerald-600',
         glow: 'hover:shadow-emerald-200/50'
     },
     amber: {
         bg: 'bg-amber-50',
-        icon: 'bg-gradient-to-br from-amber-400 to-amber-600',
+        icon: 'bg-amber-500',
         text: 'text-amber-600',
         glow: 'hover:shadow-amber-200/50'
     },
     pink: {
         bg: 'bg-pink-50',
-        icon: 'bg-gradient-to-br from-pink-400 to-pink-600',
+        icon: 'bg-pink-500',
         text: 'text-pink-600',
         glow: 'hover:shadow-pink-200/50'
     }
@@ -70,7 +70,7 @@ function StatCard({
                 transition: { duration: 0.2 }
             }}
             onClick={onClick}
-            className={`bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-5 shadow-sm hover:shadow-xl ${colors.glow} transition-all duration-300 ${onClick ? 'cursor-pointer' : ''}`}
+            className={`bg-[#f7f8fa]/80 backdrop-blur-sm rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-xl ${colors.glow} transition-all duration-300 ${onClick ? 'cursor-pointer' : ''}`}
         >
             <div className="flex items-center gap-4">
                 {/* Icon Container */}
@@ -117,7 +117,7 @@ function StatCard({
                 </div>
             </div>
 
-            {/* Decorative gradient line at bottom */}
+            {/* Decorative accent line at bottom */}
             <motion.div
                 className={`h-1 ${colors.icon} rounded-full mt-4 opacity-30`}
                 initial={{ scaleX: 0, originX: 0 }}
