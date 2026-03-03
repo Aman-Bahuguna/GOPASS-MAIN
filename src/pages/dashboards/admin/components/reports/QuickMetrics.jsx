@@ -103,7 +103,9 @@ function QuickMetrics({ metrics = {}, timePeriod, loading = false }) {
                             <div className="text-2xl font-bold text-slate-900">
                                 {metric.prefix}
                                 {loading ? (
-                                    <span className="inline-block w-16 h-7 bg-slate-200 rounded animate-pulse" />
+                                    <span className="inline-block w-16 h-7 bg-slate-100 rounded relative overflow-hidden">
+                                        <span className="absolute inset-0 -translate-x-full animate-[shimmer_1.8s_ease-in-out_infinite]" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(202,240,248,0.4) 40%, rgba(144,224,239,0.3) 50%, rgba(202,240,248,0.4) 60%, transparent 100%)' }} />
+                                    </span>
                                 ) : (
                                     <AnimatedCounter
                                         value={metric.value}

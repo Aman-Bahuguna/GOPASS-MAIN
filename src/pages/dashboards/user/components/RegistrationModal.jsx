@@ -78,7 +78,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
-                    <div className="bg-brand-100 p-6 text-white relative">
+                    <div className="bg-gradient-to-r from-brand-300 to-brand-200 p-6 text-white relative">
                         <button
                             onClick={onClose}
                             className="absolute top-4 right-4 p-2 hover:bg-[#f7f8fa]/20 rounded-full transition-colors"
@@ -188,7 +188,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
 
                                 <motion.button
                                     type="submit"
-                                    className="w-full py-4 bg-brand-100 text-white rounded-xl font-semibold flex items-center justify-center gap-2 mt-6"
+                                    className="w-full py-4 bg-gradient-to-r from-brand-300 to-brand-200 text-white rounded-xl font-semibold flex items-center justify-center gap-2 mt-6 shadow-lg shadow-brand-200/30"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                 >
@@ -261,7 +261,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                                 <p className="text-slate-500 mb-6">Your registration was successful</p>
 
                                 {/* Ticket Card */}
-                                <div className="bg-brand-100 rounded-2xl p-6 text-white text-left relative overflow-hidden">
+                                <div className="bg-gradient-to-br from-brand-300 to-brand-200 rounded-2xl p-6 text-white text-left relative overflow-hidden">
                                     {/* Decorative circles */}
                                     <div className="absolute -left-4 top-1/2 w-8 h-8 bg-[#f7f8fa] rounded-full" />
                                     <div className="absolute -right-4 top-1/2 w-8 h-8 bg-[#f7f8fa] rounded-full" />
@@ -301,7 +301,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                                     </motion.button>
                                     <motion.button
                                         onClick={handleDone}
-                                        className="flex-1 py-3 bg-brand-100 text-white rounded-xl font-semibold"
+                                        className="flex-1 py-3 bg-gradient-to-r from-brand-300 to-brand-200 text-white rounded-xl font-semibold shadow-md shadow-brand-200/25"
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                     >

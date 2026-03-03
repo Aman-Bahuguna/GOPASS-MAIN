@@ -60,20 +60,44 @@ function StatsGrid({
                 animate="visible"
             >
                 {loading ? (
-                    // Loading skeletons
+                    // Premium loading skeletons
                     Array.from({ length: 3 }).map((_, i) => (
-                        <div
+                        <motion.div
                             key={i}
-                            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-5 animate-pulse"
+                            className="bg-[#f7f8fa] rounded-2xl border border-slate-200 p-5 shadow-sm"
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.1, duration: 0.4 }}
                         >
                             <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 bg-slate-100 rounded-xl" />
+                                <div className="w-14 h-14 bg-slate-100 rounded-xl relative overflow-hidden">
+                                    <motion.div
+                                        className="absolute inset-0 -translate-x-full"
+                                        style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(202,240,248,0.4) 40%, rgba(144,224,239,0.3) 50%, rgba(202,240,248,0.4) 60%, transparent 100%)' }}
+                                        animate={{ translateX: ['-100%', '200%'] }}
+                                        transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 }}
+                                    />
+                                </div>
                                 <div className="flex-1 space-y-2">
-                                    <div className="h-4 bg-slate-100 rounded w-20" />
-                                    <div className="h-6 bg-slate-100 rounded w-16" />
+                                    <div className="h-4 bg-slate-100 rounded-lg w-20 relative overflow-hidden">
+                                        <motion.div
+                                            className="absolute inset-0 -translate-x-full"
+                                            style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(202,240,248,0.4) 40%, rgba(144,224,239,0.3) 50%, rgba(202,240,248,0.4) 60%, transparent 100%)' }}
+                                            animate={{ translateX: ['-100%', '200%'] }}
+                                            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 + 0.1 }}
+                                        />
+                                    </div>
+                                    <div className="h-6 bg-slate-100 rounded-lg w-16 relative overflow-hidden">
+                                        <motion.div
+                                            className="absolute inset-0 -translate-x-full"
+                                            style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(202,240,248,0.4) 40%, rgba(144,224,239,0.3) 50%, rgba(202,240,248,0.4) 60%, transparent 100%)' }}
+                                            animate={{ translateX: ['-100%', '200%'] }}
+                                            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 + 0.2 }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     ))
                 ) : (
                     stats.map((stat, index) => (

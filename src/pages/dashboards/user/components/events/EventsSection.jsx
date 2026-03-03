@@ -209,8 +209,32 @@ function EventsSection({
         return (
             <div className={className}>
                 <div className="mb-6">
-                    <div className="h-8 w-48 bg-slate-100 rounded-lg animate-pulse mb-4" />
-                    <div className="h-12 w-full bg-slate-100 rounded-xl animate-pulse" />
+                    <motion.div
+                        className="h-8 w-48 bg-slate-100 rounded-lg relative overflow-hidden mb-4"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <motion.div
+                            className="absolute inset-0 -translate-x-full"
+                            style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(202,240,248,0.4) 40%, rgba(144,224,239,0.3) 50%, rgba(202,240,248,0.4) 60%, transparent 100%)' }}
+                            animate={{ translateX: ['-100%', '200%'] }}
+                            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                        />
+                    </motion.div>
+                    <motion.div
+                        className="h-12 w-full bg-slate-100 rounded-xl relative overflow-hidden"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.1 }}
+                    >
+                        <motion.div
+                            className="absolute inset-0 -translate-x-full"
+                            style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(202,240,248,0.4) 40%, rgba(144,224,239,0.3) 50%, rgba(202,240,248,0.4) 60%, transparent 100%)' }}
+                            animate={{ translateX: ['-100%', '200%'] }}
+                            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: 0.1 }}
+                        />
+                    </motion.div>
                 </div>
                 <LoadingState variant="card" count={4} />
             </div>
