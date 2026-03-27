@@ -9,7 +9,7 @@ export const store = configureStore({
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
-            serializableCheck: false, // Turn off serialization check for now (mock data might have non-serializable stuff)
+            serializableCheck: false,
         }),
 });
 

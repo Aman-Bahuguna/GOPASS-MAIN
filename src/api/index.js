@@ -22,7 +22,7 @@
  */
 
 // Auth
-export { findUserByEmail, findUserById, getAllUsers } from './authApi';
+export { findUserByEmail, findUserById, getAllUsers, registerUser, loginUser } from './authApi';
 
 // Events & Registrations
 export {

@@ -4,150 +4,71 @@
  * ==========================================
  * 
  * Handles all event-related API calls.
- * Currently uses mock data — replace the implementation
- * inside each function with real API calls when ready.
  */
 
-import { mockEvents } from '../mocks';
-import { mockRegistrations } from '../mocks';
-import { mockAdmins, mockOrganizers, mockUsers } from '../mocks';
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-/**
- * Fetch all events.
- * 
- * TODO (Backend): Replace with →
- *   const res = await fetch(`${API_BASE}/events`);
- *   return res.json();
- */
 export const fetchAllEvents = async () => {
-    // Simulate network delay
-    // await new Promise(resolve => setTimeout(resolve, 500));
-    return mockEvents;
+    const res = await fetch(`${API_BASE}/events`);
+    if (!res.ok) throw new Error('Failed to fetch events');
+    return res.json();
 };
 
-/**
- * Fetch a single event by its ID.
- * 
- * TODO (Backend): Replace with →
- *   const res = await fetch(`${API_BASE}/events/${eventId}`);
- *   return res.json();
- */
 export const fetchEventById = async (eventId) => {
-    const event = mockEvents.find(e => e.id === eventId);
-    if (!event) throw new Error('Event not found');
-    return event;
+    const res = await fetch(`${API_BASE}/events/${eventId}`);
+    if (!res.ok) throw new Error('Event not found');
+    return res.json();
 };
 
-/**
- * Create a new event.
- * 
- * TODO (Backend): Replace with →
- *   const res = await fetch(`${API_BASE}/events`, {
- *     method: 'POST',
- *     headers: { 'Content-Type': 'application/json' },
- *     body: JSON.stringify(eventData),
- *   });
- *   return res.json();
- */
 export const createEvent = async (eventData) => {
-    const newEvent = {
-        ...eventData,
-        id: `evt_${Date.now()}`,
-        createdAt: new Date().toISOString(),
-    };
-    return newEvent;
+    const res = await fetch(`${API_BASE}/events`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            ...eventData,
+            createdAt: new Date().toISOString(),
+        }),
+    });
+    if (!res.ok) throw new Error('Failed to create event');
+    return res.json();
 };
 
-/**
- * Update an existing event.
- * 
- * TODO (Backend): Replace with →
- *   const res = await fetch(`${API_BASE}/events/${id}`, {
- *     method: 'PATCH',
- *     headers: { 'Content-Type': 'application/json' },
- *     body: JSON.stringify(updates),
- *   });
- *   return res.json();
- */
 export const updateEvent = async (id, updates) => {
-    return { id, updates };
+    const res = await fetch(`${API_BASE}/events/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+    });
+    if (!res.ok) throw new Error('Failed to update event');
+    return res.json();
 };
 
-/**
- * Delete an event.
- * 
- * TODO (Backend): Replace with →
- *   await fetch(`${API_BASE}/events/${eventId}`, { method: 'DELETE' });
- */
 export const deleteEvent = async (eventId) => {
-    return eventId;
+    const res = await fetch(`${API_BASE}/events/${eventId}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to delete event');
+    return res.json();
 };
 
-/**
- * Get events filtered by college name.
- * 
- * TODO (Backend): Replace with →
- *   const res = await fetch(`${API_BASE}/events?college=${collegeName}`);
- *   return res.json();
- */
-export const getEventsByCollege = (collegeName) => {
-    return mockEvents.filter(event =>
-        event.collegeId.toLowerCase() === collegeName.toLowerCase()
-    );
+export const getEventsByCollege = async (collegeName) => {
+    const res = await fetch(`${API_BASE}/events?college=${encodeURIComponent(collegeName)}`);
+    if (!res.ok) throw new Error('Failed to get events by college');
+    return res.json();
 };
 
-/**
- * Get events filtered by organizer.
- * 
- * TODO (Backend): Replace with →
- *   const res = await fetch(`${API_BASE}/events?organizerId=${organizerId}`);
- *   return res.json();
- */
-export const getEventsByOrganizer = (organizerId) => {
-    return mockEvents.filter(event => event.organizerId === organizerId);
+export const getEventsByOrganizer = async (organizerId) => {
+    const res = await fetch(`${API_BASE}/events?organizerId=${encodeURIComponent(organizerId)}`);
+    if (!res.ok) throw new Error('Failed to get events by organizer');
+    return res.json();
 };
 
-/**
- * Get user's registered events (with event details).
- * 
- * TODO (Backend): Replace with →
- *   const res = await fetch(`${API_BASE}/registrations?userId=${userId}`);
- *   return res.json();
- */
-export const getUserRegistrations = (userId) => {
-    const registrations = mockRegistrations.filter(reg => reg.userId === userId);
-    return registrations.map(reg => ({
-        ...reg,
-        event: mockEvents.find(evt => evt.id === reg.eventId),
-    }));
+export const getUserRegistrations = async (userId) => {
+    const res = await fetch(`${API_BASE}/registrations?userId=${encodeURIComponent(userId)}`);
+    if (!res.ok) throw new Error('Failed to get user registrations');
+    return res.json();
 };
 
-/**
- * Get registrations for a specific event (with user details).
- * 
- * TODO (Backend): Replace with →
- *   const res = await fetch(`${API_BASE}/registrations?eventId=${eventId}`);
- *   return res.json();
- */
-export const getEventRegistrations = (eventId) => {
-    const allUsers = [...mockAdmins, ...mockOrganizers, ...mockUsers];
-    let registrations = mockRegistrations.filter(reg => reg.eventId === eventId);
-    // if there are no registrations for this event, provide a placeholder to make the UI less empty
-    if (registrations.length === 0) {
-        registrations = [
-            {
-                id: `placeholder_${eventId}`,
-                userId: allUsers[0]?.id || 'user_001',
-                eventId,
-                registeredAt: new Date().toISOString(),
-                paymentStatus: 'PENDING',
-                ticketNumber: 'SAMPLE-0001',
-                amount: 0,
-            },
-        ];
-    }
-    return registrations.map(reg => ({
-        ...reg,
-        user: allUsers.find(u => u.id === reg.userId),
-    }));
+export const getEventRegistrations = async (eventId) => {
+    const res = await fetch(`${API_BASE}/registrations?eventId=${encodeURIComponent(eventId)}`);
+    if (!res.ok) throw new Error('Failed to get event registrations');
+    return res.json();
 };

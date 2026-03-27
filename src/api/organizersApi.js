@@ -4,38 +4,18 @@
  * ==========================================
  * 
  * Handles all organizer-related API calls.
- * Currently uses mock data — replace the implementation
- * inside each function with real API calls when ready.
  */
 
-import { mockOrganizers } from '../mocks';
-import { USER_STATUS } from '../utils/constants';
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-/**
- * Get organizers by college name and state.
- * 
- * TODO (Backend): Replace with →
- *   const res = await fetch(`${API_BASE}/organizers?college=${collegeName}&state=${state}`);
- *   return res.json();
- */
-export const getOrganizersByCollege = (collegeName, state) => {
-    return mockOrganizers.filter(org =>
-        org.college.name.toLowerCase() === collegeName.toLowerCase() &&
-        org.college.state.toLowerCase() === state.toLowerCase()
-    );
+export const getOrganizersByCollege = async (collegeName, state) => {
+    const res = await fetch(`${API_BASE}/organizers?college=${encodeURIComponent(collegeName)}&state=${encodeURIComponent(state)}`);
+    if (!res.ok) throw new Error('Failed to get organizers');
+    return res.json();
 };
 
-/**
- * Get pending organizers for a particular college.
- * 
- * TODO (Backend): Replace with →
- *   const res = await fetch(`${API_BASE}/organizers?college=${collegeName}&state=${state}&status=pending`);
- *   return res.json();
- */
-export const getPendingOrganizers = (collegeName, state) => {
-    return mockOrganizers.filter(org =>
-        org.college.name.toLowerCase() === collegeName.toLowerCase() &&
-        org.college.state.toLowerCase() === state.toLowerCase() &&
-        org.status === USER_STATUS.ACTIVE && org.isAdminApproved === false
-    );
+export const getPendingOrganizers = async (collegeName, state) => {
+    const res = await fetch(`${API_BASE}/organizers?college=${encodeURIComponent(collegeName)}&state=${encodeURIComponent(state)}&status=pending`);
+    if (!res.ok) throw new Error('Failed to get pending organizers');
+    return res.json();
 };

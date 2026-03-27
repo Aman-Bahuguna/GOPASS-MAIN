@@ -45,11 +45,19 @@ export default function OrganizerDashboard() {
         return allEvents.filter(event => event.organizerId === user.id);
     }, [allEvents, user]);
 
-    // Fetch dashboard stats (still mock for now)
-    const stats = useMemo(() => {
-        if (!user) return null;
-        // Simulate API call delay
-        return getDashboardStats(user);
+    const [stats, setStats] = useState(null);
+
+    useEffect(() => {
+        if (!user) return;
+        const fetchStats = async () => {
+            try {
+                const s = await getDashboardStats(user);
+                setStats(s);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchStats();
     }, [user]);
 
     // Combined loading state
@@ -67,10 +75,14 @@ export default function OrganizerDashboard() {
 
     const handleViewEventAttendees = async (event) => {
         setSelectedEvent(event);
-        const regs = getEventRegistrations(event.id);
-        setEventAttendees(regs);
-        // navigate to attendee page so the list is shown
-        handleNavigate('attendees');
+        try {
+            const regs = await getEventRegistrations(event.id);
+            setEventAttendees(regs);
+            // navigate to attendee page so the list is shown
+            handleNavigate('attendees');
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const handleBackToEvents = () => {

@@ -7,7 +7,8 @@ import {
     Sparkles,
     Award
 } from 'lucide-react';
-import { mockAdmins } from '../../../../data/mockData';
+import { useState, useEffect } from 'react';
+import { getAllUsers } from '../../../../api';
 import { USER_STATUS } from '../../../../utils/constants';
 import { canOrganizerCreateEvents, isSameCollege } from '../../../../utils/roleConfig';
 
@@ -15,10 +16,22 @@ import { canOrganizerCreateEvents, isSameCollege } from '../../../../utils/roleC
 function ApprovalStatusBanner({ user }) {
     const canCreate = canOrganizerCreateEvents(user);
 
-    // Find the admin from the same college
-    const collegeAdmin = mockAdmins.find(admin =>
-        isSameCollege(admin, user)
-    );
+    const [collegeAdmin, setCollegeAdmin] = useState(null);
+
+    useEffect(() => {
+        if (user?.status === USER_STATUS.PENDING_ADMIN_APPROVAL) {
+            const fetchAdmin = async () => {
+                try {
+                    const allUsers = await getAllUsers();
+                    const admin = allUsers.find(u => u.role === 'ADMIN' && isSameCollege(u, user));
+                    setCollegeAdmin(admin);
+                } catch (e) {
+                    console.error('Failed to fetch admin info', e);
+                }
+            };
+            fetchAdmin();
+        }
+    }, [user]);
 
     if (user.status === USER_STATUS.PENDING_PLATFORM_VERIFICATION) {
         return (

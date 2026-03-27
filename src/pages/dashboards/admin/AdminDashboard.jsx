@@ -18,13 +18,7 @@ import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
 import { SettingsPage } from '../settings';
 import { useAuth } from '../../../context/AuthContext';
-import {
-    getPendingOrganizers,
-    getOrganizersByCollege,
-    getEventsByCollege,
-    getDashboardStats,
-} from '../../../api';
-import { mockOrganizers } from '../../../mocks';
+import { getPendingOrganizers, getOrganizersByCollege, getEventsByCollege, getDashboardStats } from '../../../api';
 import { USER_STATUS, EVENT_STATUS } from '../../../utils/constants';
 import {
     StatCard,
@@ -95,25 +89,52 @@ export default function AdminDashboard() {
         );
     }, [events, user?.college?.name]);
 
+    const [allOrganizers, setAllOrganizers] = useState([]);
+    const [statsBase, setStatsBase] = useState(null);
+
+    useEffect(() => {
+        if (!user?.college) return;
+        const fetchOrgs = async () => {
+            try {
+                const orgs = await getOrganizersByCollege(user.college.name, user.college.state);
+                setAllOrganizers(orgs || []);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchOrgs();
+    }, [user?.college]);
+
+    useEffect(() => {
+        if (!user) return;
+        const fetchStats = async () => {
+            try {
+                const s = await getDashboardStats(user);
+                setStatsBase(s);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchStats();
+    }, [user]);
+
     // Memoized organizers
     const organizers = useMemo(() => {
-        if (!user?.college) return { pending: [], approved: [] };
-        const allOrganizers = getOrganizersByCollege(user.college.name, user.college.state);
+        if (!allOrganizers) return { pending: [], approved: [] };
         const pending = allOrganizers.filter(o => o.status === USER_STATUS.PENDING_ADMIN_APPROVAL && !pendingOrganizerState[o.id]?.rejected);
         const approved = allOrganizers.filter(o => o.isAdminApproved || pendingOrganizerState[o.id]?.approved);
         return { pending, approved };
-    }, [user?.college, pendingOrganizerState]);
+    }, [allOrganizers, pendingOrganizerState]);
 
     // Memoized stats
     const stats = useMemo(() => {
-        if (!user?.college) return null;
-        const statsBase = getDashboardStats(user);
+        if (!statsBase) return null;
         return {
             ...statsBase,
             activeEvents: collegeEvents.filter(e => e.status === EVENT_STATUS.UPCOMING).length,
             totalEvents: collegeEvents.length,
         };
-    }, [user, collegeEvents]);
+    }, [statsBase, collegeEvents]);
 
     const handleApprove = useCallback((organizerId) => {
         const approved = organizers.pending.find(o => o.id === organizerId);

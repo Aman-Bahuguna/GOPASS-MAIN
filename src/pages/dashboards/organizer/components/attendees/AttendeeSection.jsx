@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 /**
  * AttendeeSection - displays organizer's events and lets you view
- * the attendee list for a specific event. Uses mock registrations.
+ * the attendee list for a specific event.
  *
  * Props:
  * - events: array of event objects

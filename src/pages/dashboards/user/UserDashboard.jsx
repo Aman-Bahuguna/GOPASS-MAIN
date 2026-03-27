@@ -41,16 +41,26 @@ export default function UserDashboard() {
         }
     }, [eventStatus, user, dispatch]);
 
-    // Get dashboard stats - memoized
-    const stats = useMemo(() => {
-        if (!user) return null;
-        return getDashboardStats(user);
-    }, [user]);
+    const [stats, setStats] = useState(null);
+    const [registrations, setRegistrations] = useState([]);
 
-    // Get registrations - memoized
-    const registrations = useMemo(() => {
-        if (!user) return [];
-        return getUserRegistrations(user.id);
+    useEffect(() => {
+        if (!user) return;
+        const fetchData = async () => {
+            try {
+                const fetchedStats = await getDashboardStats(user);
+                setStats(fetchedStats);
+            } catch (error) {
+                console.error('Failed to fetch stats:', error);
+            }
+            try {
+                const fetchedRegs = await getUserRegistrations(user.id);
+                setRegistrations(fetchedRegs);
+            } catch (error) {
+                console.error('Failed to fetch registrations:', error);
+            }
+        };
+        fetchData();
     }, [user]);
 
     const loading = eventStatus === 'loading';
@@ -79,10 +89,15 @@ export default function UserDashboard() {
         setShowRegistrationModal(true);
     };
 
-    const handleRegistrationSuccess = (ticketData) => {
+    const handleRegistrationSuccess = async (ticketData) => {
         // Refresh registrations after successful registration
         if (user) {
-            setRegistrations(getUserRegistrations(user.id));
+            try {
+                const fetchedRegs = await getUserRegistrations(user.id);
+                setRegistrations(fetchedRegs);
+            } catch (error) {
+                console.error('Failed to fetch registrations:', error);
+            }
         }
         console.log('Registration successful:', ticketData);
     };

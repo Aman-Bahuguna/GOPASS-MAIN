@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { ROLES, USER_STATUS, ROUTES } from '../../utils/constants';
 import { getDashboardRoute, isAccountFullyVerified, getPendingVerificationStep } from '../../utils/roleConfig';
-import { findUserByEmail } from '../../api';
+import { findUserByEmail, registerUser, loginUser } from '../../api';
 
 // --- Helper simulation delay ---
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -26,21 +26,39 @@ export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, { rejectWi
 // 2. Login
 export const login = createAsyncThunk('auth/login', async ({ email, password }, { rejectWithValue }) => {
     try {
-        await delay(1000); // Simulate API
+        const responseData = await loginUser({ email, password });
+        
+        let foundUser = responseData.user || Object.assign({}, responseData);
 
-        const foundUser = findUserByEmail(email);
-        if (!foundUser) {
-            throw new Error('Invalid email or password');
+        // Optional: map backend role strings to frontend roles if needed or provide fallbacks
+        if (foundUser.role === 'STUDENT') foundUser.role = ROLES.USER;
+        else if (foundUser.role === 'ADMIN') foundUser.role = ROLES.ADMIN;
+        else if (foundUser.role === 'ORGANIZER') foundUser.role = ROLES.ORGANIZER;
+
+        // Ensure status is set if backend doesn't provide it
+        if (!foundUser.status) {
+            if (foundUser.role === ROLES.USER || foundUser.role === ROLES.ORGANIZER) {
+                foundUser.status = USER_STATUS.ACTIVE;
+            } else if (foundUser.role === ROLES.ADMIN) {
+                // Set to pending if backend doesn't explicitly return ACTIVE
+                foundUser.status = USER_STATUS.PENDING_PLATFORM_VERIFICATION; 
+            }
         }
 
-        // Mock password check: succeed if user is found
-        // In real apps, verify password here
+        // Just to ensure existing frontend logic for Organizer approval doesn't break
+        if (foundUser.role === ROLES.ORGANIZER && foundUser.isAdminApproved === undefined) {
+             foundUser.isAdminApproved = true; // Temporary fix if backend doesn't return this
+        }
 
         localStorage.setItem('gopass_user', JSON.stringify(foundUser));
+        if (responseData.token) {
+            localStorage.setItem('gopass_token', responseData.token);
+        }
 
         return {
             user: foundUser,
             redirectTo: getDashboardRoute(foundUser.role),
+            token: responseData.token
         };
     } catch (error) {
         return rejectWithValue(error.message);
@@ -50,68 +68,48 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }, 
 // 3. Signup
 export const signup = createAsyncThunk('auth/signup', async (formData, { rejectWithValue }) => {
     try {
-        await delay(1500); // Simulate API
-
-        const existingUser = findUserByEmail(formData.email);
-        if (existingUser) {
-            throw new Error('An account with this email already exists');
-        }
-
-        // Direct Role Mapping (STUDENT, ADMIN, ORGANIZER)
         let role = formData.role;
         const normalized = String(role).toUpperCase();
         if (normalized.includes('ADMIN')) role = ROLES.ADMIN;
         else if (normalized.includes('ORGANIZER')) role = ROLES.ORGANIZER;
-        else if (normalized.includes('STUDENT') || normalized.includes('USER')) role = ROLES.USER;
+        else if (normalized.includes('STUDENT') || normalized.includes('USER')) role = ROLES.USER; // map to whatever backend expects
 
-        const newUser = {
-            id: `${role.toLowerCase()}_${Date.now()}`,
-            fullName: formData.fullName,
+        // Construct backend payload based on role
+        const payload = {
             email: formData.email,
-            role: role,
-            createdAt: new Date().toISOString(),
-            avatar: null,
-            // Additional fields based on role
-            ...(formData.role === ROLES.ORGANIZER && {
-                position: formData.position,
-                college: {
-                    name: formData.collegeName,
-                    state: formData.collegeState,
-                    pincode: formData.pincode,
-                },
-                idCardUrl: formData.idCardFile ? URL.createObjectURL(formData.idCardFile) : null,
-                isAdminApproved: false,
-                approvedBy: null,
-                approvedAt: null,
-                status: USER_STATUS.ACTIVE, // Organizer active but limited permissions
-            }),
-            ...(formData.role === ROLES.ADMIN && {
-                status: USER_STATUS.PENDING_PLATFORM_VERIFICATION,
-                position: formData.position,
-                college: {
-                    name: formData.collegeName,
-                    state: formData.collegeState,
-                    pincode: formData.pincode,
-                },
-                idCardUrl: formData.idCardFile ? URL.createObjectURL(formData.idCardFile) : null,
-            }),
-            ...(formData.role === ROLES.USER && {
-                status: USER_STATUS.ACTIVE,
-                registeredEvents: [],
-            }),
+            password: formData.password,
+            fullName: formData.fullName,
+            role: role === ROLES.USER ? 'STUDENT' : role === ROLES.ADMIN ? 'ADMIN' : 'ORGANIZER',
+        };
+
+        if (role !== ROLES.USER) {
+            payload.collegeName = formData.collegeName;
+            payload.pinCode = formData.pincode || formData.pinCode;
+        }
+
+        // Call the backend registration API
+        const responseData = await registerUser(payload);
+        
+        // Use the returned user data or fallback to formatting what we have
+        const newUser = responseData.user || {
+            id: responseData.id || `${role.toLowerCase()}_${Date.now()}`,
+            ...payload,
+            status: role === ROLES.USER ? USER_STATUS.ACTIVE : USER_STATUS.PENDING_PLATFORM_VERIFICATION,
         };
 
         // Persist
         localStorage.setItem('gopass_user', JSON.stringify(newUser));
+        localStorage.setItem('gopass_token', responseData.token || '');
 
         // Redirect logic
         const requiresVerification = newUser.status !== USER_STATUS.ACTIVE;
-        const redirectTo = requiresVerification ? ROUTES.PENDING_VERIFICATION : getDashboardRoute(newUser.role);
+        const redirectTo = requiresVerification ? ROUTES.PENDING_VERIFICATION : getDashboardRoute(newUser.role || role);
 
         return {
             user: newUser,
             redirectTo,
-            requiresVerification
+            requiresVerification,
+            token: responseData.token
         };
 
     } catch (error) {
