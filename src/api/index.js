@@ -35,6 +35,7 @@ export {
     getEventsByOrganizer,
     getUserRegistrations,
     getEventRegistrations,
+    registerForEvent,
 } from './eventsApi';
 
 // Organizers

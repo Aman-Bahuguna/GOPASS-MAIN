@@ -24,6 +24,7 @@ import {
     ChevronDown,
     Check,
 } from 'lucide-react';
+import { registerForEvent } from '../../../../../api';
 
 /**
  * Streamlined Registration Modal with Custom Fields Support
@@ -41,9 +42,28 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
         agreeToTerms: false
     });
     const [ticketData, setTicketData] = useState(null);
+    const eventFee = event?.ticketPrice ? Number(event.ticketPrice) : (event?.fee || 0);
 
-    // Custom fields state
-    const customFields = event?.customFields || [];
+    // Custom fields state: map backend's formSchema if available, fallback to customFields for mock data
+    const customFields = (event?.formSchema?.map((schemaField, idx) => {
+        // Infer true type from backend structure
+        let inferredType = schemaField.type || 'text';
+        
+        // If backend says 'string' but we have options, it's likely a choice field
+        if (inferredType === 'string' && schemaField.options?.length > 0) {
+            inferredType = 'dropdown'; // Default inferred type for structured choices
+        }
+
+        return {
+            ...schemaField, // Preserve options and configs perfectly
+            id: schemaField.id || `custom_${idx}`,
+            label: schemaField.fieldName || schemaField.label,
+            type: inferredType,
+            options: schemaField.options || [],
+            required: schemaField.required !== undefined ? schemaField.required : false
+        };
+    })) || event?.customFields || [];
+    
     const hasCustomFields = customFields.length > 0;
     const [customFieldValues, setCustomFieldValues] = useState({});
     const [teamName, setTeamName] = useState('');
@@ -51,7 +71,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
 
     // Initialize team members
     useEffect(() => {
-        const teamField = customFields.find(f => f.type === 'team');
+        const teamField = customFields.find(f => f.type === 'team' || f.type === 'Team Details');
         if (teamField && teamMembers.length === 0) {
             const min = teamField.teamConfig?.minMembers || 2;
             setTeamMembers(Array.from({ length: min }, () => ({ name: '', email: '', phone: '' })));
@@ -146,7 +166,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
         e.preventDefault();
         if (!validateForm()) return;
 
-        if (event.fee === 0) {
+        if (eventFee === 0) {
             handleCompleteRegistration();
         } else {
             setStep(2);
@@ -161,26 +181,45 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
 
     const handleCompleteRegistration = async () => {
         setIsProcessing(true);
-        await new Promise(resolve => setTimeout(resolve, 500));
+        try {
+            // Prepare backend payload
+            // Backend expects the additional fields and custom question answers
+            const registrationPayload = { 
+                ...customFieldValues,
+                teamName: teamName || undefined,
+                teamMembers: teamMembers.length > 0 ? teamMembers : undefined,
+                collegeName: formData.collegeName,
+                year: formData.year,
+                phone: formData.phone
+            };
 
-        const ticket = {
-            ticketNumber: `GP${Date.now().toString(36).toUpperCase()}`,
-            eventTitle: event.title,
-            eventDate: event.date,
-            venue: event.venue,
-            amount: event.fee,
-            registeredAt: new Date().toISOString(),
-            attendeeName: formData.fullName,
-            attendeeEmail: formData.email,
-            college: formData.collegeName,
-            customFieldValues,
-            teamName: teamName || undefined,
-            teamMembers: teamMembers.length > 0 ? teamMembers : undefined,
-        };
+            // Call POST /api/registrations/{eventId}
+            await registerForEvent(event.id, registrationPayload);
 
-        setTicketData(ticket);
-        setIsProcessing(false);
-        setStep(3);
+            const ticket = {
+                ticketNumber: `GP${Date.now().toString(36).toUpperCase()}`,
+                eventTitle: event.eventName || event.title || 'Event',
+                eventDate: event.startDate || event.date || new Date().toISOString(),
+                venue: event.venue || 'Online',
+                amount: eventFee,
+                registeredAt: new Date().toISOString(),
+                attendeeName: formData.fullName,
+                attendeeEmail: formData.email,
+                college: formData.collegeName,
+                customFieldValues,
+                teamName: teamName || undefined,
+                teamMembers: teamMembers.length > 0 ? teamMembers : undefined,
+            };
+
+            setTicketData(ticket);
+            setStep(3);
+        } catch (error) {
+            console.error('Registration API Error:', error);
+            setErrors({ submit: 'Failed to register with server. Please try again.' });
+            setStep(1); 
+        } finally {
+            setIsProcessing(false);
+        }
     };
 
     const handleDone = () => {
@@ -191,7 +230,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
     // Render a single custom field
     const renderCustomField = (field) => {
         // — Team Details —
-        if (field.type === 'team') {
+        if (field.type === 'team' || field.type === 'Team Details') {
             const cfg = field.teamConfig || {};
             return (
                 <div key={field.id} className="bg-violet-50/70 rounded-2xl p-4 border border-violet-200/50 space-y-3">
@@ -453,13 +492,13 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                                 <h2 className="text-lg font-bold tracking-tight">
                                     {step === 3 ? 'Registration Complete!' : step === 2 ? 'Payment' : 'Quick Registration'}
                                 </h2>
-                                <p className="text-white/70 text-sm line-clamp-1">{event.title}</p>
+                                <p className="text-white/70 text-sm line-clamp-1">{event.eventName || event.title}</p>
                             </div>
                         </div>
 
                         {step < 3 && (
                             <div className="flex gap-2 mt-4 relative z-[1]">
-                                {[1, 2].slice(0, event?.fee === 0 ? 1 : 2).map((s) => (
+                                {[1, 2].slice(0, eventFee === 0 ? 1 : 2).map((s) => (
                                     <div key={s} className={`flex-1 h-1 rounded-full transition-all duration-500 ${s <= step ? 'bg-white' : 'bg-white/20'}`} />
                                 ))}
                             </div>
@@ -597,7 +636,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                                         <div className="flex items-center justify-between text-sm mb-2">
                                             <span className="text-slate-500 flex items-center gap-1.5">
                                                 <Calendar className="w-3.5 h-3.5" />
-                                                {new Date(event.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
+                                                {new Date(event.startDate || event.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
                                             </span>
                                             <span className="text-slate-500 flex items-center gap-1.5">
                                                 <MapPin className="w-3.5 h-3.5" />
@@ -607,7 +646,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                                         <div className="flex justify-between items-center pt-2 border-t border-slate-200">
                                             <span className="font-medium text-slate-700">Total</span>
                                             <span className="text-xl font-bold text-brand-300">
-                                                {event.fee === 0 ? 'FREE' : `₹${event.fee}`}
+                                                {eventFee === 0 ? 'FREE' : `₹${eventFee}`}
                                             </span>
                                         </div>
                                     </div>
@@ -633,7 +672,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                                         whileHover={{ scale: 1.01 }}
                                         whileTap={{ scale: 0.98 }}
                                     >
-                                        {event.fee === 0 ? 'Complete Registration' : 'Proceed to Payment'}
+                                        {eventFee === 0 ? 'Complete Registration' : 'Proceed to Payment'}
                                         <ArrowRight className="w-5 h-5" />
                                     </motion.button>
                                 </motion.form>
@@ -654,7 +693,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                                             <span className="text-slate-400 text-sm">Amount</span>
                                             <IndianRupee className="w-4 h-4 text-slate-400" />
                                         </div>
-                                        <p className="text-3xl font-bold">₹{event.fee}</p>
+                                        <p className="text-3xl font-bold">₹{eventFee}</p>
                                         <div className="mt-3 pt-3 border-t border-slate-700 flex justify-between text-sm">
                                             <span className="text-slate-400">Attendee</span>
                                             <span>{formData.fullName}</span>
@@ -691,7 +730,7 @@ function RegistrationModal({ event, onClose, onSuccess, user }) {
                                         ) : (
                                             <>
                                                 <CreditCard className="w-5 h-5" />
-                                                Pay ₹{event.fee}
+                                                Pay ₹{eventFee}
                                             </>
                                         )}
                                     </motion.button>

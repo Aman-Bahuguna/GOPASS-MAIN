@@ -1,3 +1,5 @@
+import { USER_STATUS } from '../utils/constants';
+
 /**
  * ==========================================
  * ORGANIZERS API SERVICE
@@ -6,9 +8,27 @@
  * Handles all organizer-related API calls.
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-
 export const getOrganizersByCollege = async (collegeName, state) => {
+    // Attempt to fetch from real backend first
+    try {
+        const token = localStorage.getItem('gopass_token');
+        const res = await fetch(`https://eventhub-backend-prsg.onrender.com/api/admin/organizers?college=${encodeURIComponent(collegeName)}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (res.ok) {
+            const data = await res.json();
+            const realOrgs = Array.isArray(data) ? data : (data.content || data.organizers || []);
+            if (realOrgs.length > 0) return realOrgs;
+        }
+    } catch (err) {
+        console.warn("Backend organizers fetch failed, using local storage fallback", err);
+    }
+
     const stored = localStorage.getItem('gopass_registered_organizers');
     const orgs = stored ? JSON.parse(stored) : [];
     // Ensure both college object format or flat collegeName string are matched

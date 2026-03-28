@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEvents, selectEventsStatus } from '../store/slices/eventsSlice';
 import HeroSection from '../components/blocks/HeroSection';
 import ShowcaseSection from '../components/blocks/ShowcaseSection';
 import DeckSection from '../components/blocks/DeckSection';
@@ -13,7 +15,14 @@ import Navbar from '../components/ui/Navbar';
 import Lenis from 'lenis';
 
 const LandingPage = () => {
-    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const eventStatus = useSelector(selectEventsStatus);
+
+    useEffect(() => {
+        if (eventStatus === 'idle') {
+            dispatch(fetchEvents());
+        }
+    }, [eventStatus, dispatch]);
 
     useEffect(() => {
         const lenis = new Lenis({

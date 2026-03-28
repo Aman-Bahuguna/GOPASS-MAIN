@@ -12,7 +12,7 @@ import { getDashboardStats, getEventRegistrations } from '../../../api';
 import { canOrganizerCreateEvents } from '../../../utils/roleConfig';
 import { DashboardHome } from './components';
 import { EventsSection } from './components/events';
-import { fetchEvents, selectAllEvents, selectEventsStatus } from '../../../store/slices/eventsSlice';
+import { fetchOrganizerEvents, selectAllEvents, selectEventsStatus } from '../../../store/slices/eventsSlice';
 
 /**
  * OrganizerDashboard - Main dashboard container for organizers
@@ -33,14 +33,14 @@ export default function OrganizerDashboard() {
     // Fetch Events if not loaded
     useEffect(() => {
         if (eventStatus === 'idle' && user) {
-            dispatch(fetchEvents());
+            dispatch(fetchOrganizerEvents());
         }
     }, [dispatch, eventStatus, user]);
 
     // Derived state for organizer events
     const organizerEvents = useMemo(() => {
         if (!user) return [];
-        return allEvents.filter(event => event.organizerId === user.id);
+        return allEvents; // The backend already filters for this organizer
     }, [allEvents, user]);
 
     const [stats, setStats] = useState(null);
@@ -73,11 +73,11 @@ export default function OrganizerDashboard() {
 
     const handleViewEventAttendees = async (event) => {
         setSelectedEvent(event);
+        handleNavigate('attendees');
+        
         try {
             const regs = await getEventRegistrations(event.id);
             setEventAttendees(regs);
-            // navigate to attendee page so the list is shown
-            handleNavigate('attendees');
         } catch (err) {
             console.error(err);
         }

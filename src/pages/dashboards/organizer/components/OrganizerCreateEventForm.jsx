@@ -135,23 +135,32 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
         setIsSubmitting(true);
 
         try {
-            // Transform form data to match the event structure
+            // Transform form data to preserve ALL custom field logic (options, required flags, etc.)
+            // The JSON mapper on the backend should accept arbitrary structures if it parses dynamic forms!
+            const formSchema = formData.customFields.map(field => {
+                const schema = {
+                    ...field, // Preserve options, teamConfig, required...
+                    fieldName: field.label || field.type,     // Backend standard mapping
+                    type: field.type                          // E.g., 'dropdown', 'checkbox', 'team'
+                };
+                return schema;
+            });
+
+            // Prevent spreading ...formData entirely to protect against sending File objects or unknown DTO keys
             const eventPayload = {
-                title: formData.eventName,
-                startDate: formData.startDate,
-                endDate: formData.endDate || null,
-                venue: formData.venue,
-                email: formData.email || null,
-                category: "Custom",
-                organizerId: user?.id || 'unknown',
-                organizerName: user?.fullName || 'Unknown Organizer',
+                eventName: formData.eventName,
                 description: formData.description,
-                fee: formData.paymentEnabled ? parseFloat(formData.ticketPrice) : 0,
-                maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : null,
-                contact: formData.contact,
-                posterUrl: preview,
-                customFields: formData.customFields,
+                startDate: formData.startDate ? `${formData.startDate}T00:00:00` : null,
+                endDate: formData.endDate ? `${formData.endDate}T23:59:59` : null,
+                venue: formData.venue,
+                phoneNo: formData.contact,
+                email: formData.email || '',
+                // Hardcode bannerUrl for now since base64 data URIs will exceed backend DB varchar length limits
+                bannerUrl: "https://link-to-image.com/banner.png",
+                formSchema: formSchema
             };
+
+            console.log("📤 POSTING TO BACKEND: /api/event/saveEvent", JSON.stringify(eventPayload, null, 2));
 
             await dispatch(createEvent(eventPayload)).unwrap();
 

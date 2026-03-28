@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchAllEvents as apiFetchAllEvents, fetchEventById as apiFetchEventById } from '../../api';
+import { fetchAllEvents as apiFetchAllEvents, fetchEventById as apiFetchEventById, createEvent as apiCreateEvent, getEventsByOrganizer as apiGetEventsByOrganizer } from '../../api';
 import { EVENT_STATUS } from '../../utils/constants';
 
 // --- Async Thunks ---
@@ -8,6 +8,15 @@ import { EVENT_STATUS } from '../../utils/constants';
 export const fetchEvents = createAsyncThunk('events/fetchAll', async (_, { rejectWithValue }) => {
     try {
         return await apiFetchAllEvents();
+    } catch (error) {
+        return rejectWithValue(error.message);
+    }
+});
+
+// 1.5 Fetch Organizer Events
+export const fetchOrganizerEvents = createAsyncThunk('events/fetchOrganizerEvents', async (_, { rejectWithValue }) => {
+    try {
+        return await apiGetEventsByOrganizer();
     } catch (error) {
         return rejectWithValue(error.message);
     }
@@ -25,14 +34,7 @@ export const fetchEventById = createAsyncThunk('events/fetchById', async (eventI
 // 3. Create Event
 export const createEvent = createAsyncThunk('events/create', async (eventData, { rejectWithValue }) => {
     try {
-        const newEvent = {
-            ...eventData,
-            id: `evt_${Date.now()}`,
-            createdAt: new Date().toISOString(),
-            status: EVENT_STATUS.UPCOMING,
-            registeredCount: 0,
-        };
-        // In a real app, you'd POST to an API
+        const newEvent = await apiCreateEvent(eventData);
         return newEvent;
     } catch (error) {
         return rejectWithValue(error.message);
@@ -91,6 +93,20 @@ const eventsSlice = createSlice({
                 state.lastFetched = Date.now();
             })
             .addCase(fetchEvents.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
+            })
+
+            // Fetch Organizer Events
+            .addCase(fetchOrganizerEvents.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchOrganizerEvents.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.items = action.payload;
+                state.lastFetched = Date.now();
+            })
+            .addCase(fetchOrganizerEvents.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload;
             })

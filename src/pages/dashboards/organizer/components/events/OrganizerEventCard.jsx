@@ -77,9 +77,15 @@ function OrganizerEventCard({
 
     const status = statusConfig[event.status] || statusConfig.UPCOMING;
     const StatusIcon = status.icon;
-    const revenue = (event.registeredCount || 0) * (event.fee || 0);
-    const fillPercentage = event.capacity > 0
-        ? Math.round((event.registeredCount / event.capacity) * 100)
+    
+    // BACKEND MAPPING: Use startDate if date is missing, and map registration counts
+    const eventDate = event.startDate || event.date;
+    const registeredCount = event.totalRegistrations || event.registeredCount || 0;
+    const capacity = event.maxCapacity || event.capacity || 0;
+    
+    const revenue = registeredCount * (event.ticketPrice || event.fee || 0);
+    const fillPercentage = capacity > 0
+        ? Math.round((registeredCount / capacity) * 100)
         : 0;
 
     const handleMenuAction = (action, e) => {
@@ -221,10 +227,10 @@ function OrganizerEventCard({
                             <p className="text-xs">Date</p>
                         </div>
                         <p className="font-semibold text-slate-900 text-sm">
-                            {new Date(event.date).toLocaleDateString('en-US', {
+                            {eventDate ? new Date(eventDate).toLocaleDateString('en-US', {
                                 month: 'short',
                                 day: 'numeric'
-                            })}
+                            }) : 'TBA'}
                         </p>
                     </div>
                     <div className="p-3 bg-slate-50 rounded-xl text-center">
@@ -233,7 +239,7 @@ function OrganizerEventCard({
                             <p className="text-xs">Registrations</p>
                         </div>
                         <p className="font-semibold text-slate-900 text-sm">
-                            {event.registeredCount || 0}/{event.capacity || 0}
+                            {registeredCount}/{capacity}
                         </p>
                     </div>
                     <div className="p-3 bg-emerald-50 rounded-xl text-center">

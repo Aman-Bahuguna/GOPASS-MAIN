@@ -74,17 +74,24 @@ export default function EventsSection({
 
         // Sort
         result.sort((a, b) => {
+            const dateA = new Date(a.startDate || a.date);
+            const dateB = new Date(b.startDate || b.date);
+            const regA = a.totalRegistrations || a.registeredCount || 0;
+            const regB = b.totalRegistrations || b.registeredCount || 0;
+            const priceA = a.ticketPrice || a.fee || 0;
+            const priceB = b.ticketPrice || b.fee || 0;
+
             switch (sortBy) {
                 case 'date-asc':
-                    return new Date(a.date) - new Date(b.date);
+                    return dateA - dateB;
                 case 'date-desc':
-                    return new Date(b.date) - new Date(a.date);
+                    return dateB - dateA;
                 case 'registrations-desc':
-                    return (b.registeredCount || 0) - (a.registeredCount || 0);
+                    return regB - regA;
                 case 'registrations-asc':
-                    return (a.registeredCount || 0) - (b.registeredCount || 0);
+                    return regA - regB;
                 case 'revenue-desc':
-                    return ((b.registeredCount || 0) * (b.fee || 0)) - ((a.registeredCount || 0) * (a.fee || 0));
+                    return (regB * priceB) - (regA * priceA);
                 case 'name-asc':
                     return (a.title || '').localeCompare(b.title || '');
                 default:

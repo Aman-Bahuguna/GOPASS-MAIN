@@ -44,6 +44,7 @@ import {
 
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEvents, selectAllEvents, selectEventsStatus } from '../../../store/slices/eventsSlice';
+import { normalizeUser } from '../../../utils/userUtils';
 
 // Main Admin Dashboard Component
 export default function AdminDashboard() {
@@ -141,12 +142,9 @@ export default function AdminDashboard() {
             const apiEmails = apiPendingOrgs.map(o => o.email);
             pending = pending.filter(o => !apiEmails.includes(o.email)); // Prevent duplicates
             
-            const realPending = apiPendingOrgs.map(o => ({
-                ...o,
-                id: o.id || o._id, // Map MongoDB ID if needed
-                fullName: o.fullName || o.name || 'Organizer',
-                college: o.college || user?.college
-            })).filter(o => !pendingOrganizerState[o.id]?.rejected && !pendingOrganizerState[o.id]?.approved);
+            const realPending = apiPendingOrgs
+                .map(o => normalizeUser(o, user?.college))
+                .filter(o => !pendingOrganizerState[o.id]?.rejected && !pendingOrganizerState[o.id]?.approved);
             
             pending = [...pending, ...realPending];
         }

@@ -12,25 +12,37 @@ const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
  * Find a user by email address.
  */
 export const findUserByEmail = async (email) => {
-    const res = await fetch(`${API_BASE}/auth/find-by-email?email=${encodeURIComponent(email)}`);
+    const token = localStorage.getItem('gopass_token');
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`https://eventhub-backend-prsg.onrender.com/api/auth/find-by-email?email=${encodeURIComponent(email)}`, {
+        headers
+    });
     if (!res.ok) throw new Error('User not found');
     return res.json();
 };
 
-/**
- * Find a user by their ID.
- */
 export const findUserById = async (id) => {
-    const res = await fetch(`${API_BASE}/users/${id}`);
+    const token = localStorage.getItem('gopass_token');
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`https://eventhub-backend-prsg.onrender.com/api/users/${id}`, {
+        headers
+    });
     if (!res.ok) throw new Error('User not found');
     return res.json();
 };
 
-/**
- * Get all users (combined admins + organizers + general users).
- */
 export const getAllUsers = async () => {
-    const res = await fetch(`${API_BASE}/users`);
+    const token = localStorage.getItem('gopass_token');
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`https://eventhub-backend-prsg.onrender.com/api/users`, {
+        headers
+    });
     if (!res.ok) throw new Error('Failed to fetch users');
     return res.json();
 };

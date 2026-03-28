@@ -22,7 +22,8 @@ import {
     Users,
     Award,
     TrendingUp,
-    FileText
+    FileText,
+    ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES, USER_STATUS, ADMIN_POSITIONS, ORGANIZER_POSITIONS } from '../../utils/constants';
@@ -481,7 +482,7 @@ export default function ProfilePage({ onNavigate }) {
                     <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                         <EditableField
                             label="Full Name"
-                            value={user?.fullName}
+                            value={user?.fullName || user?.name}
                             icon={User}
                             isEditing={isEditing}
                             onEdit={(val) => setEditedData({ ...editedData, fullName: val })}
@@ -501,15 +502,59 @@ export default function ProfilePage({ onNavigate }) {
                 </div>
             </motion.div>
 
-            {/* Role-Specific Section */}
+            {/* Profile Info Details (Role Specific) */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
+                className="grid grid-cols-1 lg:grid-cols-3 gap-8"
             >
-                {user?.role === ROLES.USER && <UserProfileSection user={user} />}
-                {user?.role === ROLES.ORGANIZER && <OrganizerProfileSection user={user} />}
-                {user?.role === ROLES.ADMIN && <AdminProfileSection user={user} />}
+                {/* Contact & Social Section */}
+                <div className="lg:col-span-1 space-y-6">
+                    <div className="bg-[#f7f8fa] rounded-2xl p-6 shadow-sm border border-slate-200">
+                        <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                             <Mail className="w-5 h-5 text-brand-200" />
+                             Contact Information
+                        </h3>
+                        <div className="space-y-4">
+                            <div>
+                                <p className="text-xs text-slate-400 uppercase font-medium">Primary Email</p>
+                                <p className="text-slate-900 font-medium">{user?.email}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs text-slate-400 uppercase font-medium">Account Status</p>
+                                <div className="mt-1 flex items-center gap-2">
+                                    <div className={`w-2 h-2 rounded-full ${user?.status === USER_STATUS.ACTIVE ? 'bg-green-500' : 'bg-amber-500'}`} />
+                                    <span className="text-slate-700 font-medium">{user?.status || 'Pending'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-[#f7f8fa] rounded-2xl p-6 shadow-sm border border-slate-200">
+                        <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                             <Shield className="w-5 h-5 text-brand-200" />
+                             Account Security
+                        </h3>
+                        <div className="space-y-3">
+                             <button className="w-full py-2 px-4 text-left text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors flex items-center justify-between group">
+                                 Change Password
+                                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                             </button>
+                             <button className="w-full py-2 px-4 text-left text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors flex items-center justify-between group">
+                                 Two-Factor Auth
+                                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Role Specific Stats and Content */}
+                <div className="lg:col-span-2">
+                    {user?.role === ROLES.USER && <UserProfileSection user={user} />}
+                    {user?.role === ROLES.ORGANIZER && <OrganizerProfileSection user={user} />}
+                    {user?.role === ROLES.ADMIN && <AdminProfileSection user={user} />}
+                </div>
             </motion.div>
         </div>
     );

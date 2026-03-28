@@ -4,7 +4,7 @@ import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
 import { SettingsPage } from '../settings';
 import { useAuth } from '../../../context/AuthContext';
-import { getUserRegistrations, getDashboardStats } from '../../../api';
+import { getUserRegistrations, getDashboardStats, fetchEventById } from '../../../api';
 import { EVENT_STATUS } from '../../../utils/constants';
 import { fetchEvents, selectAllEvents, selectEventsStatus, resetStatus } from '../../../store/slices/eventsSlice';
 
@@ -54,7 +54,7 @@ export default function UserDashboard() {
                 console.error('Failed to fetch stats:', error);
             }
             try {
-                const fetchedRegs = await getUserRegistrations(user.id);
+                const fetchedRegs = await getUserRegistrations();
                 setRegistrations(fetchedRegs);
             } catch (error) {
                 console.error('Failed to fetch registrations:', error);
@@ -65,13 +65,13 @@ export default function UserDashboard() {
 
     const loading = eventStatus === 'loading';
 
-    // Get all events for the events page
-    const allEvents = events;
+    // Get all events for the events page, securely defaulting to array
+    const allEvents = Array.isArray(events) ? events : [];
 
     // Get upcoming events for the home page
     const upcomingEvents = useMemo(() =>
-        events.filter(e => e.status === EVENT_STATUS.UPCOMING),
-        [events]);
+        allEvents.filter(e => e.status === EVENT_STATUS.UPCOMING),
+        [allEvents]);
 
     // Get favorited events
     const favoritedEvents = useMemo(() =>
@@ -80,13 +80,30 @@ export default function UserDashboard() {
 
     // Check if user is registered for an event
     const isRegisteredForEvent = useCallback((eventId) => {
-        return registrations.some(r => r.eventId === eventId);
+        return (Array.isArray(registrations) ? registrations : []).some(r => r.eventId === eventId);
     }, [registrations]);
 
     // Handlers
-    const handleRegister = (event) => {
-        setSelectedEvent(event);
-        setShowRegistrationModal(true);
+    const handleRegister = async (eventSummary) => {
+        try {
+            // Fetch the fully populated event (with formSchema) before opening the modal
+            const fullEvent = await fetchEventById(eventSummary.id);
+            
+            console.log("🔥 FETCHED FULL ENTRY FROM BACKEND /api/event/" + eventSummary.id + " ->", fullEvent);
+            if (!fullEvent.formSchema || fullEvent.formSchema.length === 0) {
+                 console.warn("⚠️ API WARNING: The backend database returned ZERO custom fields (`formSchema`) for this event! Check your Spring Boot Entity mapping!");
+            } else {
+                 console.log("✅ API SUCCESS: Event contains dynamic fields:", fullEvent.formSchema);
+            }
+
+            setSelectedEvent(fullEvent || eventSummary);
+            setShowRegistrationModal(true);
+        } catch (error) {
+            console.error('🚨 NETWORK WARNING - Failed to fetch event details for registration! Did the API throw 403 or 404?', error);
+            // Fallback to summary if details fail
+            setSelectedEvent(eventSummary);
+            setShowRegistrationModal(true);
+        }
     };
 
     const handleRegistrationSuccess = async (ticketData) => {
