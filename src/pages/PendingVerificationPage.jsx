@@ -107,10 +107,9 @@ function EmailCard({ email, index }) {
 
 export default function PendingVerificationPage() {
     const navigate = useNavigate();
-    const { user, simulatePlatformApproval, logout } = useAuth();
+    const { user, logout } = useAuth();
     const [emails, setEmails] = useState([]);
     const [showEmails, setShowEmails] = useState(false);
-    const [isSimulating, setIsSimulating] = useState(false);
 
     useEffect(() => { setEmails(getStoredEmails()); }, []);
     const refreshEmails = () => setEmails(getStoredEmails());
@@ -128,8 +127,6 @@ export default function PendingVerificationPage() {
     const statusContent = getStatusContent();
     const steps = [{ step: 1, title: 'Platform Verification', description: 'Our team reviews your college ID and verifies your credentials.' }, { step: 2, title: 'Account Activation', description: 'Full access to all GoPass admin features!' }];
     const getStepStatus = (stepNumber) => { if (user?.status === USER_STATUS.ACTIVE) return 'completed'; if (stepNumber < statusContent.step) return 'completed'; if (stepNumber === statusContent.step) return 'current'; return 'pending'; };
-
-    const handleSimulatePlatform = async () => { setIsSimulating(true); await new Promise(r => setTimeout(r, 1500)); simulatePlatformApproval?.(); refreshEmails(); setIsSimulating(false); };
 
     return (
         <div className="min-h-screen relative overflow-hidden">
@@ -171,14 +168,6 @@ export default function PendingVerificationPage() {
                                         <h2 className="text-lg font-semibold text-slate-800 mb-6 flex items-center gap-2"><Clock className="w-5 h-5 text-brand-200" />Verification Progress</h2>
                                         {steps.map((step, index) => <ProgressStep key={step.step} {...step} status={getStepStatus(step.step)} isLast={index === steps.length - 1} />)}
                                     </div>
-                                    {process.env.NODE_ENV !== 'production' && user?.status === USER_STATUS.PENDING_PLATFORM_VERIFICATION && (
-                                        <div className="p-5 bg-amber-50 border-t border-amber-200">
-                                            <div className="flex items-center gap-2 mb-3"><AlertCircle className="w-4 h-4 text-amber-600" /><span className="text-sm font-medium text-amber-800">Development Mode</span></div>
-                                            <motion.button onClick={handleSimulatePlatform} disabled={isSimulating} className="px-4 py-2.5 bg-brand-200 text-white rounded-lg font-medium flex items-center gap-2 hover:bg-brand-100 disabled:opacity-50" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                                {isSimulating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}Simulate Platform Approval
-                                            </motion.button>
-                                        </div>
-                                    )}
                                     {user?.status === USER_STATUS.ACTIVE && (
                                         <div className="p-5 border-t border-slate-200">
                                             <motion.button onClick={() => navigate(`/${user.role.toLowerCase()}-dashboard`)} className="w-full py-3 bg-gradient-to-r from-brand-200 to-brand-300 text-white rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-brand-200/30" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>Go to Dashboard <ArrowRight className="w-5 h-5" /></motion.button>

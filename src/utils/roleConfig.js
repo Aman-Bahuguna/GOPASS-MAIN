@@ -75,7 +75,10 @@ export const getRequiredVerifications = (role) => {
 // Check if user account is fully verified
 export const isAccountFullyVerified = (user) => {
     if (!user) return false;
-    return user.status === USER_STATUS.ACTIVE;
+    return user.status === USER_STATUS.ACTIVE || 
+           user.status === 'APPROVED' || 
+           user.isApproved === true || 
+           user.isAdminApproved === true;
 };
 
 // Check if organizer can create events

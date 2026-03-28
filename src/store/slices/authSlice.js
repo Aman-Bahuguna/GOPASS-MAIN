@@ -35,19 +35,18 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }, 
         else if (foundUser.role === 'ADMIN') foundUser.role = ROLES.ADMIN;
         else if (foundUser.role === 'ORGANIZER') foundUser.role = ROLES.ORGANIZER;
 
-        // Ensure status is set if backend doesn't provide it
-        if (!foundUser.status) {
-            if (foundUser.role === ROLES.USER || foundUser.role === ROLES.ORGANIZER) {
-                foundUser.status = USER_STATUS.ACTIVE;
-            } else if (foundUser.role === ROLES.ADMIN) {
-                // Set to pending if backend doesn't explicitly return ACTIVE
-                foundUser.status = USER_STATUS.PENDING_PLATFORM_VERIFICATION; 
-            }
+        // Support various backend success statuses
+        if (!foundUser.status || 
+            foundUser.status === USER_STATUS.PENDING_PLATFORM_VERIFICATION || 
+            foundUser.status === 'APPROVED' || 
+            foundUser.isApproved === true ||
+            foundUser.isAdminApproved === true) {
+            foundUser.status = USER_STATUS.ACTIVE;
         }
 
-        // Just to ensure existing frontend logic for Organizer approval doesn't break
-        if (foundUser.role === ROLES.ORGANIZER && foundUser.isAdminApproved === undefined) {
-             foundUser.isAdminApproved = true; // Temporary fix if backend doesn't return this
+        // Trust the backend for admin approval rather than local storage mock!
+        if (foundUser.role === 'ORGANIZER' && (foundUser.status === 'ACTIVE' || foundUser.status === 'APPROVED')) {
+            foundUser.isAdminApproved = true;
         }
 
         localStorage.setItem('gopass_user', JSON.stringify(foundUser));
@@ -90,12 +89,36 @@ export const signup = createAsyncThunk('auth/signup', async (formData, { rejectW
         // Call the backend registration API
         const responseData = await registerUser(payload);
         
-        // Use the returned user data or fallback to formatting what we have
         const newUser = responseData.user || {
             id: responseData.id || `${role.toLowerCase()}_${Date.now()}`,
             ...payload,
-            status: role === ROLES.USER ? USER_STATUS.ACTIVE : USER_STATUS.PENDING_PLATFORM_VERIFICATION,
+            status: USER_STATUS.ACTIVE,
         };
+        
+        // Force Active status to bypass removed pending page
+        if (newUser.status === USER_STATUS.PENDING_PLATFORM_VERIFICATION) {
+            newUser.status = USER_STATUS.ACTIVE;
+        }
+
+        if (newUser.role === ROLES.ORGANIZER) {
+            // Push to mock organizers DB for Admin Dashboard
+            const stored = localStorage.getItem('gopass_registered_organizers');
+            let orgs = stored ? JSON.parse(stored) : [];
+            
+            // In case of re-registration, remove old to avoid duplicates
+            orgs = orgs.filter(o => o.email !== newUser.email);
+            
+            orgs.push({
+                ...newUser,
+                status: USER_STATUS.PENDING_ADMIN_APPROVAL,
+                isAdminApproved: false,
+                college: { name: newUser.collegeName || '', state: newUser.state || '' }
+            });
+            localStorage.setItem('gopass_registered_organizers', JSON.stringify(orgs));
+            
+            newUser.isAdminApproved = false;
+        }
+
 
         // Persist
         localStorage.setItem('gopass_user', JSON.stringify(newUser));

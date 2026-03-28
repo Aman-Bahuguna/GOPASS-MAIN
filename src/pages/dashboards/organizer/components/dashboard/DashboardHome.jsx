@@ -40,16 +40,7 @@ export default function DashboardHome({
         <>
             {/* Approval Status Banner */}
             <ApprovalStatusBanner user={user} />
-            {!fullActivated && (
-                <div className="mb-4 text-center">
-                    <button
-                        onClick={onActivateFull}
-                        className="px-6 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
-                    >
-                        Activate Full Dashboard
-                    </button>
-                </div>
-            )}
+
 
             {/* Welcome Section */}
             <WelcomeSection

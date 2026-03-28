@@ -80,7 +80,7 @@ function PendingOrganizerCard({ organizer, index, onApprove, onReject }) {
                         <div className="flex items-center gap-4 mt-2">
                             <span className="flex items-center gap-1.5 text-xs text-slate-400">
                                 <Calendar className="w-3.5 h-3.5" />
-                                Applied {new Date(organizer.createdAt).toLocaleDateString('en-US', {
+                                Applied {new Date(organizer.createdAt || organizer.created_at || Date.now()).toLocaleDateString('en-US', {
                                     month: 'short',
                                     day: 'numeric',
                                     year: 'numeric'

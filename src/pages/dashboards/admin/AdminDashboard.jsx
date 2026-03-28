@@ -18,7 +18,7 @@ import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
 import { SettingsPage } from '../settings';
 import { useAuth } from '../../../context/AuthContext';
-import { getPendingOrganizers, getOrganizersByCollege, getEventsByCollege, getDashboardStats } from '../../../api';
+import { getPendingOrganizers, getOrganizersByCollege, getEventsByCollege, getDashboardStats, approveOrganizer } from '../../../api';
 import { USER_STATUS, EVENT_STATUS } from '../../../utils/constants';
 import {
     StatCard,
@@ -90,20 +90,32 @@ export default function AdminDashboard() {
     }, [events, user?.college?.name]);
 
     const [allOrganizers, setAllOrganizers] = useState([]);
+    const [apiPendingOrgs, setApiPendingOrgs] = useState([]);
     const [statsBase, setStatsBase] = useState(null);
 
     useEffect(() => {
-        if (!user?.college) return;
+        if (!user) return; // Wait until useAuth completes
         const fetchOrgs = async () => {
+            if (user?.college) {
+                try {
+                    const orgs = await getOrganizersByCollege(user.college.name, user.college.state);
+                    setAllOrganizers(orgs || []);
+                } catch (err) {
+                    console.error("Local mock organizers error:", err);
+                }
+            } else {
+                setAllOrganizers([]); // Fallback to empty
+            }
+
             try {
-                const orgs = await getOrganizersByCollege(user.college.name, user.college.state);
-                setAllOrganizers(orgs || []);
+                const pending = await getPendingOrganizers();
+                setApiPendingOrgs(pending || []);
             } catch (err) {
-                console.error(err);
+                console.error("API Pending Organizers Error:", err);
             }
         };
         fetchOrgs();
-    }, [user?.college]);
+    }, [user, user?.college]);
 
     useEffect(() => {
         if (!user) return;
@@ -121,10 +133,26 @@ export default function AdminDashboard() {
     // Memoized organizers
     const organizers = useMemo(() => {
         if (!allOrganizers) return { pending: [], approved: [] };
-        const pending = allOrganizers.filter(o => o.status === USER_STATUS.PENDING_ADMIN_APPROVAL && !pendingOrganizerState[o.id]?.rejected);
+        let pending = allOrganizers.filter(o => o.status === USER_STATUS.PENDING_ADMIN_APPROVAL && !pendingOrganizerState[o.id]?.rejected);
         const approved = allOrganizers.filter(o => o.isAdminApproved || pendingOrganizerState[o.id]?.approved);
+        
+        // Merge API fetched pending organizers seamlessly
+        if (apiPendingOrgs && apiPendingOrgs.length > 0) {
+            const apiEmails = apiPendingOrgs.map(o => o.email);
+            pending = pending.filter(o => !apiEmails.includes(o.email)); // Prevent duplicates
+            
+            const realPending = apiPendingOrgs.map(o => ({
+                ...o,
+                id: o.id || o._id, // Map MongoDB ID if needed
+                fullName: o.fullName || o.name || 'Organizer',
+                college: o.college || user?.college
+            })).filter(o => !pendingOrganizerState[o.id]?.rejected && !pendingOrganizerState[o.id]?.approved);
+            
+            pending = [...pending, ...realPending];
+        }
+
         return { pending, approved };
-    }, [allOrganizers, pendingOrganizerState]);
+    }, [allOrganizers, pendingOrganizerState, apiPendingOrgs, user?.college]);
 
     // Memoized stats
     const stats = useMemo(() => {
@@ -136,21 +164,49 @@ export default function AdminDashboard() {
         };
     }, [statsBase, collegeEvents]);
 
-    const handleApprove = useCallback((organizerId) => {
+    const handleApprove = useCallback(async (organizerId) => {
         const approved = organizers.pending.find(o => o.id === organizerId);
-        setPendingOrganizerState(prev => ({
-            ...prev,
-            [organizerId]: { approved: true }
-        }));
-        if (approved) {
-            setActivities(prev => [{
-                id: Date.now().toString(),
-                type: 'organizer_approved',
-                title: 'Approved Organizer',
-                description: `You approved ${approved.fullName}`,
-                user: approved.fullName,
-                timestamp: new Date().toISOString()
-            }, ...prev]);
+        
+        try {
+            // Send API call to backend
+            await approveOrganizer(organizerId);
+            
+            // On success, update UI state
+            setPendingOrganizerState(prev => ({
+                ...prev,
+                [organizerId]: { approved: true }
+            }));
+            
+            // Mock persistence for cross-user approval demo
+            if (approved) {
+                 const stored = localStorage.getItem('gopass_registered_organizers');
+                 if (stored) {
+                     const orgs = JSON.parse(stored);
+                     const index = orgs.findIndex(o => o.id === organizerId);
+                     if (index !== -1) {
+                         orgs[index].isAdminApproved = true;
+                         orgs[index].status = USER_STATUS.ACTIVE;
+                         localStorage.setItem('gopass_registered_organizers', JSON.stringify(orgs));
+                     }
+                 }
+
+                 const approvals = JSON.parse(localStorage.getItem('gopass_approved_organizers') || '[]');
+                 if (!approvals.includes(approved.email)) approvals.push(approved.email);
+                 if (!approvals.includes(String(approved.id))) approvals.push(String(approved.id));
+                 localStorage.setItem('gopass_approved_organizers', JSON.stringify(approvals));
+
+                 setActivities(prev => [{
+                    id: Date.now().toString(),
+                    type: 'organizer_approved',
+                    title: 'Approved Organizer',
+                    description: `You approved ${approved.fullName}`,
+                    user: approved.fullName,
+                    timestamp: new Date().toISOString()
+                }, ...prev]);
+            }
+        } catch (error) {
+            console.error("Failed to approve organizer:", error);
+            alert(`Failed to approve: ${error.message}`);
         }
     }, [organizers.pending]);
 

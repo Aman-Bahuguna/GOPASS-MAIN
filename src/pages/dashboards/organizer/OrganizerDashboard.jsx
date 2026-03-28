@@ -28,9 +28,7 @@ export default function OrganizerDashboard() {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [eventAttendees, setEventAttendees] = useState([]);
-    const [fullActivated, setFullActivated] = useState(false);
-
-    const canCreate = fullActivated || canOrganizerCreateEvents(user);
+    const canCreate = canOrganizerCreateEvents(user);
 
     // Fetch Events if not loaded
     useEffect(() => {
@@ -90,9 +88,6 @@ export default function OrganizerDashboard() {
         setEventAttendees([]);
     };
 
-    const handleActivateFull = () => {
-        setFullActivated(true);
-    };
 
     // Get page title based on current page
     const getPageTitle = () => {
@@ -232,8 +227,6 @@ export default function OrganizerDashboard() {
                         isLoading={isDashboardLoading}
                         onNavigate={handleNavigate}
                         onViewAttendees={handleViewEventAttendees}
-                        fullActivated={fullActivated}
-                        onActivateFull={handleActivateFull}
                     />
                 );
         }
