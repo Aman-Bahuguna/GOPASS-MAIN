@@ -46,12 +46,12 @@ const FEATURE_ICONS = [
     { Icon: Sparkles, label: "Moments", color: "from-yellow-500 to-amber-600" }
 ];
 
-const VisionSection = () => {
+const VisionSection = ({ onAbout, onSignup }) => {
     const [activeTab, setActiveTab] = useState('creators');
     const constraintsRef = useRef(null);
 
     return (
-        <section className="relative w-full min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 py-20 overflow-hidden">
+        <section id="about" className="relative w-full min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 py-20 overflow-hidden">
 
             {/* Animated Background Decoration */}
             <motion.div
@@ -142,6 +142,7 @@ const VisionSection = () => {
                             </motion.p>
 
                             <motion.button
+                                onClick={onAbout}
                                 className="group inline-flex items-center gap-2 text-slate-900 font-medium hover:gap-3 transition-all duration-300"
                                 initial={{ opacity: 0 }}
                                 whileInView={{ opacity: 1 }}
@@ -365,6 +366,7 @@ const VisionSection = () => {
                             }}
                             viewport={{ once: true }}
                             whileHover={{ scale: 1.1, rotate: 5 }}
+                            onClick={onSignup}
                             className="absolute -top-4 -left-4 bg-slate-900 text-white px-5 py-3 rounded-full shadow-2xl shadow-slate-900/30 flex items-center gap-2 cursor-pointer z-20"
                         >
                             <motion.div

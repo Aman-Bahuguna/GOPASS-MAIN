@@ -151,19 +151,39 @@ const Footer = () => {
     const footerLinks = [
         {
             title: 'Product',
-            links: ['Features', 'Events', 'Pricing', 'Community']
+            links: [
+                { name: 'Features', href: '#features' },
+                { name: 'Events', href: '/events' },
+                { name: 'Pricing', href: '#pricing' },
+                { name: 'Community', href: '#community' }
+            ]
         },
         {
             title: 'Company',
-            links: ['About', 'Blog', 'Careers', 'Press Kit']
+            links: [
+                { name: 'About', href: '#about' },
+                { name: 'Blog', href: '/blog' },
+                { name: 'Careers', href: '/careers' },
+                { name: 'Press Kit', href: '/press' }
+            ]
         },
         {
             title: 'Resources',
-            links: ['Documentation', 'Help Center', 'API', 'Status']
+            links: [
+                { name: 'Documentation', href: '/docs' },
+                { name: 'Help Center', href: '/help' },
+                { name: 'API', href: '/api' },
+                { name: 'Status', href: '/status' }
+            ]
         },
         {
             title: 'Legal',
-            links: ['Privacy', 'Terms', 'Cookie Policy', 'Licenses']
+            links: [
+                { name: 'Privacy', href: '/privacy' },
+                { name: 'Terms', href: '/terms' },
+                { name: 'Cookie Policy', href: '/cookies' },
+                { name: 'Licenses', href: '/licenses' }
+            ]
         }
     ];
 
@@ -272,10 +292,10 @@ const Footer = () => {
                                         {section.links.map((link, linkIndex) => (
                                             <li key={linkIndex}>
                                                 <a
-                                                    href="#"
+                                                    href={link.href}
                                                     className="text-slate-400 hover:text-brand-200 transition-colors duration-300 inline-block relative group"
                                                 >
-                                                    {link}
+                                                    {link.name}
                                                     <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-brand-200 group-hover:w-full transition-all duration-300" />
                                                 </a>
                                             </li>

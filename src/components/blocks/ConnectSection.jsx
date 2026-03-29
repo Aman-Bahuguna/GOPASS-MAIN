@@ -12,7 +12,7 @@ const CARD_IMAGES = [
     "/events/networking.png",
 ];
 
-const ConnectSection = () => {
+const ConnectSection = ({ onExploreEvents, onLearnMore }) => {
     return (
         <section className="relative w-full h-screen bg-gradient-to-br from-[#fafafa] via-[#f5f5f5] to-[#fafafa] overflow-hidden flex flex-col items-center justify-center py-12">
 
@@ -154,11 +154,17 @@ const ConnectSection = () => {
                         viewport={{ once: true }}
                         className="mt-8 md:mt-10 flex flex-wrap justify-center gap-4"
                     >
-                        <button className="group px-8 py-4 bg-slate-900 text-white rounded-full font-medium text-base md:text-lg hover:bg-slate-800 transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl shadow-slate-900/20 flex items-center gap-2">
+                        <button 
+                            onClick={onExploreEvents}
+                            className="group px-8 py-4 bg-slate-900 text-white rounded-full font-medium text-base md:text-lg hover:bg-slate-800 transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl shadow-slate-900/20 flex items-center gap-2"
+                        >
                             Explore Events
                             <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
                         </button>
-                        <button className="px-8 py-4 bg-white text-slate-900 border-2 border-slate-200 rounded-full font-medium text-base md:text-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg">
+                        <button 
+                            onClick={onLearnMore}
+                            className="px-8 py-4 bg-white text-slate-900 border-2 border-slate-200 rounded-full font-medium text-base md:text-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg"
+                        >
                             Learn More
                         </button>
                     </motion.div>

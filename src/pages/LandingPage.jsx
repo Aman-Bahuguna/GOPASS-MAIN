@@ -16,6 +16,7 @@ import Lenis from 'lenis';
 
 const LandingPage = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const eventStatus = useSelector(selectEventsStatus);
 
     useEffect(() => {
@@ -50,13 +51,22 @@ const LandingPage = () => {
 
     return (
         <main className="w-full min-h-screen bg-ui-100 text-foreground selection:bg-brand-200 selection:text-white">
-            <Navbar onNavigateToLogin={() => navigate('/login')} onNavigateToSignup={() => navigate('/signup')} />
-            <HeroSection />
+            <Navbar 
+                onNavigateToLogin={() => navigate('/login')} 
+                onNavigateToSignup={() => navigate('/signup')} 
+            />
+            <HeroSection onJoinForFree={() => navigate('/signup')} />
             <ShowcaseSection />
             {/* <DeckSection /> */}
             <FeaturedSection />
-            <ConnectSection />
-            <VisionSection />
+            <ConnectSection 
+                onExploreEvents={() => navigate('/events')} 
+                onLearnMore={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
+            />
+            <VisionSection 
+                onAbout={() => navigate('/about')} 
+                onSignup={() => navigate('/signup')}
+            />
 
             <Footer />
         </main>

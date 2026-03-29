@@ -13,7 +13,7 @@ const HERO_IMAGES = [
     "/events/networking.png",
 ];
 
-const HeroSection = () => {
+const HeroSection = ({ onJoinForFree }) => {
     const containerRef = useRef(null);
     const cardsRef = useRef([]);
 
@@ -130,7 +130,10 @@ const HeroSection = () => {
 
                 {/* CTA Buttons */}
                 <div className="hero-element flex flex-wrap justify-center gap-4">
-                    <button className="px-8 py-4 bg-slate-900 text-white rounded-full font-medium text-lg hover:bg-slate-800 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-slate-900/20 flex items-center gap-2 group">
+                    <button
+                        onClick={onJoinForFree}
+                        className="px-8 py-4 bg-slate-900 text-white rounded-full font-medium text-lg hover:bg-slate-800 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-slate-900/20 flex items-center gap-2 group"
+                    >
                         Join for Free
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </button>
