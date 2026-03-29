@@ -30,17 +30,21 @@ export default function OrganizerDashboard() {
     const [eventAttendees, setEventAttendees] = useState([]);
     const canCreate = canOrganizerCreateEvents(user);
 
-    // Fetch Events if not loaded
+    // Fetch My Events (Organizer Specific)
     useEffect(() => {
-        if (eventStatus === 'idle' && user) {
+        if (user) {
             dispatch(fetchOrganizerEvents());
         }
-    }, [dispatch, eventStatus, user]);
+    }, [dispatch, user]);
 
     // Derived state for organizer events
     const organizerEvents = useMemo(() => {
         if (!user) return [];
-        return allEvents; // The backend already filters for this organizer
+        // Even with the fresh fetch, we filter again to be 100% sure
+        return allEvents.filter(e => {
+            if (!e.organizerEmail) return true; // Legacy events
+            return e.organizerEmail === user.email;
+        });
     }, [allEvents, user]);
 
     const [stats, setStats] = useState(null);
