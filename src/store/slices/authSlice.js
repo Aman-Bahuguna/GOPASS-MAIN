@@ -97,12 +97,12 @@ export const signup = createAsyncThunk('auth/signup', async (formData, { rejectW
         localStorage.setItem('gopass_user', JSON.stringify(user));
         localStorage.setItem('gopass_token', responseData.token || '');
 
-        const redirectTo = user.status !== USER_STATUS.ACTIVE ? ROUTES.PENDING_VERIFICATION : getDashboardRoute(user.role);
+        const redirectTo = isBlockingVerificationRequired(user) ? ROUTES.PENDING_VERIFICATION : getDashboardRoute(user.role);
 
         return {
             user,
             redirectTo,
-            requiresVerification: user.status !== USER_STATUS.ACTIVE,
+            requiresVerification: isBlockingVerificationRequired(user),
             token: responseData.token
         };
 

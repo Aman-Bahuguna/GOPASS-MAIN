@@ -18,7 +18,7 @@ import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import ProfilePage from '../ProfilePage';
 import { SettingsPage } from '../settings';
 import { useAuth } from '../../../context/AuthContext';
-import { getPendingOrganizers, getOrganizersByCollege, getEventsByCollege, getDashboardStats, approveOrganizer } from '../../../api';
+import { getPendingOrganizers, getOrganizersByCollege, getEventsByCollege, getDashboardStats, approveOrganizer, rejectOrganizer } from '../../../api';
 import { USER_STATUS, EVENT_STATUS } from '../../../utils/constants';
 import {
     StatCard,
@@ -50,18 +50,37 @@ import { normalizeUser } from '../../../utils/userUtils';
 export default function AdminDashboard() {
     const dispatch = useDispatch();
     const { user } = useAuth();
+    
+    // 1. State Declarations (Must be at the top)
     const [currentPage, setCurrentPage] = useState('home');
+    const [notifications, setNotifications] = useState([]);
     const [showNotificationsPanel, setShowNotificationsPanel] = useState(false);
     const [showNotificationSettings, setShowNotificationSettings] = useState(false);
     const [showAllOrganizers, setShowAllOrganizers] = useState(false);
     const [showEditCollege, setShowEditCollege] = useState(false);
     const [pendingOrganizerState, setPendingOrganizerState] = useState({});
     const [approvedOrganizerState, setApprovedOrganizerState] = useState({});
+    const [allOrganizers, setAllOrganizers] = useState([]);
+    const [apiPendingOrgs, setApiPendingOrgs] = useState([]);
+    const [statsBase, setStatsBase] = useState(null);
+    const [activities, setActivities] = useState([
+        { id: '1', type: 'organizer_approved', title: 'Approved Organizer', description: 'You approved Jane Smith as organizer', user: 'Jane Smith', timestamp: new Date().toISOString() },
+        { id: '2', type: 'event_created', title: 'Event Created', description: 'New event "Hackathon 2024" was created', user: 'John Doe', timestamp: new Date(Date.now() - 3600000).toISOString() },
+        { id: '3', type: 'organizer_rejected', title: 'Rejected Organizer', description: 'You rejected Mike Johnson', user: 'Mike Johnson', timestamp: new Date(Date.now() - 7200000).toISOString() },
+    ]);
 
-    // Redux State
+    // 2. Redux State
     const events = useSelector(selectAllEvents);
     const eventStatus = useSelector(selectEventsStatus);
 
+    // 3. Derived Data (Memos)
+    const collegeEvents = useMemo(() => {
+        return events.filter(event =>
+            user?.college?.name && event.collegeId?.toLowerCase() === user.college.name.toLowerCase()
+        );
+    }, [events, user?.college?.name]);
+
+    // 3. Effects
     // Fetch Events once
     useEffect(() => {
         if (eventStatus === 'idle' && user) {
@@ -69,31 +88,36 @@ export default function AdminDashboard() {
         }
     }, [eventStatus, user, dispatch]);
 
-    // Memoized notifications data
-    const notifications = useMemo(() => [
-        { id: '1', type: 'new_organizer', title: 'New Organizer Request', message: 'John Doe has requested to become an organizer', timestamp: new Date().toISOString(), read: false, actionable: true },
-        { id: '2', type: 'new_event', title: 'New Event Created', message: 'Tech Fest 2024 has been created by an organizer', timestamp: new Date(Date.now() - 3600000).toISOString(), read: false, actionable: true },
-        { id: '3', type: 'system', title: 'System Update', message: 'Platform will undergo maintenance tonight', timestamp: new Date(Date.now() - 86400000).toISOString(), read: true, actionable: false },
-    ], []);
+    // Dynamic notifications based on pending organizers
+    useEffect(() => {
+        if (!apiPendingOrgs || apiPendingOrgs.length === 0) {
+            // Keep hardcoded for demo if nothing real, but otherwise use real
+            setNotifications([
+                { id: '1', type: 'new_organizer', title: 'New Organizer Request', message: 'John Doe has requested to become an organizer', timestamp: new Date().toISOString(), read: false, actionable: true },
+                { id: '2', type: 'new_event', title: 'New Event Created', message: 'Tech Fest 2024 has been created by an organizer', timestamp: new Date(Date.now() - 3600000).toISOString(), read: false, actionable: true },
+            ]);
+            return;
+        }
 
-    // Memoized activities data
-    const [activities, setActivities] = useState([
-        { id: '1', type: 'organizer_approved', title: 'Approved Organizer', description: 'You approved Jane Smith as organizer', user: 'Jane Smith', timestamp: new Date().toISOString() },
-        { id: '2', type: 'event_created', title: 'Event Created', description: 'New event "Hackathon 2024" was created', user: 'John Doe', timestamp: new Date(Date.now() - 3600000).toISOString() },
-        { id: '3', type: 'organizer_rejected', title: 'Rejected Organizer', description: 'You rejected Mike Johnson', user: 'Mike Johnson', timestamp: new Date(Date.now() - 7200000).toISOString() },
-    ]);
+        const newNotifications = apiPendingOrgs.map(org => ({
+            id: `pending_${org.id || org.email}`,
+            type: 'new_organizer',
+            title: 'New Organizer Request',
+            message: `${org.fullName || org.name} has requested to become an organizer`,
+            timestamp: org.createdAt || new Date().toISOString(),
+            read: false,
+            actionable: true,
+            data: org
+        }));
 
-    // Derived College Events - memoized
-    const collegeEvents = useMemo(() => {
-        return events.filter(event =>
-            user?.college?.name && event.collegeId?.toLowerCase() === user.college.name.toLowerCase()
-        );
-    }, [events, user?.college?.name]);
+        setNotifications(prev => {
+            const existingIds = prev.map(n => n.id);
+            const itemsToAdd = newNotifications.filter(n => !existingIds.includes(n.id));
+            return [...itemsToAdd, ...prev];
+        });
+    }, [apiPendingOrgs]);
 
-    const [allOrganizers, setAllOrganizers] = useState([]);
-    const [apiPendingOrgs, setApiPendingOrgs] = useState([]);
-    const [statsBase, setStatsBase] = useState(null);
-
+    // 4. Data Fetching
     useEffect(() => {
         if (!user) return; // Wait until useAuth completes
         const fetchOrgs = async () => {
@@ -208,21 +232,86 @@ export default function AdminDashboard() {
         }
     }, [organizers.pending]);
 
-    const handleReject = useCallback((organizerId) => {
-        const rejected = organizers.pending.find(o => o.id === organizerId);
-        setPendingOrganizerState(prev => ({
-            ...prev,
-            [organizerId]: { rejected: true }
-        }));
-        if (rejected) {
+    const handleRevoke = useCallback(async (organizer) => {
+        const organizerId = organizer.id;
+        if (!window.confirm(`Are you sure you want to revoke approval for ${organizer.fullName}?`)) return;
+
+        try {
+            await rejectOrganizer(organizerId);
+            
+            setPendingOrganizerState(prev => ({
+                ...prev,
+                [organizerId]: { rejected: true }
+            }));
+
+            // Update local storage
+            const stored = localStorage.getItem('gopass_registered_organizers');
+            if (stored) {
+                const orgs = JSON.parse(stored);
+                const index = orgs.findIndex(o => o.id === organizerId || o.email === organizer.email);
+                if (index !== -1) {
+                    orgs[index].status = USER_STATUS.REJECTED;
+                    orgs[index].isAdminApproved = false;
+                    localStorage.setItem('gopass_registered_organizers', JSON.stringify(orgs));
+                }
+            }
+
+            // Also clear from approved approvals list
+            const approvals = JSON.parse(localStorage.getItem('gopass_approved_organizers') || '[]');
+            const filteredApprovals = approvals.filter(a => a !== organizer.email && a !== String(organizerId));
+            localStorage.setItem('gopass_approved_organizers', JSON.stringify(filteredApprovals));
+
             setActivities(prev => [{
                 id: Date.now().toString(),
                 type: 'organizer_rejected',
-                title: 'Rejected Organizer',
-                description: `You rejected ${rejected.fullName}`,
-                user: rejected.fullName,
+                title: 'Revoked Approval',
+                description: `You revoked approval for ${organizer.fullName}`,
+                user: organizer.fullName,
                 timestamp: new Date().toISOString()
             }, ...prev]);
+        } catch (error) {
+            console.error("Failed to revoke approval:", error);
+            alert(`Failed to revoke: ${error.message}`);
+        }
+    }, []);
+
+    const handleReject = useCallback(async (organizerId) => {
+        const rejected = organizers.pending.find(o => o.id === organizerId);
+        
+        try {
+            // Call API
+            await rejectOrganizer(organizerId);
+
+            setPendingOrganizerState(prev => ({
+                ...prev,
+                [organizerId]: { rejected: true }
+            }));
+
+            if (rejected) {
+                // Update local storage to persist rejection
+                const stored = localStorage.getItem('gopass_registered_organizers');
+                if (stored) {
+                    const orgs = JSON.parse(stored);
+                    const index = orgs.findIndex(o => o.id === organizerId || o.email === rejected.email);
+                    if (index !== -1) {
+                        orgs[index].status = USER_STATUS.REJECTED;
+                        orgs[index].isAdminApproved = false;
+                        localStorage.setItem('gopass_registered_organizers', JSON.stringify(orgs));
+                    }
+                }
+
+                setActivities(prev => [{
+                    id: Date.now().toString(),
+                    type: 'organizer_rejected',
+                    title: 'Rejected Organizer',
+                    description: `You rejected ${rejected.fullName}`,
+                    user: rejected.fullName,
+                    timestamp: new Date().toISOString()
+                }, ...prev]);
+            }
+        } catch (error) {
+            console.error("Failed to reject organizer:", error);
+            alert(`Failed to reject: ${error.message}`);
         }
     }, [organizers.pending]);
 
@@ -346,6 +435,7 @@ export default function AdminDashboard() {
                                         key={organizer.id}
                                         organizer={organizer}
                                         index={index}
+                                        onRevoke={handleRevoke}
                                     />
                                 ))}
                                 {organizers.approved.length === 0 && (
@@ -661,7 +751,12 @@ export default function AdminDashboard() {
                                     <div className="bg-[#f7f8fa] rounded-2xl border border-slate-200 divide-y divide-slate-200 overflow-hidden shadow-sm">
                                         {organizers.approved.length > 0 ? (
                                             organizers.approved.slice(0, 5).map((organizer, index) => (
-                                                <ApprovedOrganizerRow key={organizer.id} organizer={organizer} index={index} />
+                                                <ApprovedOrganizerRow 
+                                                    key={organizer.id} 
+                                                    organizer={organizer} 
+                                                    index={index} 
+                                                    onRevoke={handleRevoke}
+                                                />
                                             ))
                                         ) : (
                                             <div className="p-8 text-center">
@@ -805,7 +900,12 @@ export default function AdminDashboard() {
     };
 
     return (
-        <DashboardLayout title={getPageTitle()} onNavigate={handleNavigate} currentPage={currentPage}>
+        <DashboardLayout 
+            title={getPageTitle()} 
+            onNavigate={handleNavigate} 
+            currentPage={currentPage}
+            notifications={notifications}
+        >
             {renderContent()}
         </DashboardLayout>
     );

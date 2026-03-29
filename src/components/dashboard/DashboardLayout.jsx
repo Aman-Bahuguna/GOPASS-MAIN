@@ -278,7 +278,7 @@ function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
 }
 
 // Premium Header
-function Header({ onMenuClick, title, onNavigate }) {
+function Header({ onMenuClick, title, onNavigate, notifications = [] }) {
     const { user, logout } = useAuth();
     const [showNotifications, setShowNotifications] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
@@ -295,10 +295,9 @@ function Header({ onMenuClick, title, onNavigate }) {
         onNavigate && onNavigate(page);
     };
 
-    const notifications = [
-        { id: 1, title: 'New event registration', time: '2 min ago', unread: true },
-        { id: 2, title: 'Approval request pending', time: '1 hour ago', unread: true },
-        { id: 3, title: 'Weekly report ready', time: '3 hours ago', unread: false },
+    // Fallback if no notifications provided
+    const displayNotifications = notifications.length > 0 ? notifications : [
+        { id: 1, title: 'No new notifications', time: 'Just now', unread: false },
     ];
 
     return (
@@ -378,7 +377,7 @@ function Header({ onMenuClick, title, onNavigate }) {
                             >
                                 <Bell className="w-5 h-5 text-slate-600" />
                                 <motion.span
-                                    className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"
+                                    className={`absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white ${notifications.filter(n => !n.read && n.unread !== false).length === 0 ? 'hidden' : ''}`}
                                     animate={{ scale: [1, 1.2, 1] }}
                                     transition={{ duration: 2, repeat: Infinity }}
                                 />
@@ -403,11 +402,11 @@ function Header({ onMenuClick, title, onNavigate }) {
                                             <div className="p-4 border-b border-slate-200 flex items-center justify-between">
                                                 <h3 className="font-semibold text-slate-900">Notifications</h3>
                                                 <span className="px-2 py-0.5 bg-brand-100/10 text-brand-200 rounded-full text-xs font-medium">
-                                                    {notifications.filter(n => n.unread).length} new
+                                                    {notifications.filter(n => !n.read && n.unread !== false).length} new
                                                 </span>
                                             </div>
                                             <div className="max-h-64 overflow-y-auto">
-                                                {notifications.map((notification, index) => (
+                                                {displayNotifications.map((notification, index) => (
                                                     <motion.div
                                                         key={notification.id}
                                                         initial={{ opacity: 0, x: -10 }}
@@ -424,10 +423,10 @@ function Header({ onMenuClick, title, onNavigate }) {
                                                                 <Bell className="w-4 h-4" />
                                                             </div>
                                                             <div className="flex-1">
-                                                                <p className={`text-sm ${notification.unread ? 'font-medium text-slate-900' : 'text-slate-600'}`}>
+                                                                <p className={`text-sm ${(notification.unread || !notification.read) ? 'font-medium text-slate-900' : 'text-slate-600'}`}>
                                                                     {notification.title}
                                                                 </p>
-                                                                <p className="text-xs text-slate-400 mt-0.5">{notification.time}</p>
+                                                                <p className="text-xs text-slate-400 mt-0.5">{notification.time || notification.timestamp}</p>
                                                             </div>
                                                             {notification.unread && (
                                                                 <div className="w-2 h-2 bg-brand-200 rounded-full" />
@@ -537,7 +536,7 @@ function Header({ onMenuClick, title, onNavigate }) {
 }
 
 // Main Dashboard Layout
-export default function DashboardLayout({ children, title = 'Dashboard', onNavigate, currentPage = 'home' }) {
+export default function DashboardLayout({ children, title = 'Dashboard', onNavigate, currentPage = 'home', notifications = [] }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const handleNavigate = (page) => {
@@ -566,6 +565,7 @@ export default function DashboardLayout({ children, title = 'Dashboard', onNavig
                     onMenuClick={() => setSidebarOpen(true)}
                     title={title}
                     onNavigate={handleNavigate}
+                    notifications={notifications}
                 />
 
                 <main className="flex-1 p-4 lg:p-6 overflow-y-auto min-h-0">

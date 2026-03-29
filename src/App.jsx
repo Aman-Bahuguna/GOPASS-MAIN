@@ -9,7 +9,7 @@ import OrganizerDashboard from './pages/dashboards/organizer/OrganizerDashboard'
 import AdminDashboard from './pages/dashboards/admin/AdminDashboard';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ROLES } from './utils/constants';
-import { getDashboardRoute, isAccountFullyVerified } from './utils/roleConfig';
+import { getDashboardRoute, isAccountFullyVerified, isBlockingVerificationRequired } from './utils/roleConfig';
 
 // Protected Route Wrapper - redirects to login if not authenticated
 function ProtectedRoute({ children }) {
@@ -46,7 +46,7 @@ function PublicRoute({ children }) {
 
   if (isAuthenticated && user) {
     // Check if user needs verification
-    if (!isAccountFullyVerified(user)) {
+    if (isBlockingVerificationRequired(user)) {
       return <Navigate to="/pending-verification" replace />;
     }
     // Use explicit paths that match actual route definitions
@@ -78,7 +78,7 @@ function DashboardRouter() {
     }
 
     // Check if user needs verification
-    if (!isAccountFullyVerified(user)) {
+    if (isBlockingVerificationRequired(user)) {
       navigate('/pending-verification', { replace: true });
       return;
     }
@@ -128,20 +128,19 @@ function DashboardRouter() {
 // Auth Success Handler - handles post-authentication routing
 function AuthSuccessHandler({ onSuccess, role }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (onSuccess) {
-      // Admins go to pending verification
-      if (role === ROLES.ADMIN) {
+    if (onSuccess && user) {
+      if (isBlockingVerificationRequired(user)) {
         navigate('/pending-verification', { replace: true });
       } else {
-        // Users and Organizers go to their dashboard
-        const dashboardRoute = getDashboardRoute(role || ROLES.USER);
+        const dashboardRoute = getDashboardRoute(user.role);
         navigate(dashboardRoute, { replace: true });
       }
       onSuccess();
     }
-  }, [onSuccess, role, navigate]);
+  }, [onSuccess, user, navigate]);
 
   return null;
 }

@@ -39,7 +39,7 @@ export {
 } from './eventsApi';
 
 // Organizers
-export { getOrganizersByCollege, getPendingOrganizers, approveOrganizer } from './organizersApi';
+export { getOrganizersByCollege, getPendingOrganizers, approveOrganizer, rejectOrganizer } from './organizersApi';
 
 // Dashboard
 export { getDashboardStats } from './dashboardApi';

@@ -35,14 +35,20 @@ export const normalizeUser = (user, fallbackCollege = null) => {
     }
 
     // 3. Map Status
+    // Cross-reference with local approvals to ensure persistence on the same machine for demo/testing
+    const localApprovals = JSON.parse(localStorage.getItem('gopass_approved_organizers') || '[]');
+    const isLocallyApproved = localApprovals.includes(normalized.email) || localApprovals.includes(String(normalized.id));
+
     const isActive = 
         normalized.status === 'ACTIVE' || 
         normalized.status === 'APPROVED' || 
         normalized.isApproved === true ||
-        normalized.isAdminApproved === true;
+        normalized.isAdminApproved === true ||
+        isLocallyApproved;
 
     if (isActive) {
         normalized.status = USER_STATUS.ACTIVE;
+        normalized.isAdminApproved = true;
     } else if (!normalized.status) {
         normalized.status = normalized.role === ROLES.ORGANIZER 
             ? USER_STATUS.PENDING_ADMIN_APPROVAL 

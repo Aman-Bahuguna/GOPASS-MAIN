@@ -7,7 +7,8 @@ import {
     Sparkles,
     Award,
     Mail,
-    HelpCircle
+    HelpCircle,
+    X
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { getAllUsers } from '../../../../../api';
@@ -24,7 +25,18 @@ import { canOrganizerCreateEvents, isSameCollege } from '../../../../../utils/ro
 function ApprovalStatusBanner({ user, onCreateEvent, onContactSupport }) {
     const canCreate = canOrganizerCreateEvents(user);
 
+    const [isDismissed, setIsDismissed] = useState(false);
     const [collegeAdmin, setCollegeAdmin] = useState(null);
+
+    useEffect(() => {
+        const dismissed = sessionStorage.getItem(`gopass_banner_dismissed_${user?.email}`);
+        if (dismissed) setIsDismissed(true);
+    }, [user?.email]);
+
+    const handleDismiss = () => {
+        setIsDismissed(true);
+        sessionStorage.setItem(`gopass_banner_dismissed_${user?.email}`, 'true');
+    };
 
     useEffect(() => {
         if (user?.status === USER_STATUS.PENDING_ADMIN_APPROVAL) {
@@ -41,6 +53,9 @@ function ApprovalStatusBanner({ user, onCreateEvent, onContactSupport }) {
         }
     }, [user]);
 
+    // Don't show if already dismissed in this session
+    if (isDismissed) return null;
+
     if (user?.status === USER_STATUS.PENDING_PLATFORM_VERIFICATION) {
         return (
             <motion.div
@@ -49,6 +64,14 @@ function ApprovalStatusBanner({ user, onCreateEvent, onContactSupport }) {
                 transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
                 className="relative overflow-hidden bg-blue-600 rounded-3xl p-8 text-white mb-8"
             >
+                {/* Dismiss button */}
+                <button 
+                   onClick={handleDismiss}
+                   className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors z-10"
+                >
+                    <X className="w-5 h-5" />
+                </button>
+
                 {/* Animated background patterns */}
                 <div className="absolute inset-0 overflow-hidden">
                     <motion.div
@@ -194,6 +217,14 @@ function ApprovalStatusBanner({ user, onCreateEvent, onContactSupport }) {
                 transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
                 className="relative overflow-hidden bg-emerald-600 rounded-3xl p-8 text-white mb-8"
             >
+                {/* Dismiss button */}
+                <button 
+                   onClick={handleDismiss}
+                   className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors z-10"
+                >
+                    <X className="w-5 h-5" />
+                </button>
+
                 {/* Confetti-like decorations */}
                 <div className="absolute inset-0 overflow-hidden">
                     <motion.div

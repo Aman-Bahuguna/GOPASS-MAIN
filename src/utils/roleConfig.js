@@ -75,10 +75,29 @@ export const getRequiredVerifications = (role) => {
 // Check if user account is fully verified
 export const isAccountFullyVerified = (user) => {
     if (!user) return false;
+    
+    // If user is explicitly rejected or suspended, they aren't verified
+    if (user.status === USER_STATUS.REJECTED || user.status === USER_STATUS.SUSPENDED) return false;
+    
     return user.status === USER_STATUS.ACTIVE || 
            user.status === 'APPROVED' || 
            user.isApproved === true || 
            user.isAdminApproved === true;
+};
+
+// Check if user should be redirected to the blocking verification page
+// Only Admins usually require this full-page platform verification blocker
+export const isBlockingVerificationRequired = (user) => {
+    if (!user) return false;
+    
+    const permissions = rolePermissions[user.role];
+    
+    // If the role doesn't require platform verification (like STUDENT or ORGANIZER),
+    // then they shouldn't be blocked by the full-page verification screen.
+    if (!permissions?.requiresPlatformVerification) return false;
+    
+    // If they ARE an admin (requires platform verification), check if they are verified
+    return !isAccountFullyVerified(user);
 };
 
 // Check if organizer can create events

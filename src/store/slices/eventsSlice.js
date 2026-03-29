@@ -14,9 +14,10 @@ export const fetchEvents = createAsyncThunk('events/fetchAll', async (_, { rejec
 });
 
 // 1.5 Fetch Organizer Events
-export const fetchOrganizerEvents = createAsyncThunk('events/fetchOrganizerEvents', async (_, { rejectWithValue }) => {
+export const fetchOrganizerEvents = createAsyncThunk('events/fetchOrganizerEvents', async (_, { rejectWithValue, getState }) => {
     try {
-        return await apiGetEventsByOrganizer();
+        const { user } = getState().auth;
+        return await apiGetEventsByOrganizer(user?.email);
     } catch (error) {
         return rejectWithValue(error.message);
     }

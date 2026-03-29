@@ -91,12 +91,11 @@ export const getEventsByCollege = async (collegeName) => {
     return res.json();
 };
 
-export const getEventsByOrganizer = async () => {
+export const getEventsByOrganizer = async (userEmail) => {
     const token = localStorage.getItem('gopass_token');
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    // Note: page=0&size=10 are hardcoded as per endpoint specification photo
     const res = await fetch(`https://eventhub-backend-prsg.onrender.com/api/event/organizerEvent?page=0&size=10`, {
         method: 'GET',
         headers
@@ -106,11 +105,24 @@ export const getEventsByOrganizer = async () => {
     const data = await res.json();
     
     // Safely extract the paginated array
-    if (Array.isArray(data)) return data;
-    if (data && Array.isArray(data.content)) return data.content;
-    if (data && Array.isArray(data.events)) return data.events;
-    if (data && Array.isArray(data.data)) return data.data;
-    return [];
+    let events = [];
+    if (Array.isArray(data)) {
+        events = data;
+    } else if (data) {
+        events = data.content || data.events || data.allEvents || data.data || [];
+    }
+
+    // CRITICAL: Double-check filtering in frontend as a safety net against backend data leakage
+    // Only return events created by this organizer (using email as the identifier)
+    // We allow events without organizerEmail for compatibility with pre-existing events
+    if (userEmail && events.length > 0) {
+        return events.filter(e => {
+            if (!e.organizerEmail) return true; // Keep legacy events
+            return e.organizerEmail === userEmail;
+        });
+    }
+    
+    return events;
 };
 
 export const registerForEvent = async (eventId, registrationData) => {

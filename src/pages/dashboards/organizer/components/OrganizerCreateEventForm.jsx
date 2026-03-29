@@ -155,6 +155,7 @@ const OrganizerCreateEventForm = ({ onNavigate }) => {
                 venue: formData.venue,
                 phoneNo: formData.contact,
                 email: formData.email || '',
+                organizerEmail: user?.email, // Tag with creator identification
                 // Hardcode bannerUrl for now since base64 data URIs will exceed backend DB varchar length limits
                 bannerUrl: "https://link-to-image.com/banner.png",
                 formSchema: formSchema
