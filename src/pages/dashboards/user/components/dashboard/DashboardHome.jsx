@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Ticket, CheckCircle2, Heart } from 'lucide-react';
 
@@ -35,36 +35,69 @@ function DashboardHome({
 }) {
     const [selectedTicket, setSelectedTicket] = useState(null);
 
+    // Correctly derive stats from registrations if API stats are missing or zero
+    const derivedStats = useMemo(() => {
+        const now = new Date();
+        const upcomingCount = registrations.filter(reg => {
+            const eventObj = reg.event || reg;
+            const dStr = eventObj.startDate || eventObj.date || reg.startDate || reg.date;
+            return dStr && new Date(dStr) >= now;
+        }).length;
+        
+        const attendedCount = registrations.filter(reg => {
+            const eventObj = reg.event || reg;
+            const dStr = eventObj.endDate || eventObj.startDate || eventObj.date || reg.startDate || reg.date;
+            return dStr && new Date(dStr) < now;
+        }).length;
+
+        return {
+            upcomingEvents: stats?.upcomingEvents || upcomingCount,
+            registeredEvents: stats?.registeredEvents || registrations.length,
+            attendedEvents: stats?.attendedEvents || attendedCount,
+            registrationsTrend: stats?.registrationsTrend
+        };
+    }, [stats, registrations]);
+
     // Build stats data for the grid
     const statsData = [
         {
             id: 'upcoming',
             icon: Calendar,
             label: 'Upcoming Events',
-            value: stats?.upcomingEvents || 0,
+            value: derivedStats.upcomingEvents,
             color: 'blue'
         },
         {
             id: 'registrations',
             icon: Ticket,
             label: 'My Registrations',
-            value: stats?.registeredEvents || 0,
-            trend: stats?.registrationsTrend,
+            value: derivedStats.registeredEvents,
+            trend: derivedStats.registrationsTrend,
             color: 'brand'
         },
         {
             id: 'attended',
             icon: CheckCircle2,
             label: 'Events Attended',
-            value: stats?.attendedEvents || 0,
+            value: derivedStats.attendedEvents,
             color: 'green'
         }
     ];
 
     // Get next upcoming registration for reminder
-    const nextUpcoming = registrations
-        .filter(reg => reg.event && new Date(reg.event.date) > new Date())
-        .sort((a, b) => new Date(a.event.date) - new Date(b.event.date))[0];
+    const nextUpcoming = useMemo(() => {
+        const now = new Date();
+        return registrations
+            .filter(reg => {
+                const eventObj = reg.event || reg;
+                const dStr = eventObj.startDate || eventObj.date || reg.startDate || reg.date;
+                return dStr && new Date(dStr) > now;
+            })
+            .sort((a, b) => {
+                const getD = (r) => new Date((r.event || r).startDate || (r.event || r).date || r.startDate || r.date).getTime();
+                return getD(a) - getD(b);
+            })[0];
+    }, [registrations]);
 
     const handleViewTicket = (registration) => {
         setSelectedTicket(registration);

@@ -82,7 +82,7 @@ function EventCard({ event, index, onRegister, isRegistered }) {
             {/* Event Details */}
             <div className="p-5">
                 <h3 className="font-bold text-lg text-slate-900 mb-2 line-clamp-1 group-hover:text-brand-200 transition-colors">
-                    {event.title}
+                    {event.eventName || event.title}
                 </h3>
                 <p className="text-slate-500 text-sm mb-4 line-clamp-2">
                     {event.shortDescription}
@@ -94,12 +94,12 @@ function EventCard({ event, index, onRegister, isRegistered }) {
                             <Clock className="w-4 h-4 text-brand-200" />
                         </div>
                         <div>
-                            <p className="font-medium">{new Date(event.date).toLocaleDateString('en-IN', {
+                            <p className="font-medium">{new Date(event.startDate || event.date).toLocaleDateString('en-IN', {
                                 weekday: 'short',
                                 month: 'short',
                                 day: 'numeric'
                             })}</p>
-                            <p className="text-xs text-slate-400">{new Date(event.date).toLocaleTimeString('en-IN', {
+                            <p className="text-xs text-slate-400">{new Date(event.startDate || event.date).toLocaleTimeString('en-IN', {
                                 hour: '2-digit',
                                 minute: '2-digit'
                             })}</p>

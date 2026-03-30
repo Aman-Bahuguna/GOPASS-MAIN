@@ -302,7 +302,7 @@ function Header({ onMenuClick, title, onNavigate, notifications = [] }) {
 
     return (
         <header className="sticky top-0 z-30 bg-[#f7f8fa]/80 backdrop-blur-xl border-b border-slate-200">
-            <div className="px-4 lg:px-8 py-4">
+            <div className="px-4 lg:px-8 py-2 md:py-3">
                 <div className="flex items-center justify-between gap-4">
                     {/* Left section */}
                     <div className="flex items-center gap-4">

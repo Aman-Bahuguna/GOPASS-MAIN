@@ -124,17 +124,48 @@ export default function UserDashboard() {
         // Ticket viewing is now handled by TicketDetailModal inside components
     };
 
+    const handleRegistration = (event, customData = {}) => {
+        console.log('Registering for event:', event.id || event.eventName, customData);
+        
+        // Check if already registered
+        if (registrations.some(r => r.eventId === (event.id || event._id))) {
+            alert('You are already registered for this event!');
+            return;
+        }
+
+        const newRegistration = {
+            id: `REG-${Math.floor(100000 + Math.random() * 900000)}`,
+            eventId: event.id || event._id,
+            eventName: event.title || event.eventName,
+            registrationDate: new Date().toISOString(),
+            status: 'confirmed',
+            ticketNumber: `GP-${Math.floor(100000 + Math.random() * 900000)}`,
+            event: event, // Keep reference to full event
+            ...customData
+        };
+
+        setRegistrations(prev => [newRegistration, ...prev]);
+        
+        // Show success message
+        const eventName = event.title || event.eventName;
+        // In a real app, we'd dispatch a toast notification here
+        console.log(`Successfully registered for ${eventName}`);
+    };
+
+    const handleToggleFavorite = (eventId) => {
+        console.log('Toggling favorite for:', eventId);
+        setFavorites(prev => {
+            if (prev.includes(eventId)) {
+                return prev.filter(id => id !== eventId);
+            } else {
+                return [...prev, eventId];
+            }
+        });
+    };
+
     const handleViewEventDetails = (event) => {
         console.log('View event details:', event);
         // TODO: Implement event detail modal
-    };
-
-    const handleToggleFavorite = (eventId, isFavorite) => {
-        if (isFavorite) {
-            setFavorites([...favorites, eventId]);
-        } else {
-            setFavorites(favorites.filter(id => id !== eventId));
-        }
     };
 
     const handleExploreEvents = () => {
@@ -181,7 +212,7 @@ export default function UserDashboard() {
     const renderContent = () => {
         switch (currentPage) {
             case 'profile':
-                return <ProfilePage onNavigate={handleNavigate} />;
+                return <ProfilePage onNavigate={handleNavigate} registrations={registrations} />;
 
             case 'settings':
                 return <SettingsPage onNavigate={handleNavigate} />;

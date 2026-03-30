@@ -12,8 +12,19 @@ function MyTicketsWidget({
     className = ''
 }) {
     const upcomingTickets = registrations
-        .filter(reg => reg.event && new Date(reg.event.endDate || reg.event.date) >= new Date())
-        .sort((a, b) => new Date(a.event.date) - new Date(b.event.date))
+        .filter(reg => {
+            const eventObj = reg.event || reg;
+            const dStr = eventObj.endDate || eventObj.startDate || eventObj.date || reg.startDate || reg.date;
+            return !dStr || new Date(dStr) >= new Date();
+        })
+        .sort((a, b) => {
+            const getD = (r) => {
+                const o = r.event || r;
+                const d = o.startDate || o.date || r.startDate || r.date;
+                return d ? new Date(d).getTime() : Infinity;
+            };
+            return getD(a) - getD(b);
+        })
         .slice(0, maxDisplay);
 
     return (
@@ -34,7 +45,9 @@ function MyTicketsWidget({
             {upcomingTickets.length > 0 ? (
                 <div className="space-y-3">
                     {upcomingTickets.map((reg, index) => {
-                        const isPast = reg.event && new Date(reg.event.endDate) < new Date();
+                        const eventObj = reg.event || reg;
+                        const dStr = eventObj.endDate || eventObj.startDate || eventObj.date || reg.startDate || reg.date;
+                        const isPastData = dStr && new Date(dStr) < new Date();
 
                         return (
                             <motion.div
@@ -44,29 +57,29 @@ function MyTicketsWidget({
                                 transition={{ delay: 0.1 * index }}
                                 whileHover={{ scale: 1.02, x: 3 }}
                                 onClick={() => onViewTicket?.(reg)}
-                                className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${isPast
-                                        ? 'bg-slate-50 border-slate-200'
+                                className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${isPastData
+                                        ? 'bg-slate-50 border-slate-200 opacity-60'
                                         : 'bg-[#f7f8fa] border-brand-100/50 hover:shadow-md'
                                     }`}
                             >
                                 {/* Mini ticket icon */}
-                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isPast
+                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isPastData
                                         ? 'bg-slate-200'
                                         : 'bg-brand-100'
                                     }`}>
-                                    <Ticket className={`w-5 h-5 ${isPast ? 'text-slate-400' : 'text-white'}`} />
+                                    <Ticket className={`w-5 h-5 ${isPastData ? 'text-slate-400' : 'text-white'}`} />
                                 </div>
 
                                 {/* Content */}
                                 <div className="flex-1 min-w-0">
                                     <h4 className="font-medium text-sm text-slate-900 truncate">
-                                        {reg.event?.title}
+                                        {eventObj.eventName || eventObj.title || reg.eventName || reg.title || 'Unknown Event'}
                                     </h4>
                                     <p className="text-xs text-slate-500">
-                                        {reg.event && new Date(reg.event.date).toLocaleDateString('en-IN', {
+                                        {dStr ? new Date(dStr).toLocaleDateString('en-IN', {
                                             month: 'short',
                                             day: 'numeric'
-                                        })}
+                                        }) : 'TBD'}
                                     </p>
                                 </div>
 

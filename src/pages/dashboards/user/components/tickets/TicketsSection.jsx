@@ -28,19 +28,47 @@ function TicketsSection({
         const past = [];
 
         registrations.forEach(reg => {
-            if (reg.event) {
-                const eventDate = new Date(reg.event.endDate || reg.event.date);
-                if (eventDate >= now) {
-                    upcoming.push(reg);
-                } else {
-                    past.push(reg);
-                }
+            // Handle both nested and flat event data
+            const eventObj = reg.event || reg;
+            
+            // Extract date with extensive fallbacks
+            const eventDateStr = 
+                eventObj.endDate || 
+                eventObj.startDate || 
+                eventObj.date || 
+                eventObj.eventDate || 
+                reg.startDate || 
+                reg.date ||
+                reg.registrationDate;
+
+            const eventDate = eventDateStr ? new Date(eventDateStr) : null;
+            
+            // If date is missing, invalid, or in the future -> Upcoming
+            if (!eventDate || isNaN(eventDate.getTime()) || eventDate >= now) {
+                upcoming.push(reg);
+            } else {
+                // Only put in past if we are CERTAIN it's a past date
+                past.push(reg);
             }
         });
 
-        // Sort upcoming by date ascending, past by date descending
-        upcoming.sort((a, b) => new Date(a.event.date) - new Date(b.event.date));
-        past.sort((a, b) => new Date(b.event.date) - new Date(a.event.date));
+        // Sort upcoming by date ascending (invalid/null dates at the end), past by date descending
+        upcoming.sort((a, b) => {
+            const getD = (r) => {
+                const o = r.event || r;
+                const d = o.startDate || o.date || r.startDate || r.date;
+                return d ? new Date(d).getTime() : Infinity;
+            };
+            return getD(a) - getD(b);
+        });
+        past.sort((a, b) => {
+            const getD = (r) => {
+                const o = r.event || r;
+                const d = o.startDate || o.date || r.startDate || r.date;
+                return d ? new Date(d).getTime() : 0;
+            };
+            return getD(b) - getD(a);
+        });
 
         return {
             upcomingTickets: upcoming,

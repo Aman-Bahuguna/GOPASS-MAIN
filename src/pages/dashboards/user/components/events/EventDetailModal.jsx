@@ -106,6 +106,19 @@ function EventDetailModal({
 
     const formatDate = (date) => {
         if (!date || isNaN(date.getTime())) return 'Date TBA';
+        // If year is way in the past (like year 1000), it's likely a timestamp in seconds instead of ms
+        if (date.getFullYear() < 2000) {
+            const correctedDate = new Date(date.getTime() * 1000);
+            if (correctedDate.getFullYear() >= 2000) {
+                return correctedDate.toLocaleDateString('en-IN', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
+            return 'Upcoming Event'; 
+        }
         return date.toLocaleDateString('en-IN', {
             weekday: 'long',
             day: 'numeric',
@@ -116,7 +129,11 @@ function EventDetailModal({
 
     const formatTime = (date) => {
         if (!date || isNaN(date.getTime())) return '';
-        return date.toLocaleTimeString('en-IN', {
+        let d = date;
+        if (date.getFullYear() < 2000) {
+            d = new Date(date.getTime() * 1000);
+        }
+        return d.toLocaleTimeString('en-IN', {
             hour: '2-digit',
             minute: '2-digit',
             hour12: true
@@ -131,14 +148,15 @@ function EventDetailModal({
             url: window.location.href
         };
 
-        if (navigator.share) {
-            try {
+        try {
+            if (navigator.share) {
                 await navigator.share(shareData);
-            } catch (err) {
-                console.log('Share cancelled');
+            } else {
+                handleCopyLink();
             }
-        } else {
-            handleCopyLink();
+        } catch (err) {
+            console.log('Share error:', err);
+            handleCopyLink(); // Fallback to copy link on error
         }
     };
 
@@ -312,35 +330,40 @@ function EventDetailModal({
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header Image Section */}
+                    {/* Header Image Section */}
                     <div className={`relative bg-gradient-to-br from-brand-400 via-brand-300 to-brand-200 ${images.length > 0 && !imageLoadError ? 'h-64 md:h-80' : 'h-44 md:h-52'}`}>
-                        {/* Back/Close button */}
-                        <button
-                            onClick={onClose}
-                            className="absolute top-4 left-4 z-10 w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/50 transition-colors"
-                        >
-                            <ChevronLeft className="w-5 h-5" />
-                        </button>
-
                         {/* Action buttons */}
-                        <div className="absolute top-4 right-4 z-10 flex gap-2">
+                        <div className="absolute top-4 right-4 z-30 flex gap-2.5">
                             <motion.button
                                 onClick={() => onToggleFavorite?.(event.id, !isFavorite)}
-                                className={`w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-colors ${isFavorite
-                                    ? 'bg-red-500 text-white'
-                                    : 'bg-black/30 text-white hover:bg-black/50'
+                                className={`w-11 h-11 rounded-2xl backdrop-blur-md flex items-center justify-center transition-all shadow-xl border ${isFavorite
+                                    ? 'bg-red-500 text-white border-red-400'
+                                    : 'bg-white/10 text-white hover:bg-white/20 border-white/20'
                                     }`}
+                                whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.9 }}
                             >
                                 <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
                             </motion.button>
                             <motion.button
                                 onClick={handleShare}
-                                className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/50 transition-colors"
+                                className="w-11 h-11 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 border border-white/20 transition-all shadow-xl"
+                                whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.9 }}
                             >
                                 <Share2 className="w-5 h-5" />
                             </motion.button>
                         </div>
+
+                        {/* Back/Close button - moved to end and increased z-index */}
+                        <motion.button
+                            onClick={onClose}
+                            className="absolute top-4 left-4 z-40 w-11 h-11 rounded-2xl bg-black/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/40 border border-white/10 transition-all shadow-xl"
+                            whileHover={{ scale: 1.05, bg: 'rgba(0,0,0,0.4)' }}
+                            whileTap={{ scale: 0.9 }}
+                        >
+                            <ChevronLeft className="w-6 h-6" />
+                        </motion.button>
 
                         {/* Image */}
                         {images.length > 0 && !imageLoadError ? (
@@ -388,26 +411,48 @@ function EventDetailModal({
                                 )}
                             </>
                         ) : (
-                            /* Polished fallback when no image or image fails */
-                            <>
-                                {/* Soft mesh overlay */}
-                                <div className="absolute inset-0">
-                                    <div className="absolute -top-12 -right-12 w-52 h-52 bg-[#f7f8fa]/10 rounded-full blur-3xl" />
-                                    <div className="absolute -bottom-10 -left-10 w-44 h-44 bg-[#f7f8fa]/10 rounded-full blur-3xl" />
-                                    <div className="absolute top-1/3 left-1/3 w-60 h-60 bg-[#f7f8fa]/5 rounded-full blur-3xl" />
-                                </div>
-                                {/* Dot pattern */}
-                                <div className="absolute inset-0 opacity-[0.06]" />
-                                {/* Centered icon + title */}
-                                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 px-8">
-                                    <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20">
-                                        <Calendar className="w-8 h-8 text-white" />
-                                    </div>
-                                    <p className="text-white/80 text-sm font-semibold text-center max-w-[60%] line-clamp-2">
-                                        {title}
-                                    </p>
-                                </div>
-                            </>
+                             <>
+                                 {/* Animated gradient background */}
+                                 <div className="absolute inset-0 bg-gradient-to-br from-brand-400 via-brand-300 to-brand-100 overflow-hidden">
+                                     <motion.div 
+                                         className="absolute -top-1/2 -left-1/2 w-full h-full bg-white/10 rounded-full blur-[120px]"
+                                         animate={{ 
+                                             x: [0, 50, 0],
+                                             y: [0, 30, 0],
+                                             scale: [1, 1.2, 1]
+                                         }}
+                                         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                                     />
+                                     <motion.div 
+                                         className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-brand-100/20 rounded-full blur-[100px]"
+                                         animate={{ 
+                                             x: [0, -40, 0],
+                                             y: [0, -20, 0],
+                                             scale: [1, 1.1, 1]
+                                         }}
+                                         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                                     />
+                                 </div>
+                                 
+                                 {/* Centered icon + title */}
+                                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 px-8">
+                                     <motion.div 
+                                         initial={{ scale: 0.8, opacity: 0 }}
+                                         animate={{ scale: 1, opacity: 1 }}
+                                         className="w-20 h-20 rounded-[2rem] bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-2xl"
+                                     >
+                                         <Calendar className="w-10 h-10 text-white" />
+                                     </motion.div>
+                                     <motion.p 
+                                         initial={{ y: 10, opacity: 0 }}
+                                         animate={{ y: 0, opacity: 1 }}
+                                         transition={{ delay: 0.2 }}
+                                         className="text-white text-lg font-bold text-center drop-shadow-lg"
+                                     >
+                                         {title}
+                                     </motion.p>
+                                 </div>
+                             </>
                         )}
 
                         {/* Category Badge */}
@@ -422,16 +467,23 @@ function EventDetailModal({
                     {/* Content — overlaps gradient header */}
                     <div className="relative -mt-6 bg-white rounded-t-3xl p-6 md:p-8">
                         {/* Title & Status */}
-                        <div className="mb-6">
-                            <div className="flex items-start justify-between gap-4 mb-3">
-                                <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
-                                    {title}
-                                </h1>
+                        <div className="mb-8">
+                            <div className="flex items-start justify-between gap-6">
+                                <div className="space-y-1">
+                                    <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                                        {title}
+                                    </h1>
+                                    <div className="h-1.5 w-20 bg-brand-100 rounded-full" />
+                                </div>
                                 {isRegistered && (
-                                    <span className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-semibold border border-emerald-200/60">
-                                        <CheckCircle2 className="w-4 h-4" />
-                                        Registered
-                                    </span>
+                                    <motion.div 
+                                        initial={{ x: 20, opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 bg-emerald-50 text-emerald-700 rounded-2xl text-sm font-bold border-2 border-emerald-100 shadow-sm"
+                                    >
+                                        <CheckCircle2 className="w-5 h-5" />
+                                        Joined
+                                    </motion.div>
                                 )}
                             </div>
 
@@ -459,38 +511,45 @@ function EventDetailModal({
                                 </div>
                             </div>
                         </div>
-
                         {/* Price & Registration Card */}
-                        <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-5 mb-6 border border-slate-200/80 shadow-sm">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Registration Fee</p>
-                                    <p className="text-3xl font-bold text-slate-900">
+                        <motion.div 
+                            className="bg-white rounded-3xl p-6 mb-8 border-2 border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] relative overflow-hidden"
+                            whileHover={{ y: -2 }}
+                        >
+                            {/* Decorative element */}
+                            <div className="absolute -top-10 -right-10 w-40 h-40 bg-brand-100/10 rounded-full blur-3xl" />
+                            
+                            <div className="relative z-[1] flex items-center justify-between">
+                                <div className="space-y-2">
+                                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Registration Fee</p>
+                                    <div className="flex items-baseline gap-1">
                                         {fee === 0 ? (
-                                            <span className="text-emerald-600 flex items-center gap-1.5"><Sparkles className="w-5 h-5" />FREE</span>
-                                        ) : (
-                                            <span className="flex items-center">
-                                                <IndianRupee className="w-6 h-6" />
-                                                {fee}
+                                            <span className="text-4xl font-extrabold text-emerald-600 tracking-tight flex items-center gap-2">
+                                                FREE
+                                                <Sparkles className="w-6 h-6 text-emerald-500 animate-pulse" />
                                             </span>
+                                        ) : (
+                                            <div className="flex items-center text-4xl font-extrabold text-slate-900 tracking-tight">
+                                                <IndianRupee className="w-8 h-8" />
+                                                {fee}
+                                            </div>
                                         )}
-                                    </p>
+                                    </div>
                                 </div>
 
                                 <div className="text-right">
-                                    {spotsRemaining === null ? (
-                                        <span className="text-slate-400 text-sm">Open registration</span>
-                                    ) : isFull ? (
-                                        <span className="text-red-500 font-semibold text-sm bg-red-50 px-3 py-1.5 rounded-lg">Event Full</span>
-                                    ) : isAlmostFull ? (
-                                        <span className="text-orange-600 font-semibold text-sm bg-orange-50 px-3 py-1.5 rounded-lg">
-                                            Only {spotsRemaining} left!
-                                        </span>
-                                    ) : (
-                                        <span className="text-slate-500 text-sm">
-                                            {spotsRemaining} spots available
-                                        </span>
-                                    )}
+                                    <div className={`px-4 py-2 rounded-2xl inline-block ${
+                                        isFull ? 'bg-red-50 text-red-600 border border-red-100' : 
+                                        isAlmostFull ? 'bg-orange-50 text-orange-600 border border-orange-100' : 
+                                        'bg-brand-50 text-brand-300 border border-brand-100'
+                                    }`}>
+                                        <p className="text-xs font-bold uppercase tracking-wider">
+                                            {isFull ? 'Sold Out' : isAlmostFull ? 'Last Call' : 'Registration'}
+                                        </p>
+                                        <p className="text-sm font-medium mt-0.5">
+                                            {spotsRemaining === null ? 'Open Entry' : isFull ? 'No Spots left' : isAlmostFull ? `${spotsRemaining} left!` : `${spotsRemaining} available`}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -516,7 +575,7 @@ function EventDetailModal({
                                     ✓ You're registered for this event! Check your tickets for details.
                                 </div>
                             )}
-                        </div>
+                        </motion.div>
 
                         {/* Tabs */}
                         <div className="mb-6">
@@ -553,11 +612,21 @@ function EventDetailModal({
                                 {activeTab === 'about' && (
                                     <div className="space-y-6">
                                         {/* Description */}
-                                        <div>
-                                            <h3 className="font-semibold text-slate-900 mb-3">About This Event</h3>
-                                            <p className="text-slate-600 leading-relaxed whitespace-pre-line">
-                                                {description}
-                                            </p>
+                                        <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+                                            <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                                <Info className="w-5 h-5 text-brand-200" />
+                                                About This Event
+                                            </h3>
+                                            {description === 'No description available.' ? (
+                                                <div className="py-8 text-center bg-white/50 rounded-xl border border-dashed border-slate-200">
+                                                    <Sparkles className="w-8 h-8 text-slate-200 mx-auto mb-2" />
+                                                    <p className="text-slate-400 text-sm italic">The organizer hasn't shared a detailed description for this event yet.</p>
+                                                </div>
+                                            ) : (
+                                                <p className="text-slate-600 leading-relaxed whitespace-pre-line text-[15px]">
+                                                    {description}
+                                                </p>
+                                            )}
                                         </div>
 
                                         {/* Highlights */}

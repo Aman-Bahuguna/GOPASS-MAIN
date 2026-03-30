@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, MapPin, Navigation, CalendarPlus } from 'lucide-react';
 
@@ -12,13 +12,15 @@ function UpcomingReminder({
     onAddToCalendar,
     className = ''
 }) {
+    const eventObj = registration?.event || registration;
+    const eventDateStr = eventObj?.startDate || eventObj?.date || registration?.startDate || registration?.date;
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
 
     useEffect(() => {
-        if (!registration?.event?.date) return;
+        if (!eventDateStr) return;
 
         const calculateTimeLeft = () => {
-            const eventDate = new Date(registration.event.date);
+            const eventDate = new Date(eventDateStr);
             const now = new Date();
             const diff = eventDate - now;
 
@@ -38,28 +40,30 @@ function UpcomingReminder({
         const timer = setInterval(calculateTimeLeft, 60000); // Update every minute
 
         return () => clearInterval(timer);
-    }, [registration]);
+    }, [registration, eventDateStr]);
 
-    if (!registration?.event) return null;
+    if (!eventObj) return null;
 
-    const { event } = registration;
-    const isPast = new Date(event.endDate || event.date) < new Date();
+    const isPast = new Date(eventObj.endDate || eventDateStr) < new Date();
 
     if (isPast) return null;
 
     const handleGetDirections = () => {
-        if (event.venue) {
-            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.venue)}`;
+        const venue = eventObj.venue || eventObj.location || registration.venue;
+        if (venue) {
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venue)}`;
             window.open(mapsUrl, '_blank');
         }
         onGetDirections?.();
     };
 
     const handleAddToCalendar = () => {
-        const eventDate = new Date(event.date);
-        const endDate = event.endDate ? new Date(event.endDate) : new Date(eventDate.getTime() + 2 * 60 * 60 * 1000);
+        const eventDate = new Date(eventDateStr);
+        const endDate = eventObj.endDate ? new Date(eventObj.endDate) : new Date(eventDate.getTime() + 2 * 60 * 60 * 1000);
+        const title = eventObj.eventName || eventObj.title || registration.eventName || registration.title;
+        const venue = eventObj.venue || eventObj.location || registration.venue || '';
 
-        const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${eventDate.toISOString().replace(/-|:|\.\d+/g, '')}/${endDate.toISOString().replace(/-|:|\.\d+/g, '')}&details=${encodeURIComponent(event.shortDescription || '')}&location=${encodeURIComponent(event.venue || '')}`;
+        const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${eventDate.toISOString().replace(/-|:|\.\d+/g, '')}/${endDate.toISOString().replace(/-|:|\.\d+/g, '')}&details=${encodeURIComponent(eventObj.shortDescription || '')}&location=${encodeURIComponent(venue)}`;
 
         window.open(calendarUrl, '_blank');
         onAddToCalendar?.();
@@ -89,11 +93,11 @@ function UpcomingReminder({
                 onClick={() => onViewTicket?.(registration)}
             >
                 <h5 className="font-medium text-slate-900 text-sm mb-1 line-clamp-1">
-                    {event.title}
+                    {eventObj.eventName || eventObj.title || registration.eventName || registration.title}
                 </h5>
                 <div className="flex items-center gap-2 text-xs text-slate-500">
                     <Clock className="w-3.5 h-3.5" />
-                    {new Date(event.date).toLocaleDateString('en-IN', {
+                    {new Date(eventDateStr).toLocaleDateString('en-IN', {
                         weekday: 'short',
                         month: 'short',
                         day: 'numeric'

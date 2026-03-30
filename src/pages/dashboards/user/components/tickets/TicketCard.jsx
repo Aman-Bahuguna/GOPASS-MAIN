@@ -40,9 +40,17 @@ function TicketCard({
     className = ''
 }) {
     const { event, ticketNumber, amount, status: ticketStatus } = registration;
+    const eventObj = event || registration;
 
     // Determine status
-    const isPast = event && new Date(event.endDate) < new Date();
+    const eventEndDate = 
+        eventObj?.endDate || 
+        eventObj?.startDate || 
+        eventObj?.date || 
+        registration?.startDate || 
+        registration?.date;
+
+    const isPast = eventObj && eventEndDate && new Date(eventEndDate) < new Date();
     const status = ticketStatus || (isPast ? 'completed' : 'upcoming');
     const statusInfo = statusConfig[status] || statusConfig.upcoming;
     const StatusIcon = statusInfo.icon;
@@ -77,10 +85,10 @@ function TicketCard({
             {/* Ticket Content */}
             <div className="flex-1 min-w-0">
                 <h4 className={`font-semibold truncate ${isPast ? 'text-slate-500' : 'text-slate-900'}`}>
-                    {event?.title}
+                    {eventObj?.eventName || eventObj?.title || eventObj?.name || eventObj?.event_name || registration?.eventName || registration?.title || 'Unknown Event'}
                 </h4>
                 <p className="text-sm text-slate-500">
-                    {event && new Date(event.date).toLocaleDateString('en-IN', {
+                    {eventObj && new Date(eventObj.startDate || eventObj.date).toLocaleDateString('en-IN', {
                         weekday: 'short',
                         month: 'short',
                         day: 'numeric',

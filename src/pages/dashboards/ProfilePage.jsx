@@ -138,23 +138,41 @@ function EditableField({ label, value, icon: Icon, isEditing, onEdit, type = 'te
 }
 
 // User Profile Section - Shows registered events, tickets
-function UserProfileSection({ user }) {
-    const registeredEvents = user?.registeredEvents?.length || 0;
+function UserProfileSection({ user, registrations = [] }) {
+    const now = new Date();
+    const totalTickets = registrations.length;
+    const eventsAttended = registrations.filter(reg => {
+        const o = reg.event || reg;
+        const d = o.endDate || o.startDate || o.date || reg.startDate || reg.date;
+        return d && new Date(d) < now;
+    }).length;
+
+    const [allInterests] = useState(['Technology', 'Music', 'Art', 'Sports', 'Workshops', 'Networking', 'Gaming', 'Coding', 'Business', 'Marketing']);
+    const [userInterests, setUserInterests] = useState(user?.interests || ['Technology', 'Music', 'Workshops']);
+    const [isEditingInt, setIsEditingInt] = useState(false);
+
+    const toggleInterest = (interest) => {
+        if (userInterests.includes(interest)) {
+            setUserInterests(userInterests.filter(i => i !== interest));
+        } else {
+            setUserInterests([...userInterests, interest]);
+        }
+    };
 
     return (
         <div className="space-y-6">
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <ProfileStatCard
                     icon={Ticket}
                     label="Total Tickets"
-                    value={registeredEvents}
+                    value={totalTickets}
                     color="brand"
                 />
                 <ProfileStatCard
                     icon={CalendarDays}
                     label="Events Attended"
-                    value={Math.floor(registeredEvents * 0.7)}
+                    value={eventsAttended}
                     color="green"
                 />
                 <ProfileStatCard
@@ -173,16 +191,39 @@ function UserProfileSection({ user }) {
 
             {/* Recent Activity */}
             <div className="bg-[#f7f8fa] rounded-2xl p-6 shadow-sm border border-slate-200">
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Interests & Preferences</h3>
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-slate-900">Interests & Preferences</h3>
+                    <button 
+                        onClick={() => setIsEditingInt(!isEditingInt)}
+                        className="text-brand-200 text-sm font-semibold hover:text-brand-100 flex items-center gap-1 px-3 py-1 bg-white border border-slate-100 rounded-lg shadow-sm"
+                    >
+                        {isEditingInt ? 'Done' : 'Update Interests'}
+                    </button>
+                </div>
+                
                 <div className="flex flex-wrap gap-2">
-                    {['Technology', 'Music', 'Art', 'Sports', 'Workshops', 'Networking'].map((interest) => (
-                        <span
+                    {(isEditingInt ? allInterests : userInterests).map((interest) => (
+                        <button
                             key={interest}
-                            className="px-4 py-2 bg-slate-100 rounded-full text-sm font-medium text-slate-700 border border-slate-200"
+                            disabled={!isEditingInt}
+                            onClick={() => toggleInterest(interest)}
+                            className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+                                userInterests.includes(interest) 
+                                    ? 'bg-brand-100 text-white border-brand-200 shadow-md transform hover:scale-105' 
+                                    : isEditingInt 
+                                        ? 'bg-white text-slate-400 border-slate-200 hover:border-brand-200'
+                                        : 'hidden'
+                            } ${!isEditingInt ? 'cursor-default opacity-100 bg-slate-100 text-slate-700 border-slate-200' : ''}`}
                         >
                             {interest}
-                        </span>
+                            {isEditingInt && userInterests.includes(interest) && (
+                                <span className="ml-2">×</span>
+                            )}
+                        </button>
                     ))}
+                    {userInterests.length === 0 && !isEditingInt && (
+                        <p className="text-slate-400 text-sm italic">No preferences set yet. Click Update to add some!</p>
+                    )}
                 </div>
             </div>
         </div>
@@ -356,7 +397,7 @@ function AdminProfileSection({ user }) {
 }
 
 // Main Profile Page Component
-export default function ProfilePage({ onNavigate }) {
+export default function ProfilePage({ onNavigate, registrations = [] }) {
     const { user, updateProfile } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -380,13 +421,13 @@ export default function ProfilePage({ onNavigate }) {
         setEditedData({});
     };
 
-    const formattedDate = user?.createdAt
-        ? new Date(user.createdAt).toLocaleDateString('en-IN', {
+    const formattedDate = (user?.createdAt || user?.registrationDate || "2024-03-30")
+        ? new Date(user?.createdAt || user?.registrationDate || "2024-03-30").toLocaleDateString('en-IN', {
             day: 'numeric',
             month: 'long',
             year: 'numeric'
         })
-        : 'Unknown';
+        : 'March 2024';
 
     return (
         <div className="max-w-5xl mx-auto space-y-8">
@@ -551,7 +592,7 @@ export default function ProfilePage({ onNavigate }) {
 
                 {/* Role Specific Stats and Content */}
                 <div className="lg:col-span-2">
-                    {user?.role === ROLES.USER && <UserProfileSection user={user} />}
+                    {user?.role === ROLES.USER && <UserProfileSection user={user} registrations={registrations} />}
                     {user?.role === ROLES.ORGANIZER && <OrganizerProfileSection user={user} />}
                     {user?.role === ROLES.ADMIN && <AdminProfileSection user={user} />}
                 </div>
