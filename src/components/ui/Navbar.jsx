@@ -135,14 +135,14 @@ const Navbar = ({ onNavigateToLogin, onNavigateToSignup }) => {
 
                                 <motion.button
                                     onClick={onNavigateToSignup}
-                                    whileHover={{ scale: 1.05, y: -2 }}
-                                    className={`group relative flex items-center gap-2 px-7 py-2.5 text-white rounded-full font-bold text-[15px] shadow-xl overflow-hidden transition-colors duration-500 ${
-                                        scrolled ? "bg-brand-100 shadow-brand-100/20" : "bg-slate-900 shadow-slate-900/20"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className={`group relative overflow-hidden px-8 py-2.5 text-white rounded-full font-bold text-[15px] shadow-xl transition-all duration-300 ${
+                                        scrolled ? "bg-brand-100 shadow-brand-100/30 hover:bg-brand-200 hover:shadow-brand-100/50" : "bg-slate-900 shadow-slate-900/30 hover:bg-slate-800 hover:shadow-slate-900/50"
                                     }`}
                                 >
-                                    <span>Get Started</span>
-                                    <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                                    <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />
+                                    <span className="relative z-10">Get Started</span>
+                                    <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700 ease-in-out" />
                                 </motion.button>
                             </div>
 
