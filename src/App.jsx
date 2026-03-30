@@ -4,9 +4,26 @@ import LandingPage from './pages/LandingPage';
 import AuthPage from './pages/AuthPage';
 import PendingVerificationPage from './pages/PendingVerificationPage';
 import { EventsPage, EventDetailPage } from './pages/events';
+import FeaturesPage from './pages/features/FeaturesPage';
+import PricingPage from './pages/pricing/PricingPage';
+import CommunityPage from './pages/community/CommunityPage';
+import AboutPage from './pages/about/AboutPage';
+import BlogPage from './pages/blog/BlogPage';
+import CareersPage from './pages/careers/CareersPage';
+import PressKitPage from './pages/press/PressKitPage';
+import DocumentationPage from './pages/documentation/DocumentationPage';
+import HelpCenterPage from './pages/help/HelpCenterPage';
+import APIPage from './pages/api/APIPage';
+import StatusPage from './pages/status/StatusPage';
+import PrivacyPage from './pages/legal/privacy/PrivacyPage';
+import TermsPage from './pages/legal/terms/TermsPage';
+import CookiePolicyPage from './pages/legal/cookies/CookiePolicyPage';
+import LicensesPage from './pages/legal/licenses/LicensesPage';
+import MarketingLayout from './components/layout/MarketingLayout';
 import UserDashboard from './pages/dashboards/user/UserDashboard';
 import OrganizerDashboard from './pages/dashboards/organizer/OrganizerDashboard';
 import AdminDashboard from './pages/dashboards/admin/AdminDashboard';
+import ScrollToTop from './components/utils/ScrollToTop';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ROLES } from './utils/constants';
 import { getDashboardRoute, isAccountFullyVerified, isBlockingVerificationRequired } from './utils/roleConfig';
@@ -150,14 +167,37 @@ function AppContent() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route
-        path="/"
-        element={
-          <PublicRoute>
-            <LandingPage />
-          </PublicRoute>
-        }
-      />
+      {/* Marketing / Landing Routes with Layout */}
+      <Route element={<MarketingLayout />}>
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <LandingPage />
+            </PublicRoute>
+          }
+        />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/community" element={<CommunityPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/careers" element={<CareersPage />} />
+        <Route path="/press" element={<PressKitPage />} />
+        <Route path="/docs" element={<DocumentationPage />} />
+        <Route path="/help" element={<HelpCenterPage />} />
+        <Route path="/api" element={<APIPage />} />
+        <Route path="/status" element={<StatusPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/cookies" element={<CookiePolicyPage />} />
+        <Route path="/licenses" element={<LicensesPage />} />
+        
+        {/* Public Events Page - No authentication required, but also part of marketing layout */}
+        <Route path="/events" element={<EventsPage />} />
+        <Route path="/events/:eventId" element={<EventDetailPage />} />
+      </Route>
+
       <Route
         path="/login"
         element={
@@ -174,10 +214,6 @@ function AppContent() {
           </PublicRoute>
         }
       />
-
-      {/* Public Events Page - No authentication required */}
-      <Route path="/events" element={<EventsPage />} />
-      <Route path="/events/:eventId" element={<EventDetailPage />} />
 
       {/* Protected Routes */}
       <Route
@@ -230,6 +266,7 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         <AppContent />
       </AuthProvider>

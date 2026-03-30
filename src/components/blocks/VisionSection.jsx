@@ -42,13 +42,11 @@ const FEATURE_ICONS = [
     { Icon: Coffee, label: "Workshops", color: "from-amber-500 to-orange-600" },
     { Icon: Users, label: "Community", color: "from-blue-500 to-indigo-600" },
     { Icon: Camera, label: "Experiences", color: "from-emerald-500 to-teal-600" },
-    { Icon: Heart, label: "Connection", color: "from-red-500 to-pink-600" },
-    { Icon: Sparkles, label: "Moments", color: "from-yellow-500 to-amber-600" }
+    { Icon: Heart, label: "Connection", color: "from-red-500 to-pink-600" }
 ];
 
 const VisionSection = ({ onAbout, onSignup }) => {
     const [activeTab, setActiveTab] = useState('creators');
-    const constraintsRef = useRef(null);
 
     return (
         <section id="about" className="relative w-full min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 py-20 overflow-hidden">
@@ -155,90 +153,32 @@ const VisionSection = ({ onAbout, onSignup }) => {
                             </motion.button>
                         </motion.div>
 
-                        {/* Bouncing Ball Container */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.6, delay: 0.4 }}
-                            viewport={{ once: true, amount: 0.5 }}
-                            className="pt-8"
-                        >
-                            <motion.div
-                                ref={constraintsRef}
-                                className="relative w-full h-[280px] bg-gradient-to-br from-slate-100/50 to-slate-50/50 backdrop-blur-sm rounded-3xl border-2 border-slate-200/50 shadow-inner overflow-hidden"
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.7, delay: 0.5 }}
-                                viewport={{ once: true }}
-                            >
-                                {/* Container Label */}
-                                <div className="absolute top-4 left-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
-                                    Drag & Explore
-                                </div>
-
-                                {/* Falling Draggable Balls */}
-                                {FEATURE_ICONS.map(({ Icon, label, color }, index) => (
-                                    <motion.div
-                                        key={label}
-                                        drag
-                                        dragConstraints={constraintsRef}
-                                        dragElastic={0.1}
-                                        dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-                                        initial={{
-                                            y: -200,
-                                            x: Math.random() * 300 - 150,
-                                            opacity: 0,
-                                            scale: 0
-                                        }}
-                                        whileInView={{
-                                            y: Math.random() * 150 + 20,
-                                            x: Math.random() * 350,
-                                            opacity: 1,
-                                            scale: 1
-                                        }}
-                                        transition={{
-                                            type: "spring",
-                                            stiffness: 100,
-                                            damping: 12,
-                                            delay: index * 0.15 + 0.8,
-                                            opacity: { duration: 0.3, delay: index * 0.15 + 0.8 }
-                                        }}
-                                        whileHover={{
-                                            scale: 1.15,
-                                            boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
-                                        }}
-                                        whileDrag={{
-                                            scale: 1.2,
-                                            cursor: "grabbing",
-                                            zIndex: 999
-                                        }}
-                                        viewport={{ once: true, amount: 0.3 }}
-                                        className={`
-                                            absolute w-16 h-16 rounded-full bg-gradient-to-br ${color}
-                                            shadow-xl shadow-slate-400/30 cursor-grab
-                                            flex items-center justify-center
-                                            border-2 border-white/30
-                                        `}
-                                        style={{
-                                            willChange: "transform"
-                                        }}
-                                    >
-                                        <Icon className="w-7 h-7 text-white drop-shadow-lg" strokeWidth={2.5} />
-
-                                        {/* Tooltip on Hover */}
-                                        <motion.div
-                                            className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap pointer-events-none opacity-0"
-                                            whileHover={{ opacity: 1 }}
-                                        >
-                                            {label}
-                                        </motion.div>
-                                    </motion.div>
-                                ))}
-
-                                {/* Decorative Bottom Gradient */}
-                                <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-slate-200/30 to-transparent pointer-events-none" />
-                            </motion.div>
-                        </motion.div>
+                        {/* Premium Feature Showcase - Replaces lagging physics balls */}
+                        <div className="grid grid-cols-2 gap-4 pt-8">
+                            {FEATURE_ICONS.map(({ Icon, label, color }, index) => (
+                                <motion.div
+                                    key={label}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                                    viewport={{ once: true }}
+                                    whileHover={{ scale: 1.05, y: -5 }}
+                                    className="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col items-center text-center"
+                                >
+                                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center mb-4 shadow-lg shadow-slate-200`}>
+                                        <Icon className="w-6 h-6 text-white" />
+                                    </div>
+                                    <span className="text-slate-900 font-bold text-sm font-sans tracking-wide">{label}</span>
+                                    
+                                    {/* Subtle decorative dot */}
+                                    <motion.div 
+                                        className="w-1 h-1 bg-brand-100 rounded-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        animate={{ scale: [1, 1.5, 1] }}
+                                        transition={{ duration: 1, repeat: Infinity }}
+                                    />
+                                </motion.div>
+                            ))}
+                        </div>
                     </motion.div>
 
                     {/* Right Side - Tabbed Image Grid */}

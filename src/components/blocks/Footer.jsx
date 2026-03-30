@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { Instagram, Twitter, Linkedin, Mail, Heart, ArrowUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
@@ -152,16 +153,16 @@ const Footer = () => {
         {
             title: 'Product',
             links: [
-                { name: 'Features', href: '#features' },
+                { name: 'Features', href: '/features' },
                 { name: 'Events', href: '/events' },
-                { name: 'Pricing', href: '#pricing' },
-                { name: 'Community', href: '#community' }
+                { name: 'Pricing', href: '/pricing' },
+                { name: 'Community', href: '/community' }
             ]
         },
         {
             title: 'Company',
             links: [
-                { name: 'About', href: '#about' },
+                { name: 'About', href: '/about' },
                 { name: 'Blog', href: '/blog' },
                 { name: 'Careers', href: '/careers' },
                 { name: 'Press Kit', href: '/press' }
@@ -291,13 +292,13 @@ const Footer = () => {
                                     <ul className="space-y-3">
                                         {section.links.map((link, linkIndex) => (
                                             <li key={linkIndex}>
-                                                <a
-                                                    href={link.href}
+                                                <Link
+                                                    to={link.href}
                                                     className="text-slate-400 hover:text-brand-200 transition-colors duration-300 inline-block relative group"
                                                 >
                                                     {link.name}
                                                     <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-brand-200 group-hover:w-full transition-all duration-300" />
-                                                </a>
+                                                </Link>
                                             </li>
                                         ))}
                                     </ul>

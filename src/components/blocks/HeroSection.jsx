@@ -87,7 +87,7 @@ const HeroSection = ({ onJoinForFree }) => {
     }, { scope: containerRef });
 
     return (
-        <section ref={containerRef} className="relative w-full min-h-screen bg-[#ffffff] flex flex-col items-center justify-center pt-20 pb-20 overflow-hidden">
+        <section ref={containerRef} className="relative w-full min-h-screen bg-[#ffffff] flex flex-col items-center justify-center pt-8 pb-16 overflow-hidden">
 
             {/* Background Gradients */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">

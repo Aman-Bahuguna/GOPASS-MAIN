@@ -348,18 +348,7 @@ const EventsPage = () => {
                     transition={{ duration: 10, repeat: Infinity }}
                 />
 
-                <div className="relative container mx-auto max-w-7xl px-6 py-12">
-                    {/* Back Button */}
-                    <motion.button
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        onClick={() => navigate('/')}
-                        className="flex items-center gap-2 text-white/80 hover:text-white mb-8 transition-colors duration-200"
-                    >
-                        <ArrowLeft className="w-5 h-5" />
-                        <span className="font-medium">Back to Home</span>
-                    </motion.button>
-
+                <div className="relative container mx-auto max-w-7xl px-6 py-20 pb-12">
                     {/* Title */}
                     <div className="text-center mb-10">
                         <motion.div
