@@ -160,8 +160,11 @@ export const getUserRegistrations = async () => {
     if (!res.ok) throw new Error('Failed to get user registrations');
     const data = await res.json();
     
-    // Extract paginated array
-    if (data && Array.isArray(data.content)) return data.content;
+    // Safely extract the registrations array
+    if (Array.isArray(data)) return data;
+    if (data) {
+        return data.content || data.registrations || data.attendees || data.data || [];
+    }
     return [];
 };
 
@@ -175,8 +178,11 @@ export const getEventRegistrations = async (eventId) => {
     });
     if (!res.ok) throw new Error('Failed to get event registrations');
     const data = await res.json();
-
-    // Extract paginated array
-    if (data && Array.isArray(data.content)) return data.content;
+    
+    // Safely extract the registrations array
+    if (Array.isArray(data)) return data;
+    if (data) {
+        return data.content || data.registrations || data.attendees || data.data || [];
+    }
     return [];
 };

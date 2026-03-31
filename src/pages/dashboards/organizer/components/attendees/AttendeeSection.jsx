@@ -18,10 +18,9 @@ export default function AttendeeSection({
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        if (initialEvent && initialEvent.id !== selectedEvent?.id) {
-            setSelectedEvent(initialEvent);
-            setAttendees(initialAttendees);
-        }
+        // Sync local state with props, important for back navigation
+        setSelectedEvent(initialEvent);
+        setAttendees(initialAttendees);
     }, [initialEvent, initialAttendees]);
 
     const handleViewRegistrations = async (evt) => {
@@ -48,8 +47,8 @@ export default function AttendeeSection({
     };
 
     const filteredAttendees = attendees.filter(reg => {
-        const name = reg.user?.fullName?.toLowerCase() || '';
-        const email = reg.user?.email?.toLowerCase() || '';
+        const name = (reg.user?.fullName || reg.fullName || reg.name || '').toLowerCase();
+        const email = (reg.user?.email || reg.email || '').toLowerCase();
         return name.includes(searchTerm.toLowerCase()) || email.includes(searchTerm.toLowerCase());
     });
 
@@ -145,7 +144,7 @@ export default function AttendeeSection({
                                     <AnimatePresence>
                                         {filteredAttendees.map((reg, idx) => (
                                             <motion.tr 
-                                                key={reg.id}
+                                                key={reg.id || idx}
                                                 initial={{ opacity: 0, x: -10 }}
                                                 animate={{ opacity: 1, x: 0 }}
                                                 transition={{ delay: idx * 0.05 }}
@@ -158,11 +157,11 @@ export default function AttendeeSection({
                                                         </div>
                                                         <div>
                                                             <div className="font-bold text-slate-900 group-hover:text-brand-200 transition-colors">
-                                                                {reg.user?.fullName || 'Unknown Student'}
+                                                                {reg.user?.fullName || reg.fullName || reg.name || 'Unknown Student'}
                                                             </div>
                                                             <div className="text-xs text-slate-500 flex items-center gap-1">
                                                                 <User className="w-3 h-3" />
-                                                                ID: {reg.id.substring(0, 8)}
+                                                                ID: {reg.id?.substring(0, 8) || 'N/A'}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -171,14 +170,14 @@ export default function AttendeeSection({
                                                     <div className="space-y-1">
                                                         <div className="flex items-center gap-2 text-slate-600">
                                                             <Mail className="w-4 h-4 text-slate-400" />
-                                                            {reg.user?.email || 'N/A'}
+                                                            {reg.user?.email || reg.email || 'N/A'}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-2 text-slate-600">
                                                         <Calendar className="w-4 h-4 text-slate-400" />
-                                                        {new Date(reg.registeredAt).toLocaleDateString('en-US', {
+                                                        {new Date(reg.registeredAt || reg.registrationDate || reg.date || reg.createdAt || Date.now()).toLocaleDateString('en-US', {
                                                             month: 'short',
                                                             day: 'numeric',
                                                             year: 'numeric'
@@ -186,8 +185,11 @@ export default function AttendeeSection({
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
-                                                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
-                                                        confirmed
+                                                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${
+                                                        reg.status === 'cancelled' ? 'bg-red-50 text-red-700 border-red-100' : 
+                                                        'bg-emerald-50 text-emerald-700 border-emerald-100'
+                                                    }`}>
+                                                        {reg.status || 'confirmed'}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
@@ -228,7 +230,7 @@ export default function AttendeeSection({
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {events.map((evt, idx) => (
                         <motion.div 
-                            key={evt.id}
+                            key={evt.id || idx}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
@@ -247,7 +249,7 @@ export default function AttendeeSection({
                             
                             <h3 className="font-bold text-slate-900 group-hover:text-brand-200 transition-colors line-clamp-1">{evt.title}</h3>
                             <p className="text-xs text-slate-500 mt-1 mb-4">
-                                ID: {evt.id.substring(0, 8)}...
+                                ID: {evt.id?.substring(0, 8) || 'N/A'}...
                             </p>
 
                             <div className="mt-auto pt-4 border-t border-slate-200/50 flex items-center justify-between">
